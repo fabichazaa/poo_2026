@@ -1,191 +1,182 @@
 ```mermaid
 classDiagram
-    direction LR
+direction LR
 
-    class TipoTurno {
-        <<enum>>
-        CONSULTA_GENERAL
-        VACUNACION
-        CIRUGIA
-        BANIO
-        ANALISIS
-        -descripcion: String
-        -duracionMinutos: int
-        +getDescripcion() String
-        +getDuracionMinutos() int
-    }
+class TipoTurno {
+    <<enum>>
+    CONSULTA_GENERAL
+    VACUNACION
+    CIRUGIA
+    BANIO
+    ANALISIS
+    -descripcion: String
+    -duracionMinutos: int
+    +getDescripcion() String
+    +getDuracionMinutos() int
+}
 
-    class TipoAlimentacion {
-        <<enum>>
-        OMNIVORO
-        CARNIVORO_ESTRICTO
-        HERVIBORO
-        -descripcion: String
-        +getDescripcion() String
-    }
+class TipoAlimentacion {
+    <<enum>>
+    OMNIVORO
+    CARNIVORO_ESTRICTO
+    HERVIBORO
+    -descripcion: String
+    +getDescripcion() String
+}
 
-    class Direccion {
-        -calle: String
-        -numero: int
-        -localidad: String
-        +actualizarDireccion() void
-        +getDireccionCompleta() String
-    }
+class Direccion {
+    -calle: String
+    -numero: int
+    -localidad: String
+    +actualizarDireccion() void
+    +getDireccionCompleta() String
+}
 
-    class Persona {
-        <<abstract>>
-        -DNI: String
-        -nombre: String
-        -apellido: String
-        -direccion: Direccion
-        +getDNI() String
-        +getNombre() String
-        +getApellido() String
-        +getDireccionCompleta() String
-    }
+class Persona {
+    <<abstract>>
+    -DNI: String
+    -nombre: String
+    -apellido: String
+    -direccion: Direccion
+    +getDNI() String
+    +getNombre() String
+    +getApellido() String
+    +getDireccionCompleta() String
+}
 
-    class Veterinario {
-        -matricula: String
-        -turnos: List~Turno~
-        -especialidad: String
-        -turnoTrabajo: String
-        +getMatricula() String
-        +getRutaFoto() String
-        +agregarTurno(Turno) void
-    }
+class Veterinario {
+    -matricula: String
+    -turnos: List
+    -especialidad: String
+    -turnoTrabajo: String
+    +getMatricula() String
+    +getRutaFoto() String
+    +agregarTurno(Turno) void
+}
 
-    class Responsable {
-        -mascotas: ArrayList~Animal~
-        +agregarMascota(Animal) void
-        +removerMascota(Animal) void
-        +getMascotas() ArrayList~Animal~
-    }
+class Responsable {
+    -mascotas: List
+    +agregarMascota(Animal) void
+    +removerMascota(Animal) void
+    +getMascotas() List
+}
 
-    class Animal {
-        <<abstract>>
-        -idAnimal: String
-        -nombre: String
-        -fechaNacimiento: LocalDate
-        -sexo: boolean
-        -responsable: Responsable
-        -historiaClinica: HistoriaClinica
-        -enAdopcion: boolean
-        +calcularEdad() int
-        +getRutaFoto() String
-        +getTipoAlimentacion()* TipoAlimentacion
-        +getEspecie()* String
-    }
+class Animal {
+    <<abstract>>
+    -idAnimal: String
+    -nombre: String
+    -fechaNacimiento: LocalDate
+    -sexo: boolean
+    -responsable: Responsable
+    -historiaClinica: HistoriaClinica
+    -enAdopcion: boolean
+    +calcularEdad() int
+    +getRutaFoto() String
+    +getTipoAlimentacion() TipoAlimentacion
+    +getEspecie() String
+}
 
-    class Perro {
-        -raza: String
-        -necesitaPaseo: boolean
-        +getTipoAlimentacion() TipoAlimentacion
-        +getEspecie() String
-    }
+class Perro {
+    -raza: String
+    -necesitaPaseo: boolean
+    +getTipoAlimentacion() TipoAlimentacion
+    +getEspecie() String
+}
 
-    class Gato {
-        -raza: String
-        -esEsterilizado: boolean
-        +getTipoAlimentacion() TipoAlimentacion
-        +getEspecie() String
-    }
+class Gato {
+    -raza: String
+    -esEsterilizado: boolean
+    +getTipoAlimentacion() TipoAlimentacion
+    +getEspecie() String
+}
 
-    class HistoriaClinica {
-        -medicamentosRecetados: ArrayList~Medicamento~
-        +recetarMedicamento(Medicamento) void
-        +getMedicamentosRecetados() ArrayList~Medicamento~
-    }
+class HistoriaClinica {
+    -medicamentosRecetados: List
+    +recetarMedicamento(Medicamento) void
+    +getMedicamentosRecetados() List
+}
 
-    class Medicamento {
-        -codigoSenasa: String
-        -nombreMedicamento: String
-        +getCodigoSenasa() String
-        +getNombreMedicamento() String
-    }
+class Medicamento {
+    -codigoSenasa: String
+    -nombreMedicamento: String
+    +getCodigoSenasa() String
+    +getNombreMedicamento() String
+}
 
-    class Vacuna {
-        -fechaAplicacion: LocalDate
-        -fechaVencimiento: LocalDate
-        +estaVencida() boolean
-    }
+class Vacuna {
+    -fechaAplicacion: LocalDate
+    -fechaVencimiento: LocalDate
+    +estaVencida() boolean
+}
 
-    class Turno {
-        +ESTADO_PENDIENTE: String$
-        +ESTADO_COMPLETADO: String$
-        +ESTADO_CANCELADO: String$
-        -idTurno: int
-        -fecha: String
-        -hora: String
-        -veterinario: Veterinario
-        -animal: Animal
-        -estado: String
-        -tipo: TipoTurno
-        -observaciones: String
-        +completarTurno() void
-        +cancelarTurno() void
-        +esPendiente() boolean
-    }
+class Turno {
+    -idTurno: int
+    -fecha: String
+    -hora: String
+    -veterinario: Veterinario
+    -animal: Animal
+    -estado: String
+    -tipo: TipoTurno
+    -observaciones: String
+    +ESTADO_PENDIENTE$ String
+    +ESTADO_COMPLETADO$ String
+    +ESTADO_CANCELADO$ String
+    +completarTurno() void
+    +cancelarTurno() void
+    +esPendiente() boolean
+}
 
-    class Veterinaria {
-        -nombreNegocio: String
-        -listaVeterinarios: ArrayList~Veterinario~
-        -listaClientes: ArrayList~Responsable~
-        -listaTurnos: ArrayList~Turno~
-        -catalogoMedicamentos: ArrayList~Medicamento~
-        +registrarVeterinario(Veterinario) void
-        +registrarCliente(Responsable) void
-        +registrarTurno(Turno) void
-        +buscarVeterinarioPorMatricula(String) Veterinario
-        +buscarVeterinarioPorDni(String) Veterinario
-        +buscarClientePorDni(String) Responsable
-        +buscarMascotasPorNombre(String) ArrayList~Animal~
-        +obtenerTurnosPorFecha(String) ArrayList~Turno~
-        +obtenerTurnosDeVeterinario(Veterinario) ArrayList~Turno~
-        +obtenerTurnosPendientes() ArrayList~Turno~
-    }
+class Veterinaria {
+    -nombreNegocio: String
+    -listaVeterinarios: List
+    -listaClientes: List
+    -listaTurnos: List
+    -catalogoMedicamentos: List
+    +registrarVeterinario(Veterinario) void
+    +registrarCliente(Responsable) void
+    +registrarTurno(Turno) void
+    +buscarVeterinarioPorMatricula(String) Veterinario
+    +buscarVeterinarioPorDni(String) Veterinario
+    +buscarClientePorDni(String) Responsable
+    +buscarMascotasPorNombre(String) List
+    +obtenerTurnosPorFecha(String) List
+    +obtenerTurnosDeVeterinario(Veterinario) List
+    +obtenerTurnosPendientes() List
+}
 
-    class ComprobanteTurno {
-        <<report>>
-        -turno: Turno
-        -fechaEmision: LocalDateTime
-        -nombreVeterinaria: String
-        +generarEncabezado() String
-        +generarDetallePaciente() String
-        +generarDetalleAtencion() String
-        +generarDetalleTratamiento() String
-        +generarTextoCompleto() String
-        +marcarComoCompletado() void
-    }
+class ComprobanteTurno {
+    <<report>>
+    -turno: Turno
+    -fechaEmision: LocalDateTime
+    -nombreVeterinaria: String
+    +generarEncabezado() String
+    +generarDetallePaciente() String
+    +generarDetalleAtencion() String
+    +generarDetalleTratamiento() String
+    +generarTextoCompleto() String
+    +marcarComoCompletado() void
+}
 
-    %% Herencia
-    Persona <|-- Responsable
-    Persona <|-- Veterinario
-    Animal <|-- Perro
-    Animal <|-- Gato
-    Medicamento <|-- Vacuna
-
-    %% Composición
-    Animal "1" *-- "1" HistoriaClinica
-    Veterinaria "1" *-- "0..*" Veterinario
-    Veterinaria "1" *-- "0..*" Responsable
-    Veterinaria "1" *-- "0..*" Turno
-
-    %% Agregación
-    Responsable "1" o-- "0..*" Animal
-    Veterinaria "1" o-- "0..*" Medicamento
-    HistoriaClinica "1" o-- "0..*" Medicamento
-
-    %% Asociación
-    Persona "1" --> "0..1" Direccion
-    Turno "0..*" --> "1" Veterinario
-    Turno "0..*" --> "1" Animal
-    Turno "0..*" --> "1" TipoTurno
-    Animal ..> TipoAlimentacion
-
-    %% Dependencias
-    ComprobanteTurno ..> Turno
-    ComprobanteTurno ..> Animal
-    ComprobanteTurno ..> Veterinario
-    ComprobanteTurno ..> Responsable
-    ComprobanteTurno ..> HistoriaClinica
+Persona <|-- Responsable
+Persona <|-- Veterinario
+Animal <|-- Perro
+Animal <|-- Gato
+Medicamento <|-- Vacuna
+Animal "1" *-- "1" HistoriaClinica
+Veterinaria "1" *-- "0..*" Veterinario
+Veterinaria "1" *-- "0..*" Responsable
+Veterinaria "1" *-- "0..*" Turno
+Responsable "1" o-- "0..*" Animal
+Veterinaria "1" o-- "0..*" Medicamento
+HistoriaClinica "1" o-- "0..*" Medicamento
+Persona "1" --> "0..1" Direccion
+Turno "0..*" --> "1" Veterinario
+Turno "0..*" --> "1" Animal
+Turno "0..*" --> "1" TipoTurno
+Animal ..> TipoAlimentacion
+ComprobanteTurno ..> Turno
+ComprobanteTurno ..> Animal
+ComprobanteTurno ..> Veterinario
+ComprobanteTurno ..> Responsable
+ComprobanteTurno ..> HistoriaClinica
 ```
