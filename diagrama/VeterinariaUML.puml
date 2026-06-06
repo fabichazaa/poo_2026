@@ -255,7 +255,7 @@ class Veterinaria {
 ' ============================================================
 '                  CLASE DE REPORTE (Req. f)
 ' ============================================================
-class ComprobanteTurno <<report>> {
+class ComprobanteTurno {
     - turno : Turno
     - fechaEmision : LocalDateTime
     - nombreVeterinaria : String
