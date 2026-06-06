@@ -2,10 +2,15 @@ package objetos;
 import java.util.ArrayList;
 
 public class Responsable extends Persona {
-    private final ArrayList<Animal> mascotas; // Asociación: Un dueño tiene muchos animales
+    private final ArrayList<Animal> mascotas;
 
-    public Responsable(String DNI, String nombre, String apellido, String direccion) {
+    public Responsable(String DNI, String nombre, String apellido, Direccion direccion) {
         super(DNI, nombre, apellido, direccion);
+        this.mascotas = new ArrayList<>();
+    }
+
+    public Responsable(String DNI, String nombre, String apellido) {
+        super(DNI, nombre, apellido);
         this.mascotas = new ArrayList<>();
     }
 
@@ -13,5 +18,11 @@ public class Responsable extends Persona {
         this.mascotas.add(animal);
     }
 
-    public ArrayList<Animal> getMascotas() { return mascotas; }
+    public void removerMascota(Animal animal) {
+        this.mascotas.remove(animal);
+    }
+
+    public ArrayList<Animal> getMascotas() {
+        return mascotas;
+    }
 }

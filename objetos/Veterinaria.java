@@ -1,19 +1,27 @@
 package objetos;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Veterinaria {
     private String nombreNegocio;
-    private final ArrayList<Veterinario> listaVeterinarios; // Composición
-    private final ArrayList<Responsable> listaClientes;          // Composición
-    private final ArrayList<Turno> listaTurnos;             // Composición
+    private final ArrayList<Veterinario> listaVeterinarios;
+    private final ArrayList<Responsable> listaClientes;
+    private final ArrayList<Turno> listaTurnos;
     private final ArrayList<Medicamento> catalogoMedicamentos;
 
     public Veterinaria(String nombreNegocio) {
+        this(nombreNegocio, false);
+    }
+
+    public Veterinaria(String nombreNegocio, boolean autoSembrar) {
         this.nombreNegocio = nombreNegocio;
         this.listaVeterinarios = new ArrayList<>();
         this.listaClientes = new ArrayList<>();
         this.listaTurnos = new ArrayList<>();
         this.catalogoMedicamentos = new ArrayList<>();
+        if (autoSembrar) {
+            cargarCatalogoDemo();
+        }
     }
 
     public String getNombreNegocio() {
@@ -29,9 +37,107 @@ public class Veterinaria {
     public void registrarTurno(Turno t) { listaTurnos.add(t); }
     public void agregarMedicamentoAlCatalogo(Medicamento m) { catalogoMedicamentos.add(m); }
 
-    // Getters para que los JTables de tus ventanas puedan leer los datos
     public ArrayList<Veterinario> getListaVeterinarios() { return listaVeterinarios; }
     public ArrayList<Responsable> getListaClientes() { return listaClientes; }
     public ArrayList<Turno> getListaTurnos() { return listaTurnos; }
     public ArrayList<Medicamento> getCatalogoMedicamentos() { return catalogoMedicamentos; }
+
+    public Veterinario buscarVeterinarioPorMatricula(String matricula) {
+        if (matricula == null) return null;
+        for (Veterinario v : listaVeterinarios) {
+            if (matricula.equalsIgnoreCase(v.getMatricula())) return v;
+        }
+        return null;
+    }
+
+    public Veterinario buscarVeterinarioPorDni(String dni) {
+        if (dni == null) return null;
+        for (Veterinario v : listaVeterinarios) {
+            if (dni.equals(v.getDNI())) return v;
+        }
+        return null;
+    }
+
+    public Responsable buscarClientePorDni(String dni) {
+        if (dni == null) return null;
+        for (Responsable c : listaClientes) {
+            if (dni.equals(c.getDNI())) return c;
+        }
+        return null;
+    }
+
+    public ArrayList<Animal> buscarMascotasPorNombre(String nombre) {
+        ArrayList<Animal> resultado = new ArrayList<>();
+        if (nombre == null || nombre.isEmpty()) return resultado;
+        String n = nombre.toLowerCase();
+        for (Responsable c : listaClientes) {
+            for (Animal a : c.getMascotas()) {
+                if (a.getNombre().toLowerCase().contains(n)) {
+                    resultado.add(a);
+                }
+            }
+        }
+        return resultado;
+    }
+
+    public ArrayList<Turno> obtenerTurnosPorFecha(String fecha) {
+        ArrayList<Turno> resultado = new ArrayList<>();
+        if (fecha == null) return resultado;
+        for (Turno t : listaTurnos) {
+            if (fecha.equals(t.getFecha())) resultado.add(t);
+        }
+        return resultado;
+    }
+
+    public ArrayList<Turno> obtenerTurnosDeVeterinario(Veterinario v) {
+        ArrayList<Turno> resultado = new ArrayList<>();
+        if (v == null) return resultado;
+        for (Turno t : listaTurnos) {
+            if (v.equals(t.getVeterinario())) resultado.add(t);
+        }
+        return resultado;
+    }
+
+    public ArrayList<Turno> obtenerTurnosPendientes() {
+        ArrayList<Turno> resultado = new ArrayList<>();
+        for (Turno t : listaTurnos) {
+            if (t.esPendiente()) resultado.add(t);
+        }
+        return resultado;
+    }
+
+    public ArrayList<Turno> obtenerTurnosCompletados() {
+        ArrayList<Turno> resultado = new ArrayList<>();
+        for (Turno t : listaTurnos) {
+            if (t.estaCompletado()) resultado.add(t);
+        }
+        return resultado;
+    }
+
+    public List<Animal> obtenerTodosLosAnimales() {
+        List<Animal> todos = new ArrayList<>();
+        for (Responsable c : listaClientes) {
+            todos.addAll(c.getMascotas());
+        }
+        return todos;
+    }
+
+    public ArrayList<Animal> obtenerAnimalesEnAdopcion() {
+        ArrayList<Animal> resultado = new ArrayList<>();
+        for (Animal a : obtenerTodosLosAnimales()) {
+            if (a.isEnAdopcion()) resultado.add(a);
+        }
+        return resultado;
+    }
+
+    public int contarTurnosDelDia(String fecha) {
+        return obtenerTurnosPorFecha(fecha).size();
+    }
+
+    private void cargarCatalogoDemo() {
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-001", "Amoxicilina 500mg"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-002", "Meloxicam 5mg"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-003", "Dipirona"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-004", "Ivermectina"));
+    }
 }

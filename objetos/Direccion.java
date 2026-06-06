@@ -44,4 +44,9 @@ public class Direccion {
     public String getDireccionCompleta() {
         return calle + " " + numero + ", " + localidad;
     }
+
+    @Override
+    public String toString() {
+        return getDireccionCompleta();
+    }
 }

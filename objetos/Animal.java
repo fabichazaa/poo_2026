@@ -9,7 +9,8 @@ public abstract class Animal {
     private LocalDate fechaNacimiento;
     private final boolean sexo;
     private Responsable responsable;
-    private final HistoriaClinica historiaClinica; // Composición: El animal nace con su historial
+    private final HistoriaClinica historiaClinica;
+    private boolean enAdopcion;
 
     public Animal(String nombre, LocalDate fechaNacimiento, boolean sexo, Responsable responsable) {
         this.idAnimal = generarIdAnimal();
@@ -18,10 +19,15 @@ public abstract class Animal {
         this.sexo = sexo;
         this.responsable = responsable;
         this.historiaClinica = new HistoriaClinica();
+        this.enAdopcion = false;
+    }
+
+    public Animal(String nombre, LocalDate fechaNacimiento, boolean sexo) {
+        this(nombre, fechaNacimiento, sexo, null);
     }
 
     public String getIdAnimal() {
-         return idAnimal;
+        return idAnimal;
     }
 
     public String getNombre() {
@@ -42,6 +48,14 @@ public abstract class Animal {
 
     public HistoriaClinica getHistorial() {
         return historiaClinica;
+    }
+
+    public boolean isEnAdopcion() {
+        return enAdopcion;
+    }
+
+    public void setEnAdopcion(boolean enAdopcion) {
+        this.enAdopcion = enAdopcion;
     }
 
     public void setNombre(String nombre) {
@@ -71,8 +85,18 @@ public abstract class Animal {
         return "imagenes/" + idAnimal + ".jpg";
     }
 
+    public abstract TipoAlimentacion getTipoAlimentacion();
+
+    public abstract String getEspecie();
+
     @Override
     public String toString() {
-        return "Nombre: " + nombre + ", Edad: " + calcularEdad() + " años, Responsable: " + responsable.getNombre() + " " + responsable.getApellido();
+        String resp = responsable != null
+            ? responsable.getNombre() + " " + responsable.getApellido()
+            : "Sin responsable";
+        return getEspecie() + " - Nombre: " + nombre
+            + ", Edad: " + calcularEdad() + " años"
+            + ", Alimentación: " + getTipoAlimentacion().getDescripcion()
+            + ", Responsable: " + resp;
     }
 }

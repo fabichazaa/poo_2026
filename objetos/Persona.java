@@ -4,13 +4,17 @@ public abstract class Persona {
     private final String DNI;
     private String nombre;
     private String apellido;
-    private String direccion; // Asociacion: Persona tiene una dirección
+    private Direccion direccion;
 
-    public Persona(String DNI, String nombre, String apellido, String direccion) {
+    public Persona(String DNI, String nombre, String apellido, Direccion direccion) {
         this.DNI = DNI;
         this.nombre = nombre;
         this.apellido = apellido;
         this.direccion = direccion;
+    }
+
+    public Persona(String DNI, String nombre, String apellido) {
+        this(DNI, nombre, apellido, null);
     }
 
     public String getDNI() {
@@ -25,8 +29,12 @@ public abstract class Persona {
         return apellido;
     }
 
-    public String getDireccion() {
+    public Direccion getDireccion() {
         return direccion;
+    }
+
+    public String getDireccionCompleta() {
+        return direccion != null ? direccion.getDireccionCompleta() : "Sin dirección";
     }
 
     public void setNombre(String nombre) {
@@ -37,7 +45,7 @@ public abstract class Persona {
         this.apellido = apellido;
     }
 
-    public void setDireccion(String direccion) {
+    public void setDireccion(Direccion direccion) {
         this.direccion = direccion;
     }
 }
