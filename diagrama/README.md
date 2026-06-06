@@ -5,16 +5,15 @@ Este directorio contiene el diagrama de clases UML del sistema **Happy Paws** (g
 | Archivo | Formato | Para qué sirve |
 |---|---|---|
 | `VeterinariaUML.puml` | PlantUML (texto) | Editar, versionar en Git, regenerar la imagen |
-| `VeterinariaUML.png` | PNG (547 KB) | Pegar en el **informe técnico** (PDF) |
-| `VeterinariaUML.svg` | SVG (82 KB) | Imagen vectorial, ideal para la web o impresión de alta calidad |
+| `VeterinariaUML.svg` | SVG (82 KB) | Imagen vectorial |
 | `VeterinariaUML.mmd` | Mermaid | Visualización directa en GitHub (sin instalar nada) |
 
-## Cómo regenerar el PNG/SVG
+## Cómo regenerar el SVG
 
 Si modificás el `.puml`, volvé a renderizar con PlantUML:
 
 ```bash
-java -jar plantuml.jar -tpng -tsvg VeterinariaUML.puml
+java -jar plantuml.jar -tsvg VeterinariaUML.puml
 ```
 
 (El jar se descarga de <https://plantuml.com/download>).
