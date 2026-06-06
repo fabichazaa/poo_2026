@@ -37,7 +37,14 @@ public class PortalVeterinario extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-
+        try {
+            // Buscamos la imagen en la carpeta de recursos/imágenes
+            ImageIcon iconoApp = new ImageIcon("imagenes/logo.png");
+            setIconImage(iconoApp.getImage());
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar el icono de la aplicación: " + e.getMessage());
+        }
+        // ===============================================
         getContentPane().setBackground(new Color(241, 245, 249));
 
         // --- PANEL SUPERIOR: Encabezado con bienvenida y contadores ---
@@ -52,6 +59,7 @@ public class PortalVeterinario extends JFrame {
         int turnos = veterinarioLogueado.getTurnos().size(); // Contar turnos del veterinario logueado
         JLabel lblSaludo = new JLabel("<html><font color='#1E293B'><b>¡Hola, Dr. " + veterinarioLogueado.getApellido() + "! 👋</b></font><br><font color='#64748B' size='4'>Tenés <font color='#0D9488'><b>" + turnos + " turnos</b></font> pendientes hoy. Que tengas un gran día.</font></html>");
         lblSaludo.setFont(fuenteTitulo);
+        lblSaludo.setSize(450, 100);
         panelHeaderLinea1.add(lblSaludo, BorderLayout.WEST);
 
         JLabel lblFechaActual = new JLabel("<html><div style='text-align: right;'><font color='#94A3B8'>Hoy</font><br><font color='#1E293B'><b>Viernes, 06 Jun 2026</b></font></div></html>");
@@ -60,7 +68,7 @@ public class PortalVeterinario extends JFrame {
         panelSuperiorAgrupado.add(panelHeaderLinea1, BorderLayout.NORTH);
 
         // Línea 2: Tarjetas de estadísticas superiores
-        JPanel panelStatsSuperiores = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+        JPanel panelStatsSuperiores = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 15));
         panelStatsSuperiores.setOpaque(false);
         panelStatsSuperiores.add(crearCardEstadisticaSuperior("3", "Atendidos", new Color(22f / 255f, 163f / 255f, 74f / 255f, 0.1f), new Color(22, 163, 74), "imagenes/emojis/exito.png"));
         panelStatsSuperiores.add(crearCardEstadisticaSuperior("4", "Mis Turnos", new Color(14f / 255f, 116f / 255f, 144f / 255f, 0.1f), new Color(14, 116, 144), "imagenes/emojis/calendario.png"));
@@ -167,7 +175,7 @@ public class PortalVeterinario extends JFrame {
         try {
             String rutaImagen = "imagenes/emojis/vet.png";
             ImageIcon iconoVet = new ImageIcon(rutaImagen);
-            Image imagenEscalada = iconoVet.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+            Image imagenEscalada = iconoVet.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
             JLabel lblIconoUser = new JLabel(new ImageIcon(imagenEscalada));
             panelFotoPerfil.add(lblIconoUser);
         } catch (Exception e) {
@@ -334,7 +342,7 @@ public class PortalVeterinario extends JFrame {
 
         JPanel panelStatusDia = new JPanel(new GridLayout(1, 2, 10, 0));
         panelStatusDia.setOpaque(false);
-        panelStatusDia.add(crearMiniContadorInferior("3", "Atendidos"));
+        panelStatusDia.add(crearMiniContadorInferior("3", "Atendidos "));
         panelStatusDia.add(crearMiniContadorInferior("4", "Mis Turnos"));
         cardAcciones.add(panelStatusDia, BorderLayout.SOUTH);
         cardAcciones.setPreferredSize(new Dimension(280, 400));
@@ -608,13 +616,19 @@ public class PortalVeterinario extends JFrame {
     }
 
     private JPanel crearCardEstadisticaSuperior(String valor, String etiqueta, Color fondo, Color colorTexto, String iconStr) {
-        JPanel card = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 8)) {
+        JPanel card = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 1)) {
             @Override
             protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g;
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
                 g2.setColor(fondo);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 15, 15);
+
+                g2.dispose();
             }
         };
         card.setOpaque(false);
@@ -719,7 +733,7 @@ public class PortalVeterinario extends JFrame {
         btn.setContentAreaFilled(true);
         btn.setBorder(BorderFactory.createEmptyBorder(15, 12, 15, 12));
         btn.setForeground(new Color(100, 116, 139));
-        btn.setBackground(Color.WHITE); 
+        btn.setBackground(Color.WHITE);
         btn.setPreferredSize(new Dimension(120, 80));
         return btn;
     }
