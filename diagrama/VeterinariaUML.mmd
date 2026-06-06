@@ -1,6 +1,5 @@
 classDiagram
 direction LR
-
 class TipoTurno {
     <<enum>>
     CONSULTA_GENERAL
@@ -13,7 +12,6 @@ class TipoTurno {
     +String getDescripcion()
     +int getDuracionMinutos()
 }
-
 class TipoAlimentacion {
     <<enum>>
     OMNIVORO
@@ -22,7 +20,6 @@ class TipoAlimentacion {
     -String descripcion
     +String getDescripcion()
 }
-
 class Direccion {
     -String calle
     -int numero
@@ -42,7 +39,6 @@ class Persona {
     +String getApellido()
     +String getDireccionCompleta()
 }
-
 class Veterinario {
     -String matricula
     -List turnos
@@ -52,14 +48,12 @@ class Veterinario {
     +String getRutaFoto()
     +void agregarTurno(Turno turno)
 }
-
 class Responsable {
     -List mascotas
     +void agregarMascota(Animal animal)
     +void removerMascota(Animal animal)
     +List getMascotas()
 }
-
 class Animal {
     <<abstract>>
     -String idAnimal
@@ -74,27 +68,23 @@ class Animal {
     +TipoAlimentacion getTipoAlimentacion()
     +String getEspecie()
 }
-
 class Perro {
     -String raza
     -boolean necesitaPaseo
     +TipoAlimentacion getTipoAlimentacion()
     +String getEspecie()
 }
-
 class Gato {
     -String raza
     -boolean esEsterilizado
     +TipoAlimentacion getTipoAlimentacion()
     +String getEspecie()
 }
-
 class HistoriaClinica {
     -List medicamentosRecetados
     +void recetarMedicamento(Medicamento medicamento)
     +List getMedicamentosRecetados()
 }
-
 class Medicamento {
     -String codigoSenasa
     -String nombreMedicamento
@@ -107,7 +97,6 @@ class Vacuna {
     -LocalDate fechaVencimiento
     +boolean estaVencida()
 }
-
 class Turno {
     -int idTurno
     -String fecha
@@ -124,7 +113,6 @@ class Turno {
     +void cancelarTurno()
     +boolean esPendiente()
 }
-
 class Veterinaria {
     -String nombreNegocio
     -List listaVeterinarios
@@ -142,7 +130,6 @@ class Veterinaria {
     +List obtenerTurnosDeVeterinario(Veterinario v)
     +List obtenerTurnosPendientes()
 }
-
 class ComprobanteTurno {
     -String tipoDocumento
     -Turno turno
@@ -155,7 +142,6 @@ class ComprobanteTurno {
     +String generarTextoCompleto()
     +void marcarComoCompletado()
 }
-
 Persona <|-- Responsable
 Persona <|-- Veterinario
 Animal <|-- Perro
