@@ -1,0 +1,166 @@
+classDiagram
+direction LR
+class TipoTurno {
+    <<enum>>
+    CONSULTA_GENERAL
+    VACUNACION
+    CIRUGIA
+    BANIO
+    ANALISIS
+    -String descripcion
+    -int duracionMinutos
+    +String getDescripcion()
+    +int getDuracionMinutos()
+}
+class TipoAlimentacion {
+    <<enum>>
+    OMNIVORO
+    CARNIVORO_ESTRICTO
+    HERVIBORO
+    -String descripcion
+    +String getDescripcion()
+}
+class Direccion {
+    -String calle
+    -int numero
+    -String localidad
+    +void actualizarDireccion()
+    +String getDireccionCompleta()
+}
+
+class Persona {
+    <<abstract>>
+    -String DNI
+    -String nombre
+    -String apellido
+    -Direccion direccion
+    +String getDNI()
+    +String getNombre()
+    +String getApellido()
+    +String getDireccionCompleta()
+}
+class Veterinario {
+    -String matricula
+    -List turnos
+    -String especialidad
+    -String turnoTrabajo
+    +String getMatricula()
+    +String getRutaFoto()
+    +void agregarTurno(Turno turno)
+}
+class Responsable {
+    -List mascotas
+    +void agregarMascota(Animal animal)
+    +void removerMascota(Animal animal)
+    +List getMascotas()
+}
+class Animal {
+    <<abstract>>
+    -String idAnimal
+    -String nombre
+    -LocalDate fechaNacimiento
+    -boolean sexo
+    -Responsable responsable
+    -HistoriaClinica historiaClinica
+    -boolean enAdopcion
+    +int calcularEdad()
+    +String getRutaFoto()
+    +TipoAlimentacion getTipoAlimentacion()
+    +String getEspecie()
+}
+class Perro {
+    -String raza
+    -boolean necesitaPaseo
+    +TipoAlimentacion getTipoAlimentacion()
+    +String getEspecie()
+}
+class Gato {
+    -String raza
+    -boolean esEsterilizado
+    +TipoAlimentacion getTipoAlimentacion()
+    +String getEspecie()
+}
+class HistoriaClinica {
+    -List medicamentosRecetados
+    +void recetarMedicamento(Medicamento medicamento)
+    +List getMedicamentosRecetados()
+}
+class Medicamento {
+    -String codigoSenasa
+    -String nombreMedicamento
+    +String getCodigoSenasa()
+    +String getNombreMedicamento()
+}
+
+class Vacuna {
+    -LocalDate fechaAplicacion
+    -LocalDate fechaVencimiento
+    +boolean estaVencida()
+}
+class Turno {
+    -int idTurno
+    -String fecha
+    -String hora
+    -Veterinario veterinario
+    -Animal animal
+    -String estado
+    -TipoTurno tipo
+    -String observaciones
+    +String ESTADO_PENDIENTE$
+    +String ESTADO_COMPLETADO$
+    +String ESTADO_CANCELADO$
+    +void completarTurno()
+    +void cancelarTurno()
+    +boolean esPendiente()
+}
+class Veterinaria {
+    -String nombreNegocio
+    -List listaVeterinarios
+    -List listaClientes
+    -List listaTurnos
+    -List catalogoMedicamentos
+    +void registrarVeterinario(Veterinario v)
+    +void registrarCliente(Responsable r)
+    +void registrarTurno(Turno t)
+    +Veterinario buscarVeterinarioPorMatricula(String m)
+    +Veterinario buscarVeterinarioPorDni(String dni)
+    +Responsable buscarClientePorDni(String dni)
+    +List buscarMascotasPorNombre(String n)
+    +List obtenerTurnosPorFecha(String f)
+    +List obtenerTurnosDeVeterinario(Veterinario v)
+    +List obtenerTurnosPendientes()
+}
+class ComprobanteTurno {
+    -String tipoDocumento
+    -Turno turno
+    -LocalDateTime fechaEmision
+    -String nombreVeterinaria
+    +String generarEncabezado()
+    +String generarDetallePaciente()
+    +String generarDetalleAtencion()
+    +String generarDetalleTratamiento()
+    +String generarTextoCompleto()
+    +void marcarComoCompletado()
+}
+Persona <|-- Responsable
+Persona <|-- Veterinario
+Animal <|-- Perro
+Animal <|-- Gato
+Medicamento <|-- Vacuna
+Animal "1" *-- "1" HistoriaClinica
+Veterinaria "1" *-- "*" Veterinario
+Veterinaria "1" *-- "*" Responsable
+Veterinaria "1" *-- "*" Turno
+Responsable "1" o-- "*" Animal
+Veterinaria "1" o-- "*" Medicamento
+HistoriaClinica "1" o-- "*" Medicamento
+Persona "1" --> "0..1" Direccion
+Turno "*" --> "1" Veterinario
+Turno "*" --> "1" Animal
+Turno "*" --> "1" TipoTurno
+Animal ..> TipoAlimentacion
+ComprobanteTurno ..> Turno
+ComprobanteTurno ..> Animal
+ComprobanteTurno ..> Veterinario
+ComprobanteTurno ..> Responsable
+ComprobanteTurno ..> HistoriaClinica
