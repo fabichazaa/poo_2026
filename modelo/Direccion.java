@@ -1,4 +1,4 @@
-package objetos;
+package modelo;
 
 public class Direccion {
     private String calle;

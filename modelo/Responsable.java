@@ -1,4 +1,4 @@
-package objetos;
+package modelo;
 import java.util.ArrayList;
 
 public class Responsable extends Persona {

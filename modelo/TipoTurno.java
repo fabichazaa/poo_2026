@@ -1,4 +1,4 @@
-package objetos;
+package modelo;
 
 public enum TipoTurno {
     CONSULTA_GENERAL("Consulta General", 15),

@@ -1,0 +1,45 @@
+# Compilados
+*.class
+*.jar
+*.war
+
+# Carpetas de build
+build/
+out/
+bin/
+dist/
+target/
+
+# IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.project
+.classpath
+.settings/
+nbproject/
+nb-configuration.xml
+nbbuild.xml
+nb-*.xml
+
+# Archivos temporales de Java
+hs_err_pid*
+replay_pid*
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos de usuario
+*.swp
+*~
+*.bak
+*.tmp
+
+# Agents
+.agents
+skills-lock.json

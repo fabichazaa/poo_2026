@@ -1,8 +1,27 @@
-import java.time.LocalDate;
-import objetos.*;
+import controlador.ControladorVeterinaria;
+import modelo.*;
+import vista.PortalVeterinario;
+import vista.dialogos.DialogoLogin;
 
 public class Main {
+
     public static void main(String[] args) {
+        if (args.length > 0 && args[0].equalsIgnoreCase("--consola")) {
+            ejecutarDemoConsola();
+        } else {
+            ControladorVeterinaria controlador = ControladorVeterinaria.getInstancia();
+            DialogoLogin login = new DialogoLogin(null, controlador);
+            login.setVisible(true);
+            if (controlador.haySesionActiva()) {
+                PortalVeterinario.main(new String[]{});
+            } else {
+                System.out.println("Login cancelado. Saliendo.");
+                System.exit(0);
+            }
+        }
+    }
+
+    private static void ejecutarDemoConsola() {
         Veterinaria miVeterinaria = new Veterinaria("Patitas Felices", true);
 
         Direccion dir1 = new Direccion("Las Glicinas", 925, "Del Viso");
@@ -20,10 +39,8 @@ public class Main {
         miVeterinaria.registrarCliente(cliente1);
         miVeterinaria.registrarCliente(cliente2);
 
-        LocalDate fechaNac1 = LocalDate.of(2009, 2, 20);
-        Animal mascota1 = new Perro("Perla", fechaNac1, false, cliente1, "Salchicha");
-        LocalDate fechaNac2 = LocalDate.of(2019, 11, 5);
-        Animal mascota2 = new Gato("Honey", fechaNac2, false, cliente2, "Británico de Pelo Corto");
+        Animal mascota1 = new Perro("Perla", java.time.LocalDate.of(2009, 2, 20), false, cliente1, "Salchicha");
+        Animal mascota2 = new Gato("Honey", java.time.LocalDate.of(2019, 11, 5), false, cliente2, "Británico de Pelo Corto");
         cliente1.agregarMascota(mascota1);
         cliente2.agregarMascota(mascota2);
 

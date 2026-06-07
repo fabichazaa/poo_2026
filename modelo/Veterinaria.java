@@ -1,4 +1,4 @@
-package objetos;
+package modelo;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -139,5 +139,9 @@ public class Veterinaria {
         agregarMedicamentoAlCatalogo(new Medicamento("SEN-002", "Meloxicam 5mg"));
         agregarMedicamentoAlCatalogo(new Medicamento("SEN-003", "Dipirona"));
         agregarMedicamentoAlCatalogo(new Medicamento("SEN-004", "Ivermectina"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-005", "Cefalexina 500mg"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-006", "Metronidazol 250mg"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-007", "Enalapril 10mg"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-008", "Omeprazol 20mg"));
     }
 }

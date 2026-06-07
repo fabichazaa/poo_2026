@@ -1,16 +1,19 @@
+package vista;
 
 import java.awt.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import objetos.*;
+import controlador.ControladorVeterinaria;
+import modelo.*;
+import recursos.CargadorFuentes;
 
 public class PortalVeterinario extends JFrame {
 
-    private Veterinaria miVeterinaria;
-    private Veterinario veterinarioLogueado;
+    private final ControladorVeterinaria controlador;
+    private final Veterinaria miVeterinaria;
+    private final Veterinario veterinarioLogueado;
 
     // Componentes para la navegación por capas
     private JPanel panelContenedorSecciones;
@@ -26,11 +29,13 @@ public class PortalVeterinario extends JFrame {
     private Font fuenteNormal;
 
     public PortalVeterinario() {
-        inicializarDatosVeterinaria();
+        this.controlador = ControladorVeterinaria.getInstancia();
+        this.miVeterinaria = controlador.getVeterinaria();
+        this.veterinarioLogueado = controlador.getVeterinarioLogueado();
 
-        fuenteTitulo = cargarFuentePersonalizada(22f);
-        fuenteSubtitulos = cargarFuentePersonalizada(14f);
-        fuenteNormal = cargarFuentePersonalizada(12f);
+        fuenteTitulo = CargadorFuentes.cargar(22f);
+        fuenteSubtitulos = CargadorFuentes.cargar(14f);
+        fuenteNormal = CargadorFuentes.cargar(12f);
 
         setTitle("Happy Paws");
         setSize(1200, 800);
@@ -56,8 +61,8 @@ public class PortalVeterinario extends JFrame {
         JPanel panelHeaderLinea1 = new JPanel(new BorderLayout());
         panelHeaderLinea1.setOpaque(false);
 
-        int turnos = veterinarioLogueado.getTurnos().size(); // Contar turnos del veterinario logueado
-        JLabel lblSaludo = new JLabel("<html><font color='#1E293B'><b>¡Hola, Dr. " + veterinarioLogueado.getApellido() + "! 👋</b></font><br><font color='#64748B' size='4'>Tenés <font color='#0D9488'><b>" + turnos + " turnos</b></font> pendientes hoy. Que tengas un gran día.</font></html>");
+        int turnosHoy = controlador.contarTurnosDelVeterinario(veterinarioLogueado, null);
+        JLabel lblSaludo = new JLabel("<html><font color='#1E293B'><b>¡Hola, Dr. " + veterinarioLogueado.getApellido() + "! 👋</b></font><br><font color='#64748B' size='4'>Tenés <font color='#0D9488'><b>" + turnosHoy + " turnos</b></font> asignados. Que tengas un gran día.</font></html>");
         lblSaludo.setFont(fuenteTitulo);
         lblSaludo.setSize(450, 100);
         panelHeaderLinea1.add(lblSaludo, BorderLayout.WEST);
@@ -67,12 +72,15 @@ public class PortalVeterinario extends JFrame {
         panelHeaderLinea1.add(lblFechaActual, BorderLayout.EAST);
         panelSuperiorAgrupado.add(panelHeaderLinea1, BorderLayout.NORTH);
 
-        // Línea 2: Tarjetas de estadísticas superiores
+        // Línea 2: Tarjetas de estadísticas superiores (calculadas dinámicamente)
         JPanel panelStatsSuperiores = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 15));
         panelStatsSuperiores.setOpaque(false);
-        panelStatsSuperiores.add(crearCardEstadisticaSuperior("3", "Atendidos", new Color(22f / 255f, 163f / 255f, 74f / 255f, 0.1f), new Color(22, 163, 74), "imagenes/emojis/exito.png"));
-        panelStatsSuperiores.add(crearCardEstadisticaSuperior("4", "Mis Turnos", new Color(14f / 255f, 116f / 255f, 144f / 255f, 0.1f), new Color(14, 116, 144), "imagenes/emojis/calendario.png"));
-        panelStatsSuperiores.add(crearCardEstadisticaSuperior("1", "Pendientes", new Color(217f / 255f, 119f / 255f, 6f / 255f, 0.1f), new Color(217, 119, 6), "imagenes/emojis/reloj_arena.png"));
+        int atendidos  = controlador.contarTurnosDelVeterinario(veterinarioLogueado, Turno.ESTADO_COMPLETADO);
+        int misTurnos  = controlador.contarTurnosDelVeterinario(veterinarioLogueado, null);
+        int pendientes = controlador.contarTurnosDelVeterinario(veterinarioLogueado, Turno.ESTADO_PENDIENTE);
+        panelStatsSuperiores.add(crearCardEstadisticaSuperior(String.valueOf(atendidos),  "Atendidos",  new Color(22f/255f, 163f/255f, 74f/255f, 0.1f),  new Color(22,163,74),  "imagenes/emojis/exito.png"));
+        panelStatsSuperiores.add(crearCardEstadisticaSuperior(String.valueOf(misTurnos),  "Mis Turnos",  new Color(14f/255f, 116f/255f, 144f/255f, 0.1f), new Color(14,116,144), "imagenes/emojis/calendario.png"));
+        panelStatsSuperiores.add(crearCardEstadisticaSuperior(String.valueOf(pendientes), "Pendientes", new Color(217f/255f, 119f/255f, 6f/255f, 0.1f),  new Color(217,119,6),  "imagenes/emojis/reloj_arena.png"));
         panelSuperiorAgrupado.add(panelStatsSuperiores, BorderLayout.SOUTH);
 
         add(panelSuperiorAgrupado, BorderLayout.NORTH);
@@ -85,10 +93,10 @@ public class PortalVeterinario extends JFrame {
         panelContenedorSecciones.add(crearVistaInicio(), "PANTALLA_INICIO");
         panelContenedorSecciones.add(crearVistaCitas(), "PANTALLA_CITAS");
 
-        panelContenedorSecciones.add(crearPanelPlaceholder("Registros Clínicos"), "PANTALLA_REGISTROS");
-        panelContenedorSecciones.add(crearPanelPlaceholder("Portal de Adopciones"), "PANTALLA_ADOPCION");
-        panelContenedorSecciones.add(crearPanelPlaceholder("Notas y Recordatorios"), "PANTALLA_NOTAS");
-        panelContenedorSecciones.add(crearPanelPlaceholder("Configuración y Más"), "PANTALLA_MAS");
+        panelContenedorSecciones.add(new vista.paneles.PanelRegistros(controlador), "PANTALLA_REGISTROS");
+        panelContenedorSecciones.add(new vista.paneles.PanelAdopcion(controlador), "PANTALLA_ADOPCION");
+        panelContenedorSecciones.add(new vista.paneles.PanelNotas(controlador), "PANTALLA_NOTAS");
+        panelContenedorSecciones.add(new vista.paneles.PanelMas(controlador), "PANTALLA_MAS");
 
         add(panelContenedorSecciones, BorderLayout.CENTER);
 
@@ -112,10 +120,22 @@ public class PortalVeterinario extends JFrame {
             actualizarListaCitasSeccion();
             navegadorCapas.show(panelContenedorSecciones, "PANTALLA_CITAS");
         });
-        btnRegistros.addActionListener(e -> navegadorCapas.show(panelContenedorSecciones, "PANTALLA_REGISTROS"));
-        btnAdopcion.addActionListener(e -> navegadorCapas.show(panelContenedorSecciones, "PANTALLA_ADOPCION"));
-        btnNotas.addActionListener(e -> navegadorCapas.show(panelContenedorSecciones, "PANTALLA_NOTAS"));
-        btnMas.addActionListener(e -> navegadorCapas.show(panelContenedorSecciones, "PANTALLA_MAS"));
+        btnRegistros.addActionListener(e -> {
+            ((vista.paneles.PanelRegistros) panelContenedorSecciones.getComponent(2)).actualizar();
+            navegadorCapas.show(panelContenedorSecciones, "PANTALLA_REGISTROS");
+        });
+        btnAdopcion.addActionListener(e -> {
+            ((vista.paneles.PanelAdopcion) panelContenedorSecciones.getComponent(3)).actualizar();
+            navegadorCapas.show(panelContenedorSecciones, "PANTALLA_ADOPCION");
+        });
+        btnNotas.addActionListener(e -> {
+            ((vista.paneles.PanelNotas) panelContenedorSecciones.getComponent(4)).actualizar();
+            navegadorCapas.show(panelContenedorSecciones, "PANTALLA_NOTAS");
+        });
+        btnMas.addActionListener(e -> {
+            ((vista.paneles.PanelMas) panelContenedorSecciones.getComponent(5)).actualizar();
+            navegadorCapas.show(panelContenedorSecciones, "PANTALLA_MAS");
+        });
 
         panelMenuInferior.add(btnInicio);
         panelMenuInferior.add(btnRegistros);
@@ -342,8 +362,8 @@ public class PortalVeterinario extends JFrame {
 
         JPanel panelStatusDia = new JPanel(new GridLayout(1, 2, 10, 0));
         panelStatusDia.setOpaque(false);
-        panelStatusDia.add(crearMiniContadorInferior("3", "Atendidos "));
-        panelStatusDia.add(crearMiniContadorInferior("4", "Mis Turnos"));
+        panelStatusDia.add(crearMiniContadorInferior(String.valueOf(controlador.contarTurnosDelVeterinario(veterinarioLogueado, Turno.ESTADO_COMPLETADO)), "Atendidos"));
+        panelStatusDia.add(crearMiniContadorInferior(String.valueOf(controlador.contarTurnosDelVeterinario(veterinarioLogueado, null)), "Mis Turnos"));
         cardAcciones.add(panelStatusDia, BorderLayout.SOUTH);
         cardAcciones.setPreferredSize(new Dimension(280, 400));
 
@@ -375,8 +395,35 @@ public class PortalVeterinario extends JFrame {
         comboFiltroAgenda.setFont(fuenteNormal);
         comboFiltroAgenda.addActionListener(e -> actualizarListaCitasSeccion());
 
-        panelFiltrosCita.add(lblSeleccion, BorderLayout.WEST);
-        panelFiltrosCita.add(comboFiltroAgenda, BorderLayout.CENTER);
+        JButton btnNuevoTurno = new JButton("+ Nuevo turno");
+        btnNuevoTurno.setFont(fuenteNormal);
+        btnNuevoTurno.setBackground(new Color(13, 148, 136));
+        btnNuevoTurno.setForeground(Color.WHITE);
+        btnNuevoTurno.setFocusPainted(false);
+        btnNuevoTurno.setOpaque(true);
+        btnNuevoTurno.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnNuevoTurno.addActionListener(e -> {
+            vista.dialogos.DialogoNuevoTurno d = new vista.dialogos.DialogoNuevoTurno(
+                PortalVeterinario.this, controlador);
+            d.setVisible(true);
+            actualizarListaCitasSeccion();
+        });
+
+        JPanel panelIzqFiltro = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panelIzqFiltro.setOpaque(false);
+        panelIzqFiltro.add(lblSeleccion);
+        panelIzqFiltro.add(comboFiltroAgenda);
+
+        JPanel panelDerFiltro = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        panelDerFiltro.setOpaque(false);
+        panelDerFiltro.add(btnNuevoTurno);
+
+        JPanel panelCentroFiltro = new JPanel(new BorderLayout());
+        panelCentroFiltro.setOpaque(false);
+        panelCentroFiltro.add(panelIzqFiltro, BorderLayout.WEST);
+        panelCentroFiltro.add(panelDerFiltro, BorderLayout.EAST);
+
+        panelFiltrosCita.add(panelCentroFiltro, BorderLayout.CENTER);
         panelCitasPrincipal.add(panelFiltrosCita, BorderLayout.NORTH);
 
         panelListaCitasDinamica = new JPanel();
@@ -579,8 +626,8 @@ public class PortalVeterinario extends JFrame {
     private JPanel crearTarjetaTurnoCompleta(Turno t, boolean mostrarVeterinario) {
         JPanel card = new JPanel(new BorderLayout(15, 0));
         card.setBackground(new Color(245, 249, 252));
-        card.setMaximumSize(new Dimension(750, 65));
-        card.setPreferredSize(new Dimension(750, 65));
+        card.setMaximumSize(new Dimension(900, 75));
+        card.setPreferredSize(new Dimension(900, 75));
         card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(220, 230, 240), 1, true), new EmptyBorder(8, 15, 8, 15)
         ));
@@ -600,7 +647,7 @@ public class PortalVeterinario extends JFrame {
         JLabel lblInfo = new JLabel(infoPrincipal);
         lblInfo.setFont(fuenteSubtitulos);
 
-        String infoSecundaria = "Fecha: " + t.getFecha() + " | Responsable: " + t.getAnimal().getResponsable().getNombre() + " " + t.getAnimal().getResponsable().getApellido();
+        String infoSecundaria = "Fecha: " + t.getFecha() + " | Estado: " + t.getEstado() + " | Responsable: " + t.getAnimal().getResponsable().getNombre() + " " + t.getAnimal().getResponsable().getApellido();
         if (mostrarVeterinario) {
             infoSecundaria += " | Atendido por: Dr. " + t.getVeterinario().getApellido();
         }
@@ -611,6 +658,39 @@ public class PortalVeterinario extends JFrame {
         panelTextos.add(lblInfo);
         panelTextos.add(lblDetalle);
         card.add(panelTextos, BorderLayout.CENTER);
+
+        JPanel panelAcciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
+        panelAcciones.setOpaque(false);
+
+        JButton btnComprobante = new JButton("📄 Comprobante");
+        btnComprobante.setFont(fuenteNormal);
+        btnComprobante.setBackground(Color.WHITE);
+        btnComprobante.setForeground(new Color(13, 148, 136));
+        btnComprobante.setFocusPainted(false);
+        btnComprobante.setBorder(new LineBorder(new Color(13, 148, 136), 1, true));
+        btnComprobante.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnComprobante.addActionListener(e -> {
+            modelo.ComprobanteTurno comp = new modelo.ComprobanteTurno(t, miVeterinaria.getNombreNegocio());
+            new vista.dialogos.DialogoComprobante(PortalVeterinario.this, comp).setVisible(true);
+        });
+        panelAcciones.add(btnComprobante);
+
+        if (t.esPendiente()) {
+            JButton btnCompletar = new JButton("✓ Completar");
+            btnCompletar.setFont(fuenteNormal);
+            btnCompletar.setBackground(new Color(22, 163, 74));
+            btnCompletar.setForeground(Color.WHITE);
+            btnCompletar.setFocusPainted(false);
+            btnCompletar.setOpaque(true);
+            btnCompletar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            btnCompletar.addActionListener(e -> {
+                t.completarTurno();
+                actualizarListaCitasSeccion();
+            });
+            panelAcciones.add(btnCompletar);
+        }
+
+        card.add(panelAcciones, BorderLayout.EAST);
 
         return card;
     }
@@ -716,16 +796,6 @@ public class PortalVeterinario extends JFrame {
         return panel;
     }
 
-    private JPanel crearPanelPlaceholder(String tituloSeccion) {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        JLabel lbl = new JLabel("Sección: " + tituloSeccion + " (Próximamente)");
-        lbl.setFont(fuenteSubtitulos);
-        panel.add(lbl);
-        return panel;
-    }
-
     private JButton crearBotonMenuNav(String titulo, String icono) {
         JButton btn = new JButton("<html><center><font size='5'>" + icono + "</font><br/><b style='white-space: nowrap;'>" + titulo + "</b></center></html>");
         btn.setFont(fuenteNormal);
@@ -736,34 +806,6 @@ public class PortalVeterinario extends JFrame {
         btn.setBackground(Color.WHITE);
         btn.setPreferredSize(new Dimension(120, 80));
         return btn;
-    }
-
-    private void inicializarDatosVeterinaria() {
-        miVeterinaria = new Veterinaria("San Roque", true);
-
-        veterinarioLogueado = new Veterinario("22333444", "Carlos", "Páez", "MP-9854");
-        Veterinario otroVet = new Veterinario("55555555", "Laura", "Gómez", "MP-1024");
-
-        miVeterinaria.registrarVeterinario(veterinarioLogueado);
-        miVeterinaria.registrarVeterinario(otroVet);
-
-        Responsable cliente = new Responsable("12345678", "Claudio", "Chiqui");
-        miVeterinaria.registrarCliente(cliente);
-
-        Perro hulk = new Perro("Hulk", LocalDate.of(2023, 4, 15), true, cliente, "Dogo de Burdeos");
-        Gato luna = new Gato("Luna", LocalDate.of(2025, 8, 20), false, cliente, "Siamés");
-        Perro cheese = new Perro("Cheese", LocalDate.of(2018, 1, 10), true, cliente, "Beagle");
-        Gato mochi = new Gato("Mochi", LocalDate.of(2024, 2, 14), false, cliente, "Siamés");
-
-        cliente.agregarMascota(hulk);
-        cliente.agregarMascota(luna);
-        cliente.agregarMascota(cheese);
-        cliente.agregarMascota(mochi);
-
-        miVeterinaria.registrarTurno(new Turno(1, "05/06/2026", "09:30 AM", veterinarioLogueado, hulk, TipoTurno.CIRUGIA));
-        miVeterinaria.registrarTurno(new Turno(2, "05/06/2026", "10:15 AM", veterinarioLogueado, luna, TipoTurno.CONSULTA_GENERAL));
-        miVeterinaria.registrarTurno(new Turno(3, "05/06/2026", "11:45 AM", veterinarioLogueado, hulk, TipoTurno.ANALISIS));
-        miVeterinaria.registrarTurno(new Turno(4, "05/06/2026", "02:00 PM", veterinarioLogueado, mochi, TipoTurno.VACUNACION));
     }
 
     // Badge redondeado con control de colores
@@ -840,7 +882,7 @@ public class PortalVeterinario extends JFrame {
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            Font fuenteBaseUI = cargarFuenteBase();
+            Font fuenteBaseUI = CargadorFuentes.obtenerFuenteBase().deriveFont(12f);
 
             UIManager.put("Label.font", fuenteBaseUI);
             UIManager.put("Button.font", fuenteBaseUI);
@@ -850,45 +892,5 @@ public class PortalVeterinario extends JFrame {
         }
 
         SwingUtilities.invokeLater(() -> new PortalVeterinario().setVisible(true));
-    }
-
-    private static Font cargarFuenteBase() {
-        try {
-            String[] rutasCandidatas = {
-                "recursos/GoogleSans.ttf",
-                "recursos\\GoogleSans.ttf",
-                "./recursos/GoogleSans.ttf"
-            };
-            for (String ruta : rutasCandidatas) {
-                java.io.File f = new java.io.File(ruta);
-                if (f.exists()) {
-                    return Font.createFont(Font.TRUETYPE_FONT, f).deriveFont(12f);
-                }
-            }
-        } catch (Exception e) {
-            // ignorar, se usa la fuente por defecto del sistema
-        }
-        return new Font("Segoe UI", Font.PLAIN, 12);
-    }
-
-    private Font cargarFuentePersonalizada(float tamano) {
-        try {
-            String[] rutasCandidatas = {
-                "recursos/GoogleSans.ttf",
-                "recursos\\GoogleSans.ttf",
-                "./recursos/GoogleSans.ttf"
-            };
-            for (String ruta : rutasCandidatas) {
-                java.io.File archivoFuente = new java.io.File(ruta);
-                if (archivoFuente.exists()) {
-                    Font fuenteBase = Font.createFont(Font.TRUETYPE_FONT, archivoFuente);
-                    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(fuenteBase);
-                    return fuenteBase.deriveFont(tamano);
-                }
-            }
-        } catch (Exception e) {
-            // ignorar, se usa la fuente por defecto del sistema
-        }
-        return new Font("Segoe UI", Font.PLAIN, (int) tamano);
     }
 }

@@ -1,4 +1,4 @@
-package objetos;
+package modelo;
 
 public class Turno {
     public static final String ESTADO_PENDIENTE = "Pendiente";

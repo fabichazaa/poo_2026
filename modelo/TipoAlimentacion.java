@@ -1,4 +1,4 @@
-package objetos;
+package modelo;
 
 public enum TipoAlimentacion {
     OMNIVORO("Omnívoro"),

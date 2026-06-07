@@ -1,4 +1,4 @@
-package objetos;
+package modelo;
 
 public class Medicamento {
     private String codigoSenasa;

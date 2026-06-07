@@ -1,4 +1,4 @@
-package objetos;
+package modelo;
 
 public abstract class Persona {
     private final String DNI;
