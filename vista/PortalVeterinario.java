@@ -1,11 +1,11 @@
 package vista;
 
+import controlador.ControladorVeterinaria;
 import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import controlador.ControladorVeterinaria;
 import modelo.*;
 import recursos.CargadorFuentes;
 
@@ -72,17 +72,6 @@ public class PortalVeterinario extends JFrame {
         panelHeaderLinea1.add(lblFechaActual, BorderLayout.EAST);
         panelSuperiorAgrupado.add(panelHeaderLinea1, BorderLayout.NORTH);
 
-        // Línea 2: Tarjetas de estadísticas superiores (calculadas dinámicamente)
-        JPanel panelStatsSuperiores = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 15));
-        panelStatsSuperiores.setOpaque(false);
-        int atendidos  = controlador.contarTurnosDelVeterinario(veterinarioLogueado, Turno.ESTADO_COMPLETADO);
-        int misTurnos  = controlador.contarTurnosDelVeterinario(veterinarioLogueado, null);
-        int pendientes = controlador.contarTurnosDelVeterinario(veterinarioLogueado, Turno.ESTADO_PENDIENTE);
-        panelStatsSuperiores.add(crearCardEstadisticaSuperior(String.valueOf(atendidos),  "Atendidos",  new Color(22f/255f, 163f/255f, 74f/255f, 0.1f),  new Color(22,163,74),  "imagenes/emojis/exito.png"));
-        panelStatsSuperiores.add(crearCardEstadisticaSuperior(String.valueOf(misTurnos),  "Mis Turnos",  new Color(14f/255f, 116f/255f, 144f/255f, 0.1f), new Color(14,116,144), "imagenes/emojis/calendario.png"));
-        panelStatsSuperiores.add(crearCardEstadisticaSuperior(String.valueOf(pendientes), "Pendientes", new Color(217f/255f, 119f/255f, 6f/255f, 0.1f),  new Color(217,119,6),  "imagenes/emojis/reloj_arena.png"));
-        panelSuperiorAgrupado.add(panelStatsSuperiores, BorderLayout.SOUTH);
-
         add(panelSuperiorAgrupado, BorderLayout.NORTH);
 
         // --- CUERPO PRINCIPAL CON CARDLAYOUT ---
@@ -101,6 +90,7 @@ public class PortalVeterinario extends JFrame {
         add(panelContenedorSecciones, BorderLayout.CENTER);
 
         // --- BARRA DE NAVEGACIÓN INFERIOR BLANCA Y ESTILIZADA ---
+       // --- BARRA DE NAVEGACIÓN INFERIOR BLANCA Y ESTILIZADA ---
         JPanel panelMenuInferior = new JPanel(new GridLayout(1, 6, 5, 0));
         panelMenuInferior.setBackground(Color.WHITE);
         panelMenuInferior.setBorder(BorderFactory.createCompoundBorder(
@@ -108,34 +98,16 @@ public class PortalVeterinario extends JFrame {
                 new EmptyBorder(8, 10, 8, 10)
         ));
 
-        JButton btnInicio = crearBotonMenuNav(" Inicio ", "🏠");
-        JButton btnRegistros = crearBotonMenuNav(" Registros ", "📂");
-        JButton btnAdopcion = crearBotonMenuNav(" Adopción ", "🐾");
-        JButton btnNotas = crearBotonMenuNav(" Notas ", "📝");
-        JButton btnCitas = crearBotonMenuNav(" Citas ", "📅");
-        JButton btnMas = crearBotonMenuNav(" Más ", "💬");
+        // Pasamos: Texto, Ruta del Icono y Clave de la Pantalla asociada
+        JButton btnInicio = crearBotonMenuNav("Inicio", "imagenes/emojis/casa.png", "PANTALLA_INICIO");
+        JButton btnRegistros = crearBotonMenuNav("Registros", "imagenes/emojis/patitas.png", "PANTALLA_REGISTROS");
+        JButton btnAdopcion = crearBotonMenuNav("Adopción", "🐾", "PANTALLA_ADOPCION");
+        JButton btnNotas = crearBotonMenuNav("Notas", "📝", "PANTALLA_NOTAS");
+        JButton btnCitas = crearBotonMenuNav("Turnos", "imagenes/emojis/calendario.png", "PANTALLA_CITAS");
+        JButton btnMas = crearBotonMenuNav("Más", "💬", "PANTALLA_MAS");
 
-        btnInicio.addActionListener(e -> navegadorCapas.show(panelContenedorSecciones, "PANTALLA_INICIO"));
-        btnCitas.addActionListener(e -> {
-            actualizarListaCitasSeccion();
-            navegadorCapas.show(panelContenedorSecciones, "PANTALLA_CITAS");
-        });
-        btnRegistros.addActionListener(e -> {
-            ((vista.paneles.PanelRegistros) panelContenedorSecciones.getComponent(2)).actualizar();
-            navegadorCapas.show(panelContenedorSecciones, "PANTALLA_REGISTROS");
-        });
-        btnAdopcion.addActionListener(e -> {
-            ((vista.paneles.PanelAdopcion) panelContenedorSecciones.getComponent(3)).actualizar();
-            navegadorCapas.show(panelContenedorSecciones, "PANTALLA_ADOPCION");
-        });
-        btnNotas.addActionListener(e -> {
-            ((vista.paneles.PanelNotas) panelContenedorSecciones.getComponent(4)).actualizar();
-            navegadorCapas.show(panelContenedorSecciones, "PANTALLA_NOTAS");
-        });
-        btnMas.addActionListener(e -> {
-            ((vista.paneles.PanelMas) panelContenedorSecciones.getComponent(5)).actualizar();
-            navegadorCapas.show(panelContenedorSecciones, "PANTALLA_MAS");
-        });
+        // Al iniciar la app, la sección activa es Inicio, por lo tanto lo marcamos
+        ((BotonMenuNav) btnInicio).setActivo(true);
 
         panelMenuInferior.add(btnInicio);
         panelMenuInferior.add(btnRegistros);
@@ -150,6 +122,9 @@ public class PortalVeterinario extends JFrame {
     // ---------------------------------------------------------------------
     // VISTA 1: SECCIÓN DE INICIO (Diseño exacto de la captura con Emojis)
     // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
+    // VISTA 1: SECCIÓN DE INICIO (Diseño exacto de la captura con Emojis)
+    // ---------------------------------------------------------------------
     private JPanel crearVistaInicio() {
         JPanel panelDashboard = new JPanel(new GridBagLayout());
         panelDashboard.setOpaque(false);
@@ -160,13 +135,26 @@ public class PortalVeterinario extends JFrame {
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 10, 0, 10);
 
-        // --- COLUMNA 1: Tarjeta Profesional (Borde superior Verde Esmeralda) ---
+        // Alto de la barra decorativa superior y radio de redondeo consistente
+        int altoBarra = 9;
+        int radioEsquina = 16;
+
+        // --- COLUMNA 1: Tarjeta Profesional (Borde superior Verde Esmeralda con Degradado) ---
         JPanel cardUsuario = new JPanel(new BorderLayout(0, 15)) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.setColor(new Color(13, 148, 136));
-                g.fillRect(0, 0, getWidth(), 5);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Degradado Turquesa claro a Esmeralda oscuro
+                GradientPaint degradado = new GradientPaint(0, 0, new Color(45, 212, 191), getWidth(), 0, new Color(13, 148, 136));
+                g2.setPaint(degradado);
+                
+                // Recorte redondeado para que calce con las esquinas del borde de la card
+                g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radioEsquina, radioEsquina));
+                g2.fillRect(0, 0, getWidth(), altoBarra);
+                g2.dispose();
             }
         };
         cardUsuario.setBackground(Color.WHITE);
@@ -174,34 +162,54 @@ public class PortalVeterinario extends JFrame {
                 new LineBorder(new Color(226, 232, 240), 1, true), new EmptyBorder(25, 20, 20, 20)
         ));
 
-        // Contenedor del avatar del doctor (Emoji nativo estilizado)
+        // Contenedor del avatar del doctor
         JPanel panelAvatarContenedor = new JPanel(new BorderLayout(0, 10));
         panelAvatarContenedor.setOpaque(false);
 
+        // Contenedor del avatar del doctor con Degradado y Antialiasing
         JPanel panelFotoPerfil = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g;
+                Graphics2D g2 = (Graphics2D) g.create();
+                
+                // ACTIVAR SUAVIZADO: Esencial para evitar pixeles duros en los bordes curvos
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(0, 168, 150)); // Fondo turquesa/esmeralda idéntico
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                
+                // CONFIGURAR DEGRADADO: Desde un turquesa brillante (arriba izq) a un esmeralda (abajo der)
+                Color colorInicio = new Color(45, 212, 191); // Teal brillante #2DD4BF
+                Color colorFin = new Color(13, 148, 136);    // Esmeralda #0D9488
+                GradientPaint degradadoDiagonal = new GradientPaint(0, 0, colorInicio, getWidth(), getHeight(), colorFin);
+                g2.setPaint(degradadoDiagonal);
+                
+                // Dibujar el fondo redondeado contenedor
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
+                g2.dispose();
             }
         };
         panelFotoPerfil.setPreferredSize(new Dimension(110, 110));
         panelFotoPerfil.setLayout(new GridBagLayout());
 
-        // Cargar imagen de veterinario desde archivo
+        // --- SOLUCIÓN ULTRA HD PARA EL VETERINARIO ---
         try {
             String rutaImagen = "imagenes/emojis/vet.png";
-            ImageIcon iconoVet = new ImageIcon(rutaImagen);
-            Image imagenEscalada = iconoVet.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-            JLabel lblIconoUser = new JLabel(new ImageIcon(imagenEscalada));
+            // Leemos el archivo directo a un java.io.File para evitar compresión nativa corrupta de ImageIcon
+            java.io.File archivoImagen = new java.io.File(rutaImagen);
+            java.awt.image.BufferedImage imgBuffer = javax.imageio.ImageIO.read(archivoImagen);
+            
+            int targetWidth = 95;  // Un toque de aire para que no toque los bordes del contenedor
+            int targetHeight = 95;
+            
+            // Forzamos el remuestreo bilinear premium desde la matriz de bytes pura
+            ImageIcon iconoEscalado = escalarImagenAltaCalidad(imgBuffer, targetWidth, targetHeight);
+            
+            JLabel lblIconoUser = new JLabel(iconoEscalado);
             panelFotoPerfil.add(lblIconoUser);
         } catch (Exception e) {
-            // Si la imagen no se carga, usar el emoji como fallback
+            System.out.println("Error al renderizar en alta definición: " + e.getMessage());
             JLabel lblIconoUser = new JLabel("👨‍⚕️");
-            lblIconoUser.setFont(new Font("Segoe UI", Font.PLAIN, 50));
+            lblIconoUser.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 50));
             panelFotoPerfil.add(lblIconoUser);
         }
 
@@ -254,11 +262,10 @@ public class PortalVeterinario extends JFrame {
         cardMatricula.add(lblMatTxt);
         cardMatricula.add(lblMatNum);
 
-        // Detalles inferiores (Especialidad y Turno)
+        // Detalles inferiores corregidos: Especialidad Y el Turno faltante
         JPanel panelFilaDetalles = new JPanel(new GridLayout(1, 2, 10, 0));
         panelFilaDetalles.setOpaque(false);
         panelFilaDetalles.add(crearMiniBadgeInformación("Especialidad", "General"));
-        panelFilaDetalles.add(crearMiniBadgeInformación("Turno", "Mañana"));
 
         panelDatosUser.add(lblNombreUser);
         panelDatosUser.add(Box.createVerticalStrut(4));
@@ -276,13 +283,20 @@ public class PortalVeterinario extends JFrame {
         gbc.weightx = 0;
         panelDashboard.add(cardUsuario, gbc);
 
-        // --- COLUMNA 2: Mis Próximos Turnos (Borde superior Violeta) ---
+        // --- COLUMNA 2: Mis Próximos Turnos (Borde superior Violeta con Degradado) ---
         JPanel cardTurnos = new JPanel(new BorderLayout(0, 15)) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.setColor(new Color(124, 58, 237));
-                g.fillRect(0, 0, getWidth(), 5);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                GradientPaint degradado = new GradientPaint(0, 0, new Color(168, 85, 247), getWidth(), 0, new Color(109, 40, 217));
+                g2.setPaint(degradado);
+                
+                g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radioEsquina, radioEsquina));
+                g2.fillRect(0, 0, getWidth(), altoBarra);
+                g2.dispose();
             }
         };
         cardTurnos.setBackground(Color.WHITE);
@@ -321,6 +335,15 @@ public class PortalVeterinario extends JFrame {
         scrollTurnos.setBorder(null);
         scrollTurnos.setOpaque(false);
         scrollTurnos.getViewport().setOpaque(false);
+
+        // --- CONFIGURACIÓN MODERNA Y FLUIDA DEL SCROLL ---
+        JScrollBar barraVertical = scrollTurnos.getVerticalScrollBar();
+        barraVertical.setUI(new ModernScrollBarUI()); // Aplicamos tu UI personalizada
+        barraVertical.setPreferredSize(new Dimension(8, 0)); // Barra delgada de 8px
+        barraVertical.setOpaque(false); // Forzamos la transparencia de fondo de forma segura
+        barraVertical.setUnitIncrement(12); // Scroll rápido y fluido con la ruedita
+        // ------
+
         cardTurnos.add(scrollTurnos, BorderLayout.CENTER);
         cardTurnos.setPreferredSize(new Dimension(300, 400));
 
@@ -328,13 +351,20 @@ public class PortalVeterinario extends JFrame {
         gbc.weightx = 1;
         panelDashboard.add(cardTurnos, gbc);
 
-        // --- COLUMNA 3: Acciones Rápidas (Borde superior Fucsia) ---
+        // --- COLUMNA 3: Acciones Rápidas (Borde superior Naranja a Fucsia con Degradado Ancho) ---
         JPanel cardAcciones = new JPanel(new BorderLayout(0, 15)) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.setColor(new Color(236, 72, 153));
-                g.fillRect(0, 0, getWidth(), 5);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                GradientPaint degradadoHorizontal = new GradientPaint(0, 0, new Color(249, 115, 22), getWidth(), 0, new Color(236, 72, 153));
+                g2.setPaint(degradadoHorizontal);
+                
+                g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radioEsquina, radioEsquina));
+                g2.fillRect(0, 0, getWidth(), altoBarra); 
+                g2.dispose();
             }
         };
         cardAcciones.setBackground(Color.WHITE);
@@ -351,21 +381,39 @@ public class PortalVeterinario extends JFrame {
         panelBotonesAccion.setLayout(new BoxLayout(panelBotonesAccion, BoxLayout.Y_AXIS));
         panelBotonesAccion.setOpaque(false);
 
-        // Se configuran los emojis nativos de los botones como se observa en la captura
-        panelBotonesAccion.add(crearFilaAccionEstilizada("Nueva Consulta", "Iniciar atención a un paciente", new Color(13, 148, 136), "imagenes/emojis/estetoscopio.png"));
+        panelBotonesAccion.add(crearFilaAccionEstilizada("Nueva Consulta", new Color(115, 236, 255), "imagenes/emojis/estetoscopio.png"));
         panelBotonesAccion.add(Box.createVerticalStrut(12));
-        panelBotonesAccion.add(crearFilaAccionEstilizada("Registrar Paciente", "Agregar nuevo animal al sistema", new Color(99, 102, 241), "🐶"));
+        panelBotonesAccion.add(crearFilaAccionEstilizada("Registrar Paciente", new Color(99, 102, 241), "imagenes/emojis/perro_cara.png"));
         panelBotonesAccion.add(Box.createVerticalStrut(12));
-        panelBotonesAccion.add(crearFilaAccionEstilizada("Ver Historiales", "Consultar historial clínico", new Color(245, 158, 11), "📁"));
 
         cardAcciones.add(panelBotonesAccion, BorderLayout.CENTER);
 
+       // --- CONTADORES INFERIORES EN ACCIONES RÁPIDAS ---
         JPanel panelStatusDia = new JPanel(new GridLayout(1, 2, 10, 0));
         panelStatusDia.setOpaque(false);
-        panelStatusDia.add(crearMiniContadorInferior(String.valueOf(controlador.contarTurnosDelVeterinario(veterinarioLogueado, Turno.ESTADO_COMPLETADO)), "Atendidos"));
-        panelStatusDia.add(crearMiniContadorInferior(String.valueOf(controlador.contarTurnosDelVeterinario(veterinarioLogueado, null)), "Mis Turnos"));
+
+        int totalAtendidos  = controlador.contarTurnosDelVeterinario(veterinarioLogueado, Turno.ESTADO_COMPLETADO);
+        int totalPendientes = controlador.contarTurnosDelVeterinario(veterinarioLogueado, Turno.ESTADO_PENDIENTE);
+
+        // 1. Atendidos con su símbolo de éxito
+        panelStatusDia.add(crearMiniContadorInferior(
+                String.valueOf(totalAtendidos), 
+                "Atendidos", 
+                new Color(240, 253, 250), 
+                new Color(13, 148, 136),
+                "imagenes/emojis/exito.png" // <-- Ruta del ícono de éxito
+        ));
+
+        // 2. Pendientes con su reloj de arena
+        panelStatusDia.add(crearMiniContadorInferior(
+                String.valueOf(totalPendientes), 
+                "Pendientes", 
+                new Color(254, 243, 199), 
+                new Color(217, 119, 6),
+                "imagenes/emojis/reloj_arena.png" // <-- Ruta del reloj de arena
+        ));
+
         cardAcciones.add(panelStatusDia, BorderLayout.SOUTH);
-        cardAcciones.setPreferredSize(new Dimension(280, 400));
 
         gbc.gridx = 2;
         gbc.weightx = 0;
@@ -460,77 +508,96 @@ public class PortalVeterinario extends JFrame {
         panelListaCitasDinamica.repaint();
     }
 
-    // --- RENDERIZADO CON EMOJIS COMPATIBLES SEÚN LA ESPECIE ---
     private JPanel crearTarjetaTurnoVisual(Turno t) {
         JPanel itemTurno = new JPanel(new BorderLayout(15, 0));
         itemTurno.setBackground(new Color(248, 250, 252));
-        itemTurno.setMaximumSize(new Dimension(385, 70));
-        itemTurno.setPreferredSize(new Dimension(385, 70));
+        itemTurno.setMaximumSize(new Dimension(385, 62)); 
+        itemTurno.setPreferredSize(new Dimension(385, 62));
         itemTurno.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(241, 245, 249), 1, true), new EmptyBorder(12, 12, 12, 12)
+                BorderFactory.createLineBorder(new Color(241, 245, 249), 1, true), new EmptyBorder(6, 12, 6, 12)
         ));
 
-        // Caja de la hora
+        // --- CAJA DE LA HORA OPTIMIZADA (COMPACTA) ---
         JLabel lblHora = new JLabel(t.getHora(), SwingConstants.CENTER) {
             @Override
             protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g;
+                Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                // Draw shadow
-                g2.setColor(new Color(0, 0, 0, 25));
-                g2.fillRoundRect(2, 3, getWidth() - 4, getHeight() - 4, 12, 12);
+                // Sombra sutil
+                g2.setColor(new Color(0, 0, 0, 15));
+                g2.fillRoundRect(1, 2, getWidth() - 2, getHeight() - 3, 8, 8);
 
-                // Draw white background
+                // Fondo blanco limpio
                 g2.setColor(new Color(255, 255, 255));
-                g2.fillRoundRect(0, 0, getWidth() - 2, getHeight() - 2, 12, 12);
+                g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
 
-                // Draw border
-                g2.setColor(new Color(220, 225, 230));
+                // Borde gris claro delgado
+                g2.setColor(new Color(226, 232, 240));
                 g2.setStroke(new BasicStroke(1));
-                g2.drawRoundRect(0, 0, getWidth() - 2, getHeight() - 2, 12, 12);
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
 
+                g2.dispose();
                 super.paintComponent(g);
             }
         };
-        lblHora.setFont(fuenteNormal); // Usa tu Google Sans sin romper nada
+        lblHora.setFont(fuenteNormal); 
         lblHora.setForeground(new Color(30, 41, 59));
-        lblHora.setPreferredSize(new Dimension(75, 35));
-        itemTurno.add(lblHora, BorderLayout.WEST);
+        lblHora.setPreferredSize(new Dimension(65, 28)); 
+        
+        // Contenedor para centrar la tarjeta de la hora verticalmente
+        JPanel panelHoraWrapper = new JPanel(new GridBagLayout());
+        panelHoraWrapper.setOpaque(false);
+        panelHoraWrapper.add(lblHora);
+        itemTurno.add(panelHoraWrapper, BorderLayout.WEST);
 
-        // Bloque central estructurado: Separamos el Emoji del Texto
-        JPanel panelTextosTurno = new JPanel(new BorderLayout(8, 0));
-        panelTextosTurno.setOpaque(false);
+        // --- BLOQUE CENTRAL: ÍCONO Y TEXTO ALINEADOS A LA IZQUIERDA ---
+        // FlowLayout.LEFT garantiza que los componentes se posicionen de izquierda a derecha inmediatamente después de la hora
+        JPanel panelContenidoCentral = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        panelContenidoCentral.setOpaque(false);
 
-        // Cargar imagen de animal según tipo
+        // Cargar imagen del animal (Perro o Gato)
         String rutaImagen = (t.getAnimal() instanceof Perro) ? "imagenes/emojis/perro.png" : "imagenes/emojis/gato.png";
         JLabel lblEmoji = new JLabel();
         try {
             ImageIcon iconoAnimal = new ImageIcon(rutaImagen);
-            Image imagenEscalada = iconoAnimal.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
-            lblEmoji.setIcon(new ImageIcon(imagenEscalada));
+            ImageIcon iconoEscalado = escalarImagenAltaCalidad(iconoAnimal.getImage(), 22, 22);
+            lblEmoji.setIcon(iconoEscalado);
         } catch (Exception e) {
-            // Si la imagen no se carga, usar el emoji como fallback
             String emojiMascota = (t.getAnimal() instanceof Perro) ? "🐕" : "🐈";
             lblEmoji.setText(emojiMascota);
-            lblEmoji.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 18));
+            lblEmoji.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
         }
-        panelTextosTurno.add(lblEmoji, BorderLayout.WEST);
+        panelContenidoCentral.add(lblEmoji); 
 
-        // Los textos de información siguen usando Google Sans mediante tus fuentes globales
-        JPanel panelLabelsInternos = new JPanel(new GridLayout(2, 1, 0, 1));
+        // Panel para los textos (Nombre arriba, tipo de turno abajo)
+        JPanel panelLabelsInternos = new JPanel(new GridLayout(2, 1, 0, 0));
         panelLabelsInternos.setOpaque(false);
 
         JLabel lblPaciente = new JLabel(t.getAnimal().getNombre());
         lblPaciente.setFont(fuenteSubtitulos);
         lblPaciente.setForeground(new Color(15, 23, 42));
 
+        JLabel lblSubDescripcion = new JLabel(t.getTipo().getDescripcion());
+        lblSubDescripcion.setFont(fuenteNormal);
+        lblSubDescripcion.setForeground(new Color(148, 163, 184));
+
         panelLabelsInternos.add(lblPaciente);
-        panelTextosTurno.add(panelLabelsInternos, BorderLayout.CENTER);
+        panelLabelsInternos.add(lblSubDescripcion);
+        panelContenidoCentral.add(panelLabelsInternos); 
 
-        itemTurno.add(panelTextosTurno, BorderLayout.CENTER);
+        // Envolvemos en un GridBagLayout externo únicamente para que el bloque mantenga el centrado vertical con respecto a la tarjeta,
+        // pero obligando a que su contenido interno se empuje hacia el extremo izquierdo (WEST)
+        JPanel panelAlineacionWrapper = new JPanel(new GridBagLayout());
+        panelAlineacionWrapper.setOpaque(false);
+        GridBagConstraints gbcCentro = new GridBagConstraints();
+        gbcCentro.anchor = GridBagConstraints.WEST; // <-- Fuerza la alineación hacia la izquierda
+        gbcCentro.weightx = 1.0;                    // <-- Toma el espacio restante para empujar el badge a la derecha
+        panelAlineacionWrapper.add(panelContenidoCentral, gbcCentro);
+        
+        itemTurno.add(panelAlineacionWrapper, BorderLayout.CENTER);
 
-        // Tag dinámico a la derecha (Píldora)
+        // --- TAG DINÁMICO A LA DERECHA (PÍLDORA) ---
         PildoraBadge lblBadgePildora = new PildoraBadge(t.getTipo().getDescripcion());
         lblBadgePildora.setFont(fuenteNormal);
         lblBadgePildora.setBorder(new EmptyBorder(4, 12, 4, 12));
@@ -563,66 +630,71 @@ public class PortalVeterinario extends JFrame {
         return itemTurno;
     }
 
-    // Fila de acciones usando emojis o imágenes en cajas de colores
-    private JPanel crearFilaAccionEstilizada(String titulo, String sub, Color colorFondoIcono, String emojiIcono) {
-        JPanel panelFila = new JPanel(new BorderLayout(15, 0));
-        panelFila.setBackground(new Color(248, 250, 252));
-        panelFila.setMaximumSize(new Dimension(320, 58));
-        panelFila.setPreferredSize(new Dimension(320, 58));
-        panelFila.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(241, 245, 249), 1, true), new EmptyBorder(8, 12, 8, 12)
-        ));
+    private JPanel crearFilaAccionEstilizada(String titulo, Color colorFondoIcono, String emojiIcono) {
+    // Reducimos la altura a 52 para que se adapte de forma estilizada a una sola línea
+    JPanel panelFila = new JPanel(new BorderLayout(15, 0));
+    panelFila.setBackground(new Color(248, 250, 252));
+    panelFila.setMaximumSize(new Dimension(320, 52));
+    panelFila.setPreferredSize(new Dimension(320, 52));
+    panelFila.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(241, 245, 249), 1, true), new EmptyBorder(6, 12, 6, 12)
+    ));
 
-        JPanel panelCuadroIcono = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g;
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(colorFondoIcono);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
-            }
-        };
-        panelCuadroIcono.setPreferredSize(new Dimension(40, 40));
-        panelCuadroIcono.setLayout(new GridBagLayout());
+    // --- ICONO DE LA ACCIÓN ---
+    JPanel panelCuadroIcono = new JPanel() {
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(colorFondoIcono);
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
+        }
+    };
+    panelCuadroIcono.setPreferredSize(new Dimension(40, 40));
+    panelCuadroIcono.setLayout(new GridBagLayout());
 
-        // Cargar imagen si es ruta PNG, sino usar como emoji
-        JLabel lblEmoji = new JLabel();
-        if (emojiIcono.endsWith(".png")) {
-            try {
-                ImageIcon icono = new ImageIcon(emojiIcono);
-                Image imagenEscalada = icono.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
-                lblEmoji.setIcon(new ImageIcon(imagenEscalada));
-            } catch (Exception e) {
-                lblEmoji.setText("?");
-                lblEmoji.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-            }
-        } else {
-            lblEmoji.setText(emojiIcono);
+    JLabel lblEmoji = new JLabel();
+    if (emojiIcono.endsWith(".png")) {
+        try {
+            ImageIcon icono = new ImageIcon(emojiIcono);
+            // Usando tu método de alta calidad o el escalado clásico suave
+            Image imagenEscalada = icono.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+            lblEmoji.setIcon(new ImageIcon(imagenEscalada));
+        } catch (Exception e) {
+            lblEmoji.setText("?");
             lblEmoji.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         }
-        panelCuadroIcono.add(lblEmoji);
-        panelFila.add(panelCuadroIcono, BorderLayout.WEST);
-
-        JPanel panelTextos = new JPanel(new GridLayout(2, 1, 0, 1));
-        panelTextos.setOpaque(false);
-        JLabel lblT = new JLabel(titulo);
-        lblT.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        lblT.setForeground(new Color(15, 23, 42));
-        JLabel lblS = new JLabel(sub);
-        lblS.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        lblS.setForeground(new Color(148, 163, 184));
-        panelTextos.add(lblT);
-        panelTextos.add(lblS);
-        panelFila.add(panelTextos, BorderLayout.CENTER);
-
-        JLabel lblFlechita = new JLabel(">");
-        lblFlechita.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        lblFlechita.setForeground(new Color(203, 213, 225));
-        panelFila.add(lblFlechita, BorderLayout.EAST);
-
-        return panelFila;
+    } else {
+        lblEmoji.setText(emojiIcono);
+        lblEmoji.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 18));
     }
+    panelCuadroIcono.add(lblEmoji);
+    panelFila.add(panelCuadroIcono, BorderLayout.WEST);
 
+    // --- TEXTO DE LA ACCIÓN (SÓLO TÍTULO Y CENTRADO VERTICAL) ---
+    // Usamos GridBagLayout en el contenedor del texto para lograr un centrado vertical absoluto y limpio
+    JPanel panelContenedorTexto = new JPanel(new GridBagLayout());
+    panelContenedorTexto.setOpaque(false);
+    
+    JLabel lblT = new JLabel(titulo);
+    lblT.setFont(new Font("Segoe UI", Font.PLAIN, 12)); // Subido a 14 un toque para destacar más al estar solo
+    lblT.setForeground(new Color(15, 23, 42));
+    
+    GridBagConstraints gbcTexto = new GridBagConstraints();
+    gbcTexto.anchor = GridBagConstraints.WEST; // Alineado firmemente a la izquierda (pegado al ícono)
+    gbcTexto.weightx = 1.0;                    // Empuja lo que esté a la derecha
+    panelContenedorTexto.add(lblT, gbcTexto);
+    
+    panelFila.add(panelContenedorTexto, BorderLayout.CENTER);
+
+    
+    // La envolvemos en un GridBagLayout para que también mantenga el centro vertical perfecto
+    JPanel panelFlechaWrapper = new JPanel(new GridBagLayout());
+    panelFlechaWrapper.setOpaque(false);
+    panelFila.add(panelFlechaWrapper, BorderLayout.EAST);
+
+    return panelFila;
+}
     private JPanel crearTarjetaTurnoCompleta(Turno t, boolean mostrarVeterinario) {
         JPanel card = new JPanel(new BorderLayout(15, 0));
         card.setBackground(new Color(245, 249, 252));
@@ -716,7 +788,6 @@ public class PortalVeterinario extends JFrame {
         card.setPreferredSize(new Dimension(110, 42));
 
         JLabel lblIcono = new JLabel();
-        // Verificar si es una ruta de imagen o un emoji
         if (iconStr.endsWith(".png")) {
             try {
                 ImageIcon icono = new ImageIcon(iconStr);
@@ -768,49 +839,110 @@ public class PortalVeterinario extends JFrame {
         return panel;
     }
 
-    private JPanel crearMiniContadorInferior(String valor, String etiqueta) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10)) {
+   private JPanel crearMiniContadorInferior(String valor, String etiqueta, Color fondo, Color colorTexto, String rutaIcono) {
+        // Modificamos el dibujo para remover por completo las esquinas redondeadas
+        JPanel panel = new JPanel(new BorderLayout(12, 0)) {
             @Override
             protected void paintComponent(Graphics g) {
-                g.setColor(new Color(240, 253, 250));
-                g.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                
+                // 1. Fondo completamente recto (sin border-radius)
+                g2.setColor(fondo);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                
+                // 2. Contorno sutil y fino de 1px recto estilo "Especialidad"
+                Color colorBordeSuave = new Color(
+                        Math.max(0, fondo.getRed() - 25),
+                        Math.max(0, fondo.getGreen() - 20),
+                        Math.max(0, fondo.getBlue() - 15)
+                );
+                g2.setColor(colorBordeSuave);
+                g2.setStroke(new BasicStroke(1.0f)); 
+                g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+                
+                g2.dispose();
             }
         };
         panel.setOpaque(false);
-        panel.setBorder(BorderFactory.createLineBorder(new Color(204, 251, 241), 1, true));
+        
+        // Mantenemos el padding interno y las dimensiones de 56px de alto para que no se achate
+        panel.setBorder(new EmptyBorder(8, 14, 8, 14));
+        panel.setPreferredSize(new Dimension(135, 56)); 
 
-        JLabel lblV = new JLabel(valor);
-        lblV.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        lblV.setForeground(new Color(13, 148, 136));
+        // --- ÍCONO EN ALTA RESOLUCIÓN ---
+        JLabel lblIcono = new JLabel();
+        try {
+            java.io.File archivoImagen = new java.io.File(rutaIcono);
+            java.awt.image.BufferedImage imgBuffer = javax.imageio.ImageIO.read(archivoImagen);
+            ImageIcon iconoEscalado = escalarImagenAltaCalidad(imgBuffer, 22, 22);
+            lblIcono.setIcon(iconoEscalado);
+        } catch (Exception e) {
+            lblIcono.setText("•");
+            lblIcono.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            lblIcono.setForeground(colorTexto);
+        }
+        
+        JPanel panelIconoWrapper = new JPanel(new GridBagLayout());
+        panelIconoWrapper.setOpaque(false);
+        panelIconoWrapper.add(lblIcono);
+        panel.add(panelIconoWrapper, BorderLayout.WEST);
 
+        // --- PANEL DE TEXTOS ---
+        JPanel panelTxt = new JPanel(new GridLayout(2, 1, 0, 1));
+        panelTxt.setOpaque(false);
+
+        JLabel lblVal = new JLabel(valor);
+        lblVal.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblVal.setForeground(colorTexto);
+        
         JLabel lblE = new JLabel(etiqueta);
         lblE.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         lblE.setForeground(new Color(100, 116, 139));
 
-        JPanel panelTxt = new JPanel(new GridLayout(2, 1, 0, -2));
-        panelTxt.setOpaque(false);
-        panelTxt.add(lblV);
+        panelTxt.add(lblVal);
         panelTxt.add(lblE);
+        
+        panel.add(panelTxt, BorderLayout.CENTER);
 
-        panel.add(panelTxt);
         return panel;
     }
+    private JButton crearBotonMenuNav(String titulo, String icono, String claveCapa) {
+        BotonMenuNav btn = new BotonMenuNav(titulo, icono, claveCapa);
+        
+        // Vinculamos la acción de cambiar de sección
+        btn.addActionListener(e -> {
+            // 1. Cambiamos la sección en el CardLayout
+            if (claveCapa.equals("PANTALLA_REGISTROS")) {
+                ((vista.paneles.PanelRegistros) panelContenedorSecciones.getComponent(2)).actualizar();
+            } else if (claveCapa.equals("PANTALLA_ADOPCION")) {
+                ((vista.paneles.PanelAdopcion) panelContenedorSecciones.getComponent(3)).actualizar();
+            } else if (claveCapa.equals("PANTALLA_NOTAS")) {
+                ((vista.paneles.PanelNotas) panelContenedorSecciones.getComponent(4)).actualizar();
+            } else if (claveCapa.equals("PANTALLA_MAS")) {
+                ((vista.paneles.PanelMas) panelContenedorSecciones.getComponent(5)).actualizar();
+            } else if (claveCapa.equals("PANTALLA_CITAS")) {
+                actualizarListaCitasSeccion();
+            }
+            navegadorCapas.show(panelContenedorSecciones, claveCapa);
 
-    private JButton crearBotonMenuNav(String titulo, String icono) {
-        JButton btn = new JButton("<html><center><font size='5'>" + icono + "</font><br/><b style='white-space: nowrap;'>" + titulo + "</b></center></html>");
-        btn.setFont(fuenteNormal);
-        btn.setFocusPainted(false);
-        btn.setContentAreaFilled(true);
-        btn.setBorder(BorderFactory.createEmptyBorder(15, 12, 15, 12));
-        btn.setForeground(new Color(100, 116, 139));
-        btn.setBackground(Color.WHITE);
-        btn.setPreferredSize(new Dimension(120, 80));
+            // 2. RECORRER TODOS LOS BOTONES para avisarles cuál es el activo ahora
+            JPanel panelMenu = (JPanel) btn.getParent();
+            if (panelMenu != null) {
+                for (Component comp : panelMenu.getComponents()) {
+                    if (comp instanceof BotonMenuNav) {
+                        BotonMenuNav b = (BotonMenuNav) comp;
+                        b.setActivo(b == btn); // True solo para el botón cliqueado
+                    }
+                }
+            }
+        });
+        
         return btn;
     }
 
-    // Badge redondeado con control de colores
     private static class BadgeRedondeado extends JLabel {
-
         private Color bgColor;
         private Color borderColor;
 
@@ -829,11 +961,9 @@ public class PortalVeterinario extends JFrame {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // Draw background with rounded corners
             g2.setColor(bgColor);
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
 
-            // Draw border
             g2.setColor(borderColor);
             g2.setStroke(new BasicStroke(0.8f));
             g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
@@ -842,9 +972,7 @@ public class PortalVeterinario extends JFrame {
         }
     }
 
-    // Inner class for pill-shaped badge
     private static class PildoraBadge extends JLabel {
-
         private Color bgColor = Color.WHITE;
 
         public PildoraBadge(String text) {
@@ -861,11 +989,9 @@ public class PortalVeterinario extends JFrame {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // Draw background with rounded corners
             g2.setColor(bgColor);
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
 
-            // Draw border (darker than background)
             Color borderColor = new Color(
                     Math.max(0, bgColor.getRed() - 40),
                     Math.max(0, bgColor.getGreen() - 40),
@@ -893,4 +1019,214 @@ public class PortalVeterinario extends JFrame {
 
         SwingUtilities.invokeLater(() -> new PortalVeterinario().setVisible(true));
     }
+
+    // Método auxiliar para escalar PNGs sin perder calidad (evita el pixelado)
+    private ImageIcon escalarImagenAltaCalidad(Image srcImg, int w, int h) {
+        java.awt.image.BufferedImage resizedImg = new java.awt.image.BufferedImage(w, h, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = resizedImg.createGraphics();
+
+        // Configuración de renderizado premium
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Dibujar la imagen en el lienzo limpio de alta calidad
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+
+        return new ImageIcon(resizedImg);
+    }
+
+    // =========================================================================
+    // CLASE INTERNA: Debe ir al final del archivo, FUERA de cualquier método
+    // =========================================================================
+    // =========================================================================
+    // CLASE INTERNA: Modificada con soporte para efecto Hover (Rollover)
+    // =========================================================================
+    private static class ModernScrollBarUI extends javax.swing.plaf.basic.BasicScrollBarUI {
+        
+        // Diseña el "track" (el fondo por donde se desliza la barra)
+        @Override
+        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
+            // Lo dejamos vacío para eliminar el fondo gris antiguo de Windows 2000
+        }
+
+        // Diseña el "thumb" (la barrita redondeada que arrastramos)
+        @Override
+        protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
+            if (thumbBounds.isEmpty() || !scrollbar.isEnabled()) {
+                return;
+            }
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            
+            // --- LÓGICA DE HOVER / DRAG DINÁMICO ---
+            Color colorFinal;
+            
+            if (isDragging) {
+                // Si el usuario la está arrastrando: Gris Slate Oscuro (#64748B)
+                colorFinal = new Color(100, 116, 139);
+            } else if (isThumbRollover()) {
+                // Si solo tiene el mouse encima (Hover): Gris Slate Intermedio (#94A3B8)
+                colorFinal = new Color(148, 163, 184);
+            } else {
+                // Estado base pasivo: Tu gris suave original (#CBD5E1)
+                colorFinal = new Color(203, 213, 225);
+            }
+            
+            g2.setColor(colorFinal);
+            // ----------------------------------------
+            
+            // Dibujamos la barra con un margen de 2px a los costados y esquinas redondeadas
+            g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2, 
+                             thumbBounds.width - 4, thumbBounds.height - 4, 8, 8);
+            g2.dispose();
+        }
+
+        // Removemos la flecha superior clásica de Windows
+        @Override
+        protected JButton createDecreaseButton(int orientation) {
+            return crearBotonInvisible();
+        }
+
+        // Removemos la flecha inferior clásica de Windows
+        @Override
+        protected JButton createIncreaseButton(int orientation) {
+            return crearBotonInvisible();
+        }
+
+        // Método auxiliar para generar un botón sin dimensiones (oculto)
+        private JButton crearBotonInvisible() {
+            JButton btn = new JButton();
+            btn.setPreferredSize(new Dimension(0, 0));
+            btn.setMinimumSize(new Dimension(0, 0));
+            btn.setMaximumSize(new Dimension(0, 0));
+            return btn;
+        }
+    }
+    
+    // =========================================================================
+    // CLASE INTERNA: Botón de Navegación Profesional con Hover y Active Dinámicos
+    // =========================================================================
+    // =========================================================================
+    // CLASE INTERNA: Botón de Navegación Profesional (Área de Hover Corregida)
+    // =========================================================================
+    private class BotonMenuNav extends JButton {
+        private final String claveCapa;
+        private boolean mouseEncima = false;
+        private boolean activo = false;
+        
+        // Colores de la captura de pantalla
+        private final Color colorFondoVerdeSuave = new Color(240, 253, 250); // Menta clarito #F0FDFA
+        private final Color colorTextoVerdeOscuro = new Color(13, 148, 136); // Teal / Esmeralda #0D9488
+        private final Color colorTextoGrisBase = new Color(100, 116, 139);   // Gris Slate #64748B
+
+        public BotonMenuNav(String titulo, String icono, String claveCapa) {
+            this.claveCapa = claveCapa;
+            
+            // Configuración base estética de Swing
+            setFocusPainted(false);
+            setContentAreaFilled(false);
+            setBorderPainted(false);
+            setOpaque(false);
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            
+            // REDISEÑO DEL TAMAÑO: Reducimos el ancho preferido para que la celda invisible no sea gigante
+            // Le damos un padding interno generoso a los lados (24px) para que el fondo verde abrace al texto cómodamente
+            setPreferredSize(new Dimension(85, 70)); 
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            setBorder(new EmptyBorder(8, 20, 8, 20)); // <-- Mantiene el área de clic e ícono perfectamente contenida
+            
+            // 1. Inicializar y centrar el ícono (PNG o Emoji)
+            JLabel lblIcon = new JLabel();
+            lblIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
+            if (icono.endsWith(".png")) {
+                try {
+                    ImageIcon imageIcon = new ImageIcon(icono);
+                    Image imagenEscalada = imageIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH);
+                    lblIcon.setIcon(new ImageIcon(imagenEscalada));
+                } catch (Exception e) {
+                    lblIcon.setText("?");
+                    lblIcon.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+                }
+            } else {
+                lblIcon.setText(icono);
+                lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
+            }
+            
+            // 2. Inicializar y centrar el texto inferior
+            JLabel lblTitulo = new JLabel(titulo);
+            lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 12));
+            lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+            
+            // Añadimos los componentes al botón con un separador vertical
+            add(Box.createVerticalGlue());
+            add(lblIcon);
+            add(Box.createVerticalStrut(5));
+            add(lblTitulo);
+            add(Box.createVerticalGlue());
+
+            // 3. Escuchador de Eventos para detectar el paso del mouse preciso
+            addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent e) {
+                    mouseEncima = true;
+                    repaint(); // Fuerza a Swing a volver a pintar con el color de Hover
+                }
+
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent e) {
+                    mouseEncima = false;
+                    repaint(); // Vuelve a pintar el estado pasivo
+                }
+            });
+        }
+
+        // Setter para actualizar el estado del botón desde afuera al hacer clic
+        public void setActivo(boolean estado) {
+            this.activo = estado;
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Obtenemos los JLabels internos para cambiarles el color de texto dinámicamente
+            JLabel lblIcon = (JLabel) getComponent(1);
+            JLabel lblTitulo = (JLabel) getComponent(3);
+
+            // --- LÓGICA DE RENDERIZADO DINÁMICO (HOVER Y ACTIVE MATCH REAL) ---
+            if (activo || mouseEncima) {
+                g2.setColor(colorFondoVerdeSuave);
+                
+                // CAMBIO CLAVE: Ahora la píldora toma el ancho exacto del botón visible en vez de un número fijo
+                // Dejamos un margen sutil de 4px a los lados para que se vea redondeado y armónico
+                int x = 6; 
+                int y = 5;
+                int anchoPildora = getWidth() - 12;
+                int altoPildora = getHeight() - 10;
+                
+                g2.fillRoundRect(x, y, anchoPildora, altoPildora, 18, 18);
+
+                // Cambiamos las tipografías al verde oscuro corporativo
+                lblTitulo.setForeground(colorTextoVerdeOscuro);
+                if (lblIcon.getIcon() == null) {
+                    lblIcon.setForeground(colorTextoVerdeOscuro);
+                }
+            } else {
+                // Estado pasivo: Sin fondo y texto gris suave
+                lblTitulo.setForeground(colorTextoGrisBase);
+                if (lblIcon.getIcon() == null) {
+                    lblIcon.setForeground(colorTextoGrisBase);
+                }
+            }
+
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    }
 }
+
+

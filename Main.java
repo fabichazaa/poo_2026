@@ -1,7 +1,6 @@
 import controlador.ControladorVeterinaria;
 import modelo.*;
 import vista.PortalVeterinario;
-import vista.dialogos.DialogoLogin;
 
 public class Main {
 
@@ -10,12 +9,14 @@ public class Main {
             ejecutarDemoConsola();
         } else {
             ControladorVeterinaria controlador = ControladorVeterinaria.getInstancia();
-            DialogoLogin login = new DialogoLogin(null, controlador);
-            login.setVisible(true);
+            
+            // TEMP: Auto-login for development (skip login dialog)
+            controlador.loginPorMatricula("MP-9854");
+            
             if (controlador.haySesionActiva()) {
                 PortalVeterinario.main(new String[]{});
             } else {
-                System.out.println("Login cancelado. Saliendo.");
+                System.out.println("Login automático falló. Saliendo.");
                 System.exit(0);
             }
         }

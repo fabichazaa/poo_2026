@@ -82,7 +82,7 @@ public abstract class Animal {
     }
 
     public String getRutaFoto() {
-        return "imagenes/" + idAnimal + ".jpg";
+        return "imagenes/patitas.png";
     }
 
     public abstract TipoAlimentacion getTipoAlimentacion();

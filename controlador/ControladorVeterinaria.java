@@ -173,6 +173,17 @@ public class ControladorVeterinaria {
         c3.agregarMascota(new Perro("Rocky", LocalDate.of(2017, 7, 4),  true,  c3, "Bulldog Inglés"));
 
         c4.agregarMascota(new Gato ("Pelusa",   LocalDate.of(2024, 5, 30), false, c4, "Angora Turco"));
+
+        veterinaria.registrarPaciente(c1.getMascotas().get(0));
+        veterinaria.registrarPaciente(c1.getMascotas().get(1));
+        veterinaria.registrarPaciente(c1.getMascotas().get(2));
+        veterinaria.registrarPaciente(c1.getMascotas().get(3));
+        veterinaria.registrarPaciente(c2.getMascotas().get(0));
+        veterinaria.registrarPaciente(c2.getMascotas().get(1));
+        veterinaria.registrarPaciente(c2.getMascotas().get(2));
+        veterinaria.registrarPaciente(c3.getMascotas().get(0));
+        veterinaria.registrarPaciente(c3.getMascotas().get(1));
+        veterinaria.registrarPaciente(c4.getMascotas().get(0));
     }
 
     private void cargarMedicamentosYVacunas() {

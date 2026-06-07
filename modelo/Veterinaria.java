@@ -8,6 +8,7 @@ public class Veterinaria {
     private final ArrayList<Responsable> listaClientes;
     private final ArrayList<Turno> listaTurnos;
     private final ArrayList<Medicamento> catalogoMedicamentos;
+    private final ArrayList<Animal> pacientesRegistrados;
 
     public Veterinaria(String nombreNegocio) {
         this(nombreNegocio, false);
@@ -19,6 +20,7 @@ public class Veterinaria {
         this.listaClientes = new ArrayList<>();
         this.listaTurnos = new ArrayList<>();
         this.catalogoMedicamentos = new ArrayList<>();
+        this.pacientesRegistrados = new ArrayList<>();
         if (autoSembrar) {
             cargarCatalogoDemo();
         }
@@ -41,6 +43,7 @@ public class Veterinaria {
     public ArrayList<Responsable> getListaClientes() { return listaClientes; }
     public ArrayList<Turno> getListaTurnos() { return listaTurnos; }
     public ArrayList<Medicamento> getCatalogoMedicamentos() { return catalogoMedicamentos; }
+    public ArrayList<Animal> getPacientesRegistrados() { return pacientesRegistrados; }
 
     public Veterinario buscarVeterinarioPorMatricula(String matricula) {
         if (matricula == null) return null;
@@ -64,6 +67,12 @@ public class Veterinaria {
             if (dni.equals(c.getDNI())) return c;
         }
         return null;
+    }
+
+    public void registrarPaciente(Animal a) {
+        if (a != null && !pacientesRegistrados.contains(a)) {
+            pacientesRegistrados.add(a);
+        }
     }
 
     public ArrayList<Animal> buscarMascotasPorNombre(String nombre) {
