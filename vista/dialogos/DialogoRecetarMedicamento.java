@@ -22,11 +22,25 @@ public class DialogoRecetarMedicamento extends JDialog {
     private JTextField campoFechaAplicacion;
     private JTextField campoFechaVencimiento;
     private JLabel lblError;
+    private final boolean modoVacunaExclusivo;
 
     public DialogoRecetarMedicamento(Frame owner, ControladorVeterinaria controlador, Animal animal) {
-        super(owner, "Recetar / Aplicar — " + animal.getNombre(), true);
+        this((Window) owner, controlador, animal, false);
+    }
+
+    public DialogoRecetarMedicamento(Frame owner, ControladorVeterinaria controlador, Animal animal, boolean modoVacunaExclusivo) {
+        this((Window) owner, controlador, animal, modoVacunaExclusivo);
+    }
+
+    public DialogoRecetarMedicamento(Dialog owner, ControladorVeterinaria controlador, Animal animal, boolean modoVacunaExclusivo) {
+        this((Window) owner, controlador, animal, modoVacunaExclusivo);
+    }
+
+    private DialogoRecetarMedicamento(Window owner, ControladorVeterinaria controlador, Animal animal, boolean modoVacunaExclusivo) {
+        super(owner, modoVacunaExclusivo ? "Aplicar vacuna — " + animal.getNombre() : "Recetar medicamento — " + animal.getNombre(), Dialog.ModalityType.APPLICATION_MODAL);
         this.controlador = controlador;
         this.animal = animal;
+        this.modoVacunaExclusivo = modoVacunaExclusivo;
         construir();
     }
 
@@ -36,6 +50,7 @@ public class DialogoRecetarMedicamento extends JDialog {
 
     private void construir() {
         setSize(520, 460);
+        setResizable(false);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
         getContentPane().setBackground(new Color(241, 245, 249));
@@ -45,7 +60,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         panelCentral.setBorder(new EmptyBorder(24, 32, 24, 32));
         panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
 
-        JLabel lblTitulo = new JLabel("Recetar medicamento / Aplicar vacuna");
+        JLabel lblTitulo = new JLabel(modoVacunaExclusivo ? "Aplicar vacuna" : "Recetar medicamento");
         lblTitulo.setFont(CargadorFuentes.cargar(16f));
         lblTitulo.setForeground(new Color(30, 41, 59));
         lblTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -65,8 +80,8 @@ public class DialogoRecetarMedicamento extends JDialog {
         panelRadios.setOpaque(false);
         panelRadios.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelRadios.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
-        radioMedicamento = new JRadioButton("Medicamento", true);
-        radioVacuna = new JRadioButton("Vacuna");
+        radioMedicamento = new JRadioButton("Medicamento", !modoVacunaExclusivo);
+        radioVacuna = new JRadioButton("Vacuna", modoVacunaExclusivo);
         ButtonGroup grupo = new ButtonGroup();
         grupo.add(radioMedicamento);
         grupo.add(radioVacuna);
@@ -79,6 +94,9 @@ public class DialogoRecetarMedicamento extends JDialog {
         panelRadios.add(radioMedicamento);
         panelRadios.add(radioVacuna);
         panelCentral.add(panelRadios);
+        // Modo exclusivo: ocultar la opción que no corresponde
+        radioMedicamento.setVisible(!modoVacunaExclusivo);
+        radioVacuna.setVisible(modoVacunaExclusivo);
 
         panelCentral.add(Box.createVerticalStrut(12));
 
@@ -97,11 +115,11 @@ public class DialogoRecetarMedicamento extends JDialog {
         });
         comboMedicamento.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         JLabel lblCombo = new JLabel("Producto del catálogo");
-        lblCombo.setFont(CargadorFuentes.cargar(11f));
-        lblCombo.setForeground(new Color(71, 85, 105));
+        lblCombo.setFont(CargadorFuentes.cargar(14f).deriveFont(Font.BOLD));
+        lblCombo.setForeground(new Color(30, 41, 59));
         lblCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(lblCombo);
-        panelCentral.add(Box.createVerticalStrut(4));
+        panelCentral.add(Box.createVerticalStrut(8));
         comboMedicamento.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(comboMedicamento);
 
@@ -110,31 +128,30 @@ public class DialogoRecetarMedicamento extends JDialog {
         campoFechaAplicacion = new JTextField(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         campoFechaAplicacion.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         JLabel lblAplic = new JLabel("Fecha de aplicación (dd/MM/yyyy)");
-        lblAplic.setFont(CargadorFuentes.cargar(11f));
-        lblAplic.setForeground(new Color(71, 85, 105));
+        lblAplic.setFont(CargadorFuentes.cargar(14f).deriveFont(Font.BOLD));
+        lblAplic.setForeground(new Color(30, 41, 59));
         lblAplic.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(lblAplic);
-        panelCentral.add(Box.createVerticalStrut(4));
+        panelCentral.add(Box.createVerticalStrut(8));
         campoFechaAplicacion.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(203, 213, 225), 1, true),
-            new EmptyBorder(6, 10, 6, 10)
+            new LineBorder(new Color(226, 232, 240), 1, true),
+            new EmptyBorder(10, 14, 10, 14)
         ));
         campoFechaAplicacion.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(campoFechaAplicacion);
-
         panelCentral.add(Box.createVerticalStrut(12));
 
         campoFechaVencimiento = new JTextField(LocalDate.now().plusYears(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         campoFechaVencimiento.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         JLabel lblVenc = new JLabel("Fecha de vencimiento (dd/MM/yyyy)");
-        lblVenc.setFont(CargadorFuentes.cargar(11f));
-        lblVenc.setForeground(new Color(71, 85, 105));
+        lblVenc.setFont(CargadorFuentes.cargar(14f).deriveFont(Font.BOLD));
+        lblVenc.setForeground(new Color(30, 41, 59));
         lblVenc.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(lblVenc);
-        panelCentral.add(Box.createVerticalStrut(4));
+        panelCentral.add(Box.createVerticalStrut(8));
         campoFechaVencimiento.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(203, 213, 225), 1, true),
-            new EmptyBorder(6, 10, 6, 10)
+            new LineBorder(new Color(226, 232, 240), 1, true),
+            new EmptyBorder(10, 14, 10, 14)
         ));
         campoFechaVencimiento.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(campoFechaVencimiento);
@@ -149,17 +166,31 @@ public class DialogoRecetarMedicamento extends JDialog {
 
         panelCentral.add(Box.createVerticalStrut(16));
 
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 0));
+        panelBotones.setOpaque(false);
+        panelBotones.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.PLAIN));
+        btnCancelar.setBackground(Color.WHITE);
+        btnCancelar.setForeground(new Color(30, 41, 59));
+        btnCancelar.setFocusPainted(false);
+        btnCancelar.setBorder(new LineBorder(new Color(226, 232, 240), 1, true));
+        btnCancelar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnCancelar.addActionListener(e -> dispose());
+        panelBotones.add(btnCancelar);
+
         JButton btnGuardar = new JButton("Confirmar");
-        btnGuardar.setFont(CargadorFuentes.cargar(13f));
+        btnGuardar.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
         btnGuardar.setBackground(new Color(13, 148, 136));
         btnGuardar.setForeground(Color.WHITE);
         btnGuardar.setFocusPainted(false);
         btnGuardar.setOpaque(true);
-        btnGuardar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
-        btnGuardar.setAlignmentX(Component.LEFT_ALIGNMENT);
         btnGuardar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnGuardar.addActionListener(e -> intentarGuardar());
-        panelCentral.add(btnGuardar);
+        panelBotones.add(btnGuardar);
+
+        panelCentral.add(panelBotones);
 
         add(panelCentral, BorderLayout.CENTER);
 

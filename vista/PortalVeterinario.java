@@ -734,19 +734,6 @@ public class PortalVeterinario extends JFrame {
         JPanel panelAcciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
         panelAcciones.setOpaque(false);
 
-        JButton btnComprobante = new JButton("📄 Comprobante");
-        btnComprobante.setFont(fuenteNormal);
-        btnComprobante.setBackground(Color.WHITE);
-        btnComprobante.setForeground(new Color(13, 148, 136));
-        btnComprobante.setFocusPainted(false);
-        btnComprobante.setBorder(new LineBorder(new Color(13, 148, 136), 1, true));
-        btnComprobante.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnComprobante.addActionListener(e -> {
-            modelo.ComprobanteTurno comp = new modelo.ComprobanteTurno(t, miVeterinaria.getNombreNegocio());
-            new vista.dialogos.DialogoComprobante(PortalVeterinario.this, comp).setVisible(true);
-        });
-        panelAcciones.add(btnComprobante);
-
         if (t.esPendiente()) {
             JButton btnCompletar = new JButton("✓ Completar");
             btnCompletar.setFont(fuenteNormal);
@@ -756,10 +743,23 @@ public class PortalVeterinario extends JFrame {
             btnCompletar.setOpaque(true);
             btnCompletar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             btnCompletar.addActionListener(e -> {
-                t.completarTurno();
+                new vista.dialogos.DialogoAtenderTurno(PortalVeterinario.this, controlador, t).setVisible(true);
                 actualizarListaCitasSeccion();
             });
             panelAcciones.add(btnCompletar);
+        } else {
+            JButton btnComprobante = new JButton("📄 Comprobante");
+            btnComprobante.setFont(fuenteNormal);
+            btnComprobante.setBackground(Color.WHITE);
+            btnComprobante.setForeground(new Color(13, 148, 136));
+            btnComprobante.setFocusPainted(false);
+            btnComprobante.setBorder(new LineBorder(new Color(13, 148, 136), 1, true));
+            btnComprobante.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            btnComprobante.addActionListener(e -> {
+                modelo.ComprobanteTurno comp = new modelo.ComprobanteTurno(t, miVeterinaria.getNombreNegocio());
+                new vista.dialogos.DialogoComprobante(PortalVeterinario.this, comp).setVisible(true);
+            });
+            panelAcciones.add(btnComprobante);
         }
 
         card.add(panelAcciones, BorderLayout.EAST);

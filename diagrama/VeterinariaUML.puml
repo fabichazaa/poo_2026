@@ -13,7 +13,7 @@ skinparam class {
 hide empty methods
 
 ' ============================================================
-'                          ENUMS
+'                         ENUMS
 ' ============================================================
 enum TipoTurno <<enum>> {
     CONSULTA_GENERAL
@@ -40,7 +40,7 @@ enum TipoAlimentacion <<enum>> {
 }
 
 ' ============================================================
-'                      CLASES DE SOPORTE
+'                     CLASES DE SOPORTE
 ' ============================================================
 class Direccion {
     - calle : String
@@ -54,7 +54,7 @@ class Direccion {
 }
 
 ' ============================================================
-'                   JERARQUÍA DE PERSONAS
+'                    JERARQUÍA DE PERSONAS
 ' ============================================================
 abstract class Persona <<abstract>> {
     - DNI : String {final}
@@ -104,7 +104,7 @@ class Responsable {
 }
 
 ' ============================================================
-'                   JERARQUÍA DE ANIMALES
+'                    JERARQUÍA DE ANIMALES
 ' ============================================================
 abstract class Animal <<abstract>> {
     - idAnimal : String {final}
@@ -166,38 +166,51 @@ class Gato {
 }
 
 ' ============================================================
-'                   HISTORIA CLÍNICA Y MEDICAMENTOS
+'                    HISTORIA CLÍNICA Y MEDICAMENTOS
 ' ============================================================
 class HistoriaClinica {
     - medicamentosRecetados : ArrayList<Medicamento>
+    - registroVacunas : ArrayList<RegistroVacunacion>
     --
     + HistoriaClinica()
     + recetarMedicamento(med: Medicamento) : void
     + getMedicamentosRecetados() : ArrayList<Medicamento>
+    + getRegistroVacunacion() : ArrayList<RegistroVacunacion>
 }
 
 class Medicamento {
     - codigoSenasa : String
-    - nombreMedicamento : String
+    - nombre : String
+    - laboratorio : String
+    - numero_lote : String
+    - fechaVencimiento : LocalDate
     --
     + Medicamento(codigoSenasa: String, nombreMedicamento: String)
     + getCodigoSenasa() : String
     + getNombreMedicamento() : String
+    + agregar_registro_vacuna(registro: RegistroVacunacion) : void
+    + obtener_vacunas_vencidas() : boolean
 }
 
 class Vacuna {
-    - fechaAplicacion : LocalDate
-    - fechaVencimiento : LocalDate
+    - vigencia : int
     --
-    + Vacuna(codigoSenasa: String, nombreMedicamento: String, fechaAplicacion: LocalDate, fechaVencimiento: LocalDate)
-    + getFechaAplicacion() : LocalDate
-    + getFechaVencimiento() : LocalDate
+    + Vacuna(codigoSenasa: String, nombreMedicamento: String, vigencia: LocalDate)
+    + getRegistroVacunacion() : LocalDate
     + estaVencida() : boolean
+}
+
+class RegistroVacunacion {
+    - fecha_aplicacion : LocalDate
+    - fecha_vencimiento : LocalDate
+    - vacuna_aplicada : Vacuna
+    --
+    + esta_vencida() : boolean 
 }
 
 ' ============================================================
 '                          TURNOS
-' ============================================================
+' ============================================================  
 class Turno {
     + {static} ESTADO_PENDIENTE : String = "Pendiente"
     + {static} ESTADO_COMPLETADO : String = "Completado"
@@ -217,7 +230,7 @@ class Turno {
     + cancelarTurno() : void
     + esPendiente() : boolean
     + estaCompletado() : boolean
-    + getters/setters
+    + getters/setters() : void
 }
 
 ' ============================================================
@@ -249,7 +262,7 @@ class Veterinaria {
     + obtenerTodosLosAnimales() : List<Animal>
     + obtenerAnimalesEnAdopcion() : ArrayList<Animal>
     + contarTurnosDelDia(fecha: String) : int
-    + getters
+    + getters() : void
 }
 
 ' ============================================================
@@ -273,7 +286,7 @@ class ComprobanteTurno {
 }
 
 ' ============================================================
-'                       HERENCIA
+'                        HERENCIA
 ' ============================================================
 Persona <|-- Responsable
 Persona <|-- Veterinario
@@ -285,43 +298,20 @@ Medicamento <|-- Vacuna
 '                  ASOCIACIONES Y CARDINALIDADES
 ' ============================================================
 
-' Persona tiene una Direccion (asociación, 1 a 0..1)
 Persona "1" --> "0..1" Direccion : reside en >
-
-' Composición: cada Animal posee exactamente una HistoriaClinica
 Animal "1" *-- "1" HistoriaClinica : tiene >
-
-' Agregación: Responsable puede tener muchos Animales
 Responsable "1" o-- "0..*" Animal : es dueño de >
-
-' Asociación: Turno atendido por un Veterinario
 Turno "0..*" --> "1" Veterinario : atendido por >
-
-' Asociación: Turno para un Animal
 Turno "0..*" --> "1" Animal : para >
-
-' Asociación: Turno de un TipoTurno
 Turno "0..*" --> "1" TipoTurno : de tipo >
-
-' Dependencia: Animal consulta TipoAlimentacion
 Animal ..> TipoAlimentacion : clasifica según >
-
-' Composición: Veterinaria contiene Veterinarios
 Veterinaria "1" *-- "0..*" Veterinario : emplea >
-
-' Composición: Veterinaria contiene Clientes
 Veterinaria "1" *-- "0..*" Responsable : registra >
-
-' Composición: Veterinaria contiene Turnos
 Veterinaria "1" *-- "0..*" Turno : agenda >
-
-' Agregación: Veterinaria cataloga Medicamentos
 Veterinaria "1" o-- "0..*" Medicamento : cataloga >
-
-' Agregación: HistoriaClinica receta Medicamentos
 HistoriaClinica "1" o-- "0..*" Medicamento : receta >
+HistoriaClinica "1" *-- "0..*" RegistroVacunacion : muestra >
 
-' Dependencia: ComprobanteTurno delega en Turno y objetos asociados
 ComprobanteTurno ..> Turno : presenta >
 ComprobanteTurno ..> Animal
 ComprobanteTurno ..> Veterinario

@@ -36,6 +36,7 @@ public class DialogoNuevoTurno extends JDialog {
 
     private void construir() {
         setSize(480, 460);
+        setResizable(false);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
         getContentPane().setBackground(new Color(241, 245, 249));
@@ -123,6 +124,20 @@ public class DialogoNuevoTurno extends JDialog {
         panelCentral.add(lblError);
 
         panelCentral.add(Box.createVerticalStrut(20));
+
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 0));
+        panelBotones.setOpaque(false);
+        panelBotones.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.PLAIN));
+        btnCancelar.setBackground(Color.WHITE);
+        btnCancelar.setForeground(new Color(30, 41, 59));
+        btnCancelar.setFocusPainted(false);
+        btnCancelar.setBorder(new LineBorder(new Color(226, 232, 240), 1, true));
+        btnCancelar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnCancelar.addActionListener(e -> dispose());
+        panelBotones.add(btnCancelar);
 
         JButton btnGuardar = new JButton("Registrar turno");
         btnGuardar.setFont(CargadorFuentes.cargar(13f));
