@@ -32,7 +32,7 @@ enum TipoTurno <<enum>> {
 enum TipoAlimentacion <<enum>> {
     OMNIVORO
     CARNIVORO_ESTRICTO
-    HERVIBORO
+    HERBIBORO
     --
     - descripcion : String
     --
@@ -174,38 +174,37 @@ class HistoriaClinica {
     --
     + HistoriaClinica()
     + recetarMedicamento(med: Medicamento) : void
+    + registrarVacuna(reg: RegistroVacunacion) : void
     + getMedicamentosRecetados() : ArrayList<Medicamento>
-    + getRegistroVacunacion() : ArrayList<RegistroVacunacion>
+    + getRegistroVacunas() : ArrayList<RegistroVacunacion>
 }
 
 class Medicamento {
     - codigoSenasa : String
-    - nombre : String
-    - laboratorio : String
-    - numero_lote : String
-    - fechaVencimiento : LocalDate
+    - nombreMedicamento : String
     --
     + Medicamento(codigoSenasa: String, nombreMedicamento: String)
     + getCodigoSenasa() : String
     + getNombreMedicamento() : String
-    + agregar_registro_vacuna(registro: RegistroVacunacion) : void
-    + obtener_vacunas_vencidas() : boolean
 }
 
 class Vacuna {
-    - vigencia : int
+    - vigenciaDias : int
     --
-    + Vacuna(codigoSenasa: String, nombreMedicamento: String, vigencia: LocalDate)
-    + getRegistroVacunacion() : LocalDate
-    + estaVencida() : boolean
+    + Vacuna(codigoSenasa: String, nombreMedicamento: String, vigenciaDias: int)
+    + getVigenciaDias() : int
 }
 
 class RegistroVacunacion {
-    - fecha_aplicacion : LocalDate
-    - fecha_vencimiento : LocalDate
-    - vacuna_aplicada : Vacuna
+    - vacunaAplicada : Vacuna
+    - fechaAplicacion : LocalDate
+    - fechaVencimiento : LocalDate
     --
-    + esta_vencida() : boolean 
+    + RegistroVacunacion(vacunaAplicada: Vacuna, fechaAplicacion: LocalDate)
+    + getVacunaAplicada() : Vacuna
+    + getFechaAplicacion() : LocalDate
+    + getFechaVencimiento() : LocalDate
+    + estaVencida() : boolean 
 }
 
 ' ============================================================
@@ -242,6 +241,7 @@ class Veterinaria {
     - listaClientes : ArrayList<Responsable>
     - listaTurnos : ArrayList<Turno>
     - catalogoMedicamentos : ArrayList<Medicamento>
+    - pacientesRegistrados : ArrayList<Animal>
     --
     + Veterinaria(nombreNegocio: String)
     + Veterinaria(nombreNegocio: String, autoSembrar: boolean)
@@ -250,6 +250,7 @@ class Veterinaria {
     + registrarVeterinario(v: Veterinario) : void
     + registrarCliente(d: Responsable) : void
     + registrarTurno(t: Turno) : void
+    + registrarPaciente(a: Animal) : void
     + agregarMedicamentoAlCatalogo(m: Medicamento) : void
     + buscarVeterinarioPorMatricula(matricula: String) : Veterinario
     + buscarVeterinarioPorDni(dni: String) : Veterinario
@@ -259,7 +260,7 @@ class Veterinaria {
     + obtenerTurnosDeVeterinario(v: Veterinario) : ArrayList<Turno>
     + obtenerTurnosPendientes() : ArrayList<Turno>
     + obtenerTurnosCompletados() : ArrayList<Turno>
-    + obtenerTodosLosAnimales() : List<Animal>
+    + obtenerTodosLosAnimales() : ArrayList<Animal>
     + obtenerAnimalesEnAdopcion() : ArrayList<Animal>
     + contarTurnosDelDia(fecha: String) : int
     + getters() : void
@@ -311,11 +312,13 @@ Veterinaria "1" *-- "0..*" Turno : agenda >
 Veterinaria "1" o-- "0..*" Medicamento : cataloga >
 HistoriaClinica "1" o-- "0..*" Medicamento : receta >
 HistoriaClinica "1" *-- "0..*" RegistroVacunacion : muestra >
+RegistroVacunacion "0..*" --> "1" Vacuna : contiene >
 
 ComprobanteTurno ..> Turno : presenta >
 ComprobanteTurno ..> Animal
 ComprobanteTurno ..> Veterinario
 ComprobanteTurno ..> Responsable
 ComprobanteTurno ..> HistoriaClinica
+ComprobanteTurno ..> RegistroVacunacion
 
 @enduml

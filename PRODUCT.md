@@ -5,7 +5,7 @@
 **Brand:** Happy Paws  
 **Desarrollado por:** Grupo POO 2026  
 **Profesional a cargo (dominio):** Veterinaria modelo del Área Metropolitana de Buenos Aires (tipología de clínica pequeña a mediana, 2-4 veterinarios, atención general y vacunación).  
-**Registro / Matrícula de referencia:** MP-9854, MP-1024, MP-2255, MP-3344 (veterinarios simulados para demostración del sistema).
+**Registro / Matrícula de referencia:** MP-9854, MP-1024, MP-2050, MP-3080 (veterinarios simulados para demostración del sistema).
 
 ---
 
