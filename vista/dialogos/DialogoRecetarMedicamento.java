@@ -20,7 +20,7 @@ public class DialogoRecetarMedicamento extends JDialog {
     private JRadioButton radioVacuna;
     private JComboBox<Medicamento> comboMedicamento;
     private JTextField campoFechaAplicacion;
-    private JTextField campoFechaVencimiento;
+    private JTextField campoVigenciaDias;
     private JLabel lblError;
     private final boolean modoVacunaExclusivo;
 
@@ -141,20 +141,20 @@ public class DialogoRecetarMedicamento extends JDialog {
         panelCentral.add(campoFechaAplicacion);
         panelCentral.add(Box.createVerticalStrut(12));
 
-        campoFechaVencimiento = new JTextField(LocalDate.now().plusYears(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        campoFechaVencimiento.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
-        JLabel lblVenc = new JLabel("Fecha de vencimiento (dd/MM/yyyy)");
+        campoVigenciaDias = new JTextField("365");
+        campoVigenciaDias.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
+        JLabel lblVenc = new JLabel("Vigencia (en días)");
         lblVenc.setFont(CargadorFuentes.cargar(14f).deriveFont(Font.BOLD));
         lblVenc.setForeground(new Color(30, 41, 59));
         lblVenc.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(lblVenc);
         panelCentral.add(Box.createVerticalStrut(8));
-        campoFechaVencimiento.setBorder(BorderFactory.createCompoundBorder(
+        campoVigenciaDias.setBorder(BorderFactory.createCompoundBorder(
             new LineBorder(new Color(226, 232, 240), 1, true),
             new EmptyBorder(10, 14, 10, 14)
         ));
-        campoFechaVencimiento.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelCentral.add(campoFechaVencimiento);
+        campoVigenciaDias.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelCentral.add(campoVigenciaDias);
 
         panelCentral.add(Box.createVerticalStrut(8));
 
@@ -200,7 +200,7 @@ public class DialogoRecetarMedicamento extends JDialog {
     private void actualizarVisibilidad() {
         boolean esVacuna = radioVacuna.isSelected();
         campoFechaAplicacion.setEnabled(esVacuna);
-        campoFechaVencimiento.setEnabled(esVacuna);
+        campoVigenciaDias.setEnabled(esVacuna);
     }
 
     private void intentarGuardar() {
@@ -213,17 +213,21 @@ public class DialogoRecetarMedicamento extends JDialog {
         if (radioMedicamento.isSelected()) {
             controlador.recetarMedicamento(animal, med);
         } else {
-            LocalDate aplic, venc;
+            LocalDate aplic;
+            int vigencia;
             try {
                 DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 aplic = LocalDate.parse(campoFechaAplicacion.getText().trim(), fmt);
-                venc = LocalDate.parse(campoFechaVencimiento.getText().trim(), fmt);
+                vigencia = Integer.parseInt(campoVigenciaDias.getText().trim());
             } catch (DateTimeParseException ex) {
-                lblError.setText("Fechas inválidas. Usá dd/MM/yyyy.");
+                lblError.setText("Fecha de aplicación inválida. Usá dd/MM/yyyy.");
+                return;
+            } catch (NumberFormatException ex) {
+                lblError.setText("Vigencia inválida. Ingrese un número entero.");
                 return;
             }
-            Vacuna v = new Vacuna(med.getCodigoSenasa(), med.getNombreMedicamento(), aplic, venc);
-            controlador.recetarMedicamento(animal, v);
+            Vacuna v = new Vacuna(med.getCodigoSenasa(), med.getNombreMedicamento(), vigencia);
+            controlador.registrarVacunacion(animal, v, aplic);
         }
 
         recetado = true;

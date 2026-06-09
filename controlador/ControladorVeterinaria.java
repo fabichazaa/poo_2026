@@ -74,6 +74,13 @@ public class ControladorVeterinaria {
         }
     }
 
+    public void registrarVacunacion(Animal animal, Vacuna vacuna, LocalDate fechaAplicacion) {
+        if (animal != null && vacuna != null && fechaAplicacion != null) {
+            RegistroVacunacion registro = new RegistroVacunacion(vacuna, fechaAplicacion);
+            animal.getHistorial().registrarVacuna(registro);
+        }
+    }
+
     public void marcarEnAdopcion(Animal animal, boolean enAdopcion) {
         if (animal != null) {
             animal.setEnAdopcion(enAdopcion);
@@ -198,20 +205,17 @@ public class ControladorVeterinaria {
 
         if (hulk != null) {
             hulk.getHistorial().recetarMedicamento(veterinaria.getCatalogoMedicamentos().get(0));
-            hulk.getHistorial().recetarMedicamento(
-                new Vacuna("SEN-VAC-001", "Antirrábica", LocalDate.of(2025, 6, 1), LocalDate.of(2026, 6, 1))
-            );
+            Vacuna v1 = new Vacuna("SEN-VAC-001", "Antirrábica", 365);
+            hulk.getHistorial().registrarVacuna(new RegistroVacunacion(v1, LocalDate.of(2025, 6, 1)));
             hulk.setEnAdopcion(false);
         }
         if (luna != null) {
-            luna.getHistorial().recetarMedicamento(
-                new Vacuna("SEN-VAC-002", "Triple Felina", LocalDate.of(2025, 2, 10), LocalDate.of(2026, 2, 10))
-            );
+            Vacuna v2 = new Vacuna("SEN-VAC-002", "Triple Felina", 365);
+            luna.getHistorial().registrarVacuna(new RegistroVacunacion(v2, LocalDate.of(2025, 2, 10)));
         }
         if (cheese != null) {
-            cheese.getHistorial().recetarMedicamento(
-                new Vacuna("SEN-VAC-003", "Parvovirus (vencida)", LocalDate.of(2023, 1, 15), LocalDate.of(2024, 1, 15))
-            );
+            Vacuna v3 = new Vacuna("SEN-VAC-003", "Parvovirus (vencida)", 365);
+            cheese.getHistorial().registrarVacuna(new RegistroVacunacion(v3, LocalDate.of(2023, 1, 15)));
         }
         if (mishi != null) {
             mishi.getHistorial().recetarMedicamento(veterinaria.getCatalogoMedicamentos().get(1));

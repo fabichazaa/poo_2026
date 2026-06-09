@@ -255,7 +255,8 @@ public class DialogoAtenderTurno extends JDialog {
     private void refrescarMedicamentos() {
         panelMedicamentos.removeAll();
         ArrayList<Medicamento> recetados = animal.getHistorial().getMedicamentosRecetados();
-        if (recetados.isEmpty()) {
+        ArrayList<RegistroVacunacion> vacunas = animal.getHistorial().getRegistroVacunas();
+        if (recetados.isEmpty() && vacunas.isEmpty()) {
             JLabel vacio = new JLabel("(Sin medicación registrada)");
             vacio.setFont(CargadorFuentes.cargar(11f));
             vacio.setForeground(new Color(148, 163, 184));
@@ -263,13 +264,19 @@ public class DialogoAtenderTurno extends JDialog {
             panelMedicamentos.add(vacio);
         } else {
             for (Medicamento m : recetados) {
-                String icono = (m instanceof Vacuna) ? "💉" : "💊";
+                String icono = "💊";
                 String detalle = m.getNombreMedicamento() + " (" + m.getCodigoSenasa() + ")";
-                if (m instanceof Vacuna) {
-                    Vacuna v = (Vacuna) m;
-                    detalle += " — Aplic: " + v.getFechaAplicacion().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                            + "  Vence: " + v.getFechaVencimiento().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                }
+                JLabel lbl = new JLabel(icono + " " + detalle);
+                lbl.setFont(CargadorFuentes.cargar(11f));
+                lbl.setForeground(new Color(22, 163, 74));
+                lbl.setBorder(new EmptyBorder(3, 28, 3, 0));
+                panelMedicamentos.add(lbl);
+            }
+            for (RegistroVacunacion rv : vacunas) {
+                String icono = "💉";
+                String detalle = rv.getVacunaAplicada().getNombreMedicamento() + " (" + rv.getVacunaAplicada().getCodigoSenasa() + ")"
+                        + " — Aplic: " + rv.getFechaAplicacion().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                        + "  Vence: " + rv.getFechaVencimiento().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                 JLabel lbl = new JLabel(icono + " " + detalle);
                 lbl.setFont(CargadorFuentes.cargar(11f));
                 lbl.setForeground(new Color(22, 163, 74));

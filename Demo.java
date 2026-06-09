@@ -89,23 +89,26 @@ public class Demo {
         verificar("Historia clínica += 1 medicamento",
             bobby.getHistorial().getMedicamentosRecetados().size() == medsAntes + 1);
 
-        Vacuna nuevaVac = new Vacuna("SEN-TEST-001", "Vacuna Test",
-            LocalDate.of(2026, 6, 1), LocalDate.of(2027, 6, 1));
-        c.recetarMedicamento(bobby, nuevaVac);
-        verificar("Vacuna fue agregada a la historia",
-            bobby.getHistorial().getMedicamentosRecetados().contains(nuevaVac));
-        verificar("Vacuna nueva NO está vencida", !nuevaVac.estaVencida());
+        Vacuna nuevaVac = new Vacuna("SEN-TEST-001", "Vacuna Test", 365);
+        c.registrarVacunacion(bobby, nuevaVac, LocalDate.of(2026, 6, 1));
+        boolean vacAgregada = bobby.getHistorial().getRegistroVacunas().stream()
+            .anyMatch(r -> r.getVacunaAplicada().getCodigoSenasa().equals("SEN-TEST-001"));
+        verificar("Vacuna fue agregada a la historia", vacAgregada);
 
-        Vacuna vencida = new Vacuna("SEN-VIEJA-001", "Vacuna Vieja",
-            LocalDate.of(2020, 1, 1), LocalDate.of(2021, 1, 1));
-        verificar("Vacuna vieja SÍ está vencida", vencida.estaVencida());
+        RegistroVacunacion regNueva = bobby.getHistorial().getRegistroVacunas().stream()
+            .filter(r -> r.getVacunaAplicada().getCodigoSenasa().equals("SEN-TEST-001"))
+            .findFirst().orElseThrow();
+        verificar("Vacuna nueva NO está vencida", !regNueva.estaVencida());
+
+        Vacuna vacunaVieja = new Vacuna("SEN-VIEJA-001", "Vacuna Vieja", 365);
+        RegistroVacunacion regVencida = new RegistroVacunacion(vacunaVieja, LocalDate.of(2020, 1, 1));
+        verificar("Vacuna vieja SÍ está vencida", regVencida.estaVencida());
 
         // Verificar que Cheese tiene una vacuna VENCIDA en su historial
         Animal cheese = v.obtenerTodosLosAnimales().stream()
             .filter(a -> a.getNombre().equals("Cheese")).findFirst().orElseThrow();
-        boolean cheeseTieneVencida = cheese.getHistorial().getMedicamentosRecetados().stream()
-            .filter(m -> m instanceof Vacuna)
-            .anyMatch(m -> ((Vacuna) m).estaVencida());
+        boolean cheeseTieneVencida = cheese.getHistorial().getRegistroVacunas().stream()
+            .anyMatch(rv -> rv.estaVencida());
         verificar("Cheese tiene al menos una vacuna vencida", cheeseTieneVencida);
 
         // ========================================================

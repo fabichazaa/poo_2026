@@ -90,21 +90,33 @@ public class ComprobanteTurno {
 
     public String generarDetalleTratamiento() {
         ArrayList<Medicamento> meds = turno.getAnimal().getHistorial().getMedicamentosRecetados();
+        ArrayList<RegistroVacunacion> vacs = turno.getAnimal().getHistorial().getRegistroVacunas();
         StringBuilder sb = new StringBuilder();
         sb.append("\nTRATAMIENTO\n");
-        if (meds == null || meds.isEmpty()) {
-            sb.append("  Sin medicamentos recetados.\n");
+
+        boolean tieneMeds = meds != null && !meds.isEmpty();
+        boolean tieneVacs = vacs != null && !vacs.isEmpty();
+
+        if (!tieneMeds && !tieneVacs) {
+            sb.append("  Sin medicamentos ni vacunas registradas.\n");
         } else {
             int i = 1;
-            for (Medicamento m : meds) {
-                sb.append("  ").append(i++).append(". ")
-                  .append(m.getNombreMedicamento())
-                  .append(" (SENASA: ").append(m.getCodigoSenasa()).append(")\n");
-                if (m instanceof Vacuna) {
-                    Vacuna vac = (Vacuna) m;
-                    sb.append("     Tipo: Vacuna | Aplicada: ").append(vac.getFechaAplicacion())
-                      .append(" | Vence: ").append(vac.getFechaVencimiento())
-                      .append(vac.estaVencida() ? " (VENCIDA)" : " (VIGENTE)")
+            if (tieneMeds) {
+                for (Medicamento m : meds) {
+                    sb.append("  ").append(i++).append(". ")
+                      .append(m.getNombreMedicamento())
+                      .append(" (SENASA: ").append(m.getCodigoSenasa()).append(")\n");
+                }
+            }
+            if (tieneVacs) {
+                for (RegistroVacunacion rv : vacs) {
+                    sb.append("  ").append(i++).append(". ")
+                      .append(rv.getVacunaAplicada().getNombreMedicamento())
+                      .append(" (SENASA: ").append(rv.getVacunaAplicada().getCodigoSenasa()).append(")\n");
+                    sb.append("     Tipo: Vacuna | Aplicada: ").append(rv.getFechaAplicacion())
+                      .append(" | Vence: ").append(rv.getFechaVencimiento())
+                      .append(" (Vigencia: ").append(rv.getVacunaAplicada().getVigenciaDias()).append(" días)")
+                      .append(rv.estaVencida() ? " (VENCIDA)" : " (VIGENTE)")
                       .append("\n");
                 }
             }
