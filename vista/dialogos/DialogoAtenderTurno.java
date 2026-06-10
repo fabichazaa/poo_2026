@@ -2,6 +2,7 @@ package vista.dialogos;
 
 import controlador.ControladorVeterinaria;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -14,7 +15,6 @@ public class DialogoAtenderTurno extends JDialog {
     private final Turno turno;
     private final Animal animal;
     private JPanel panelMedicamentos;
-    private JLabel lblPaso;
 
     public DialogoAtenderTurno(Frame owner, ControladorVeterinaria controlador, Turno turno) {
         super(owner, "Atender turno — " + turno.getAnimal().getNombre(), true);
@@ -46,7 +46,7 @@ public class DialogoAtenderTurno extends JDialog {
             g2.drawImage(img, 0, 0, 48, 48, null);
             g2.dispose();
             lblIcono.setIcon(new ImageIcon(mini));
-        } catch (Exception e) {
+        } catch (IOException e) {
             lblIcono.setText(animal instanceof Perro ? "🐕" : "🐈");
             lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
         }
@@ -83,7 +83,6 @@ public class DialogoAtenderTurno extends JDialog {
         pasos.setBorder(new EmptyBorder(16, 0, 0, 0));
 
         // PASO 1: Datos del turno + diagnóstico
-        lblPaso = new JLabel();
         pasos.add(crearPaso(1, "Revisar paciente", turno.getAnimal().getNombre() + " (" + turno.getAnimal().getEspecie() + ") — " + turno.getTipo().getDescripcion(), false));
 
         // PASO 2: Recetar medicamento
@@ -234,7 +233,6 @@ public class DialogoAtenderTurno extends JDialog {
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al abrir recetar: " + ex.getMessage());
-            ex.printStackTrace();
         }
     }
 
@@ -248,7 +246,6 @@ public class DialogoAtenderTurno extends JDialog {
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al abrir vacuna: " + ex.getMessage());
-            ex.printStackTrace();
         }
     }
 

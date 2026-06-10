@@ -20,8 +20,7 @@ public class PortalVeterinario extends JFrame {
     private CardLayout navegadorCapas;
 
     // Componentes de la sección Citas
-    private JPanel panelListaCitasDinamica;
-    private JComboBox<String> comboFiltroAgenda;
+    private vista.paneles.PanelCitas panelCitas;
 
     // Variables globales de fuentes
     private Font fuenteTitulo;
@@ -80,7 +79,8 @@ public class PortalVeterinario extends JFrame {
         panelContenedorSecciones.setOpaque(false);
 
         panelContenedorSecciones.add(crearVistaInicio(), "PANTALLA_INICIO");
-        panelContenedorSecciones.add(crearVistaCitas(), "PANTALLA_CITAS");
+        panelCitas = new vista.paneles.PanelCitas(controlador);
+        panelContenedorSecciones.add(panelCitas, "PANTALLA_CITAS");
 
         panelContenedorSecciones.add(new vista.paneles.PanelRegistros(controlador), "PANTALLA_REGISTROS");
         panelContenedorSecciones.add(new vista.paneles.PanelAdopcion(controlador), "PANTALLA_ADOPCION");
@@ -90,7 +90,7 @@ public class PortalVeterinario extends JFrame {
         add(panelContenedorSecciones, BorderLayout.CENTER);
 
         // --- BARRA DE NAVEGACIÓN INFERIOR BLANCA Y ESTILIZADA ---
-       // --- BARRA DE NAVEGACIÓN INFERIOR BLANCA Y ESTILIZADA ---
+        // --- BARRA DE NAVEGACIÓN INFERIOR BLANCA Y ESTILIZADA ---
         JPanel panelMenuInferior = new JPanel(new GridLayout(1, 6, 5, 0));
         panelMenuInferior.setBackground(Color.WHITE);
         panelMenuInferior.setBorder(BorderFactory.createCompoundBorder(
@@ -146,11 +146,11 @@ public class PortalVeterinario extends JFrame {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                
+
                 // Degradado Turquesa claro a Esmeralda oscuro
                 GradientPaint degradado = new GradientPaint(0, 0, new Color(45, 212, 191), getWidth(), 0, new Color(13, 148, 136));
                 g2.setPaint(degradado);
-                
+
                 // Recorte redondeado para que calce con las esquinas del borde de la card
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radioEsquina, radioEsquina));
                 g2.fillRect(0, 0, getWidth(), altoBarra);
@@ -172,17 +172,17 @@ public class PortalVeterinario extends JFrame {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
-                
+
                 // ACTIVAR SUAVIZADO: Esencial para evitar pixeles duros en los bordes curvos
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                
+
                 // CONFIGURAR DEGRADADO: Desde un turquesa brillante (arriba izq) a un esmeralda (abajo der)
                 Color colorInicio = new Color(45, 212, 191); // Teal brillante #2DD4BF
                 Color colorFin = new Color(13, 148, 136);    // Esmeralda #0D9488
                 GradientPaint degradadoDiagonal = new GradientPaint(0, 0, colorInicio, getWidth(), getHeight(), colorFin);
                 g2.setPaint(degradadoDiagonal);
-                
+
                 // Dibujar el fondo redondeado contenedor
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
                 g2.dispose();
@@ -197,13 +197,13 @@ public class PortalVeterinario extends JFrame {
             // Leemos el archivo directo a un java.io.File para evitar compresión nativa corrupta de ImageIcon
             java.io.File archivoImagen = new java.io.File(rutaImagen);
             java.awt.image.BufferedImage imgBuffer = javax.imageio.ImageIO.read(archivoImagen);
-            
+
             int targetWidth = 95;  // Un toque de aire para que no toque los bordes del contenedor
             int targetHeight = 95;
-            
+
             // Forzamos el remuestreo bilinear premium desde la matriz de bytes pura
             ImageIcon iconoEscalado = escalarImagenAltaCalidad(imgBuffer, targetWidth, targetHeight);
-            
+
             JLabel lblIconoUser = new JLabel(iconoEscalado);
             panelFotoPerfil.add(lblIconoUser);
         } catch (Exception e) {
@@ -290,10 +290,10 @@ public class PortalVeterinario extends JFrame {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                
+
                 GradientPaint degradado = new GradientPaint(0, 0, new Color(168, 85, 247), getWidth(), 0, new Color(109, 40, 217));
                 g2.setPaint(degradado);
-                
+
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radioEsquina, radioEsquina));
                 g2.fillRect(0, 0, getWidth(), altoBarra);
                 g2.dispose();
@@ -358,12 +358,12 @@ public class PortalVeterinario extends JFrame {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                
+
                 GradientPaint degradadoHorizontal = new GradientPaint(0, 0, new Color(249, 115, 22), getWidth(), 0, new Color(236, 72, 153));
                 g2.setPaint(degradadoHorizontal);
-                
+
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radioEsquina, radioEsquina));
-                g2.fillRect(0, 0, getWidth(), altoBarra); 
+                g2.fillRect(0, 0, getWidth(), altoBarra);
                 g2.dispose();
             }
         };
@@ -388,27 +388,27 @@ public class PortalVeterinario extends JFrame {
 
         cardAcciones.add(panelBotonesAccion, BorderLayout.CENTER);
 
-       // --- CONTADORES INFERIORES EN ACCIONES RÁPIDAS ---
+        // --- CONTADORES INFERIORES EN ACCIONES RÁPIDAS ---
         JPanel panelStatusDia = new JPanel(new GridLayout(1, 2, 10, 0));
         panelStatusDia.setOpaque(false);
 
-        int totalAtendidos  = controlador.contarTurnosDelVeterinario(veterinarioLogueado, Turno.ESTADO_COMPLETADO);
+        int totalAtendidos = controlador.contarTurnosDelVeterinario(veterinarioLogueado, Turno.ESTADO_COMPLETADO);
         int totalPendientes = controlador.contarTurnosDelVeterinario(veterinarioLogueado, Turno.ESTADO_PENDIENTE);
 
         // 1. Atendidos con su símbolo de éxito
         panelStatusDia.add(crearMiniContadorInferior(
-                String.valueOf(totalAtendidos), 
-                "Atendidos", 
-                new Color(240, 253, 250), 
+                String.valueOf(totalAtendidos),
+                "Atendidos",
+                new Color(240, 253, 250),
                 new Color(13, 148, 136),
                 "imagenes/emojis/exito.png" // <-- Ruta del ícono de éxito
         ));
 
         // 2. Pendientes con su reloj de arena
         panelStatusDia.add(crearMiniContadorInferior(
-                String.valueOf(totalPendientes), 
-                "Pendientes", 
-                new Color(254, 243, 199), 
+                String.valueOf(totalPendientes),
+                "Pendientes",
+                new Color(254, 243, 199),
                 new Color(217, 119, 6),
                 "imagenes/emojis/reloj_arena.png" // <-- Ruta del reloj de arena
         ));
@@ -422,96 +422,12 @@ public class PortalVeterinario extends JFrame {
         return panelDashboard;
     }
 
-    // ---------------------------------------------------------------------
-    // VISTA 2: SECCIÓN SELECCIONABLE DE CITAS
-    // ---------------------------------------------------------------------
-    private JPanel crearVistaCitas() {
-        JPanel panelCitasPrincipal = new JPanel(new BorderLayout(0, 15));
-        panelCitasPrincipal.setOpaque(false);
-        panelCitasPrincipal.setBorder(new EmptyBorder(10, 25, 15, 25));
 
-        JPanel panelFiltrosCita = new JPanel(new BorderLayout());
-        panelFiltrosCita.setBackground(Color.WHITE);
-        panelFiltrosCita.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true), new EmptyBorder(10, 15, 10, 15)
-        ));
-
-        JLabel lblSeleccion = new JLabel("Visualización de la Agenda: ");
-        lblSeleccion.setFont(fuenteSubtitulos);
-
-        comboFiltroAgenda = new JComboBox<>(new String[]{"Mis Turnos Asignados 👤", "Agenda General de la Veterinaria 🏢"});
-        comboFiltroAgenda.setFont(fuenteNormal);
-        comboFiltroAgenda.addActionListener(e -> actualizarListaCitasSeccion());
-
-        JButton btnNuevoTurno = new JButton("+ Nuevo turno");
-        btnNuevoTurno.setFont(fuenteNormal);
-        btnNuevoTurno.setBackground(new Color(13, 148, 136));
-        btnNuevoTurno.setForeground(Color.WHITE);
-        btnNuevoTurno.setFocusPainted(false);
-        btnNuevoTurno.setOpaque(true);
-        btnNuevoTurno.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnNuevoTurno.addActionListener(e -> {
-            vista.dialogos.DialogoNuevoTurno d = new vista.dialogos.DialogoNuevoTurno(
-                PortalVeterinario.this, controlador);
-            d.setVisible(true);
-            actualizarListaCitasSeccion();
-        });
-
-        JPanel panelIzqFiltro = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        panelIzqFiltro.setOpaque(false);
-        panelIzqFiltro.add(lblSeleccion);
-        panelIzqFiltro.add(comboFiltroAgenda);
-
-        JPanel panelDerFiltro = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        panelDerFiltro.setOpaque(false);
-        panelDerFiltro.add(btnNuevoTurno);
-
-        JPanel panelCentroFiltro = new JPanel(new BorderLayout());
-        panelCentroFiltro.setOpaque(false);
-        panelCentroFiltro.add(panelIzqFiltro, BorderLayout.WEST);
-        panelCentroFiltro.add(panelDerFiltro, BorderLayout.EAST);
-
-        panelFiltrosCita.add(panelCentroFiltro, BorderLayout.CENTER);
-        panelCitasPrincipal.add(panelFiltrosCita, BorderLayout.NORTH);
-
-        panelListaCitasDinamica = new JPanel();
-        panelListaCitasDinamica.setLayout(new BoxLayout(panelListaCitasDinamica, BoxLayout.Y_AXIS));
-        panelListaCitasDinamica.setBackground(Color.WHITE);
-
-        JScrollPane scrollCitas = new JScrollPane(panelListaCitasDinamica);
-        scrollCitas.setBorder(new LineBorder(Color.WHITE, 1, true));
-        panelCitasPrincipal.add(scrollCitas, BorderLayout.CENTER);
-
-        return panelCitasPrincipal;
-    }
-
-    private void actualizarListaCitasSeccion() {
-        panelListaCitasDinamica.removeAll();
-        panelListaCitasDinamica.add(Box.createVerticalStrut(10));
-
-        ArrayList<Turno> todosLosTurnos = miVeterinaria.getListaTurnos();
-        int seleccion = comboFiltroAgenda.getSelectedIndex();
-
-        for (Turno t : todosLosTurnos) {
-            if (seleccion == 0) {
-                if (t.getVeterinario().equals(veterinarioLogueado)) {
-                    panelListaCitasDinamica.add(crearTarjetaTurnoCompleta(t, false));
-                    panelListaCitasDinamica.add(Box.createVerticalStrut(10));
-                }
-            } else {
-                panelListaCitasDinamica.add(crearTarjetaTurnoCompleta(t, true));
-                panelListaCitasDinamica.add(Box.createVerticalStrut(10));
-            }
-        }
-
-        panelListaCitasDinamica.revalidate();
-        panelListaCitasDinamica.repaint();
-    }
 
     private JPanel crearTarjetaTurnoVisual(Turno t) {
         JPanel itemTurno = new JPanel(new BorderLayout(15, 0));
         itemTurno.setBackground(new Color(248, 250, 252));
-        itemTurno.setMaximumSize(new Dimension(385, 62)); 
+        itemTurno.setMaximumSize(new Dimension(385, 62));
         itemTurno.setPreferredSize(new Dimension(385, 62));
         itemTurno.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(241, 245, 249), 1, true), new EmptyBorder(6, 12, 6, 12)
@@ -541,10 +457,10 @@ public class PortalVeterinario extends JFrame {
                 super.paintComponent(g);
             }
         };
-        lblHora.setFont(fuenteNormal); 
+        lblHora.setFont(fuenteNormal);
         lblHora.setForeground(new Color(30, 41, 59));
-        lblHora.setPreferredSize(new Dimension(65, 28)); 
-        
+        lblHora.setPreferredSize(new Dimension(65, 28));
+
         // Contenedor para centrar la tarjeta de la hora verticalmente
         JPanel panelHoraWrapper = new JPanel(new GridBagLayout());
         panelHoraWrapper.setOpaque(false);
@@ -568,7 +484,7 @@ public class PortalVeterinario extends JFrame {
             lblEmoji.setText(emojiMascota);
             lblEmoji.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
         }
-        panelContenidoCentral.add(lblEmoji); 
+        panelContenidoCentral.add(lblEmoji);
 
         // Panel para los textos (Nombre arriba, tipo de turno abajo)
         JPanel panelLabelsInternos = new JPanel(new GridLayout(2, 1, 0, 0));
@@ -584,7 +500,7 @@ public class PortalVeterinario extends JFrame {
 
         panelLabelsInternos.add(lblPaciente);
         panelLabelsInternos.add(lblSubDescripcion);
-        panelContenidoCentral.add(panelLabelsInternos); 
+        panelContenidoCentral.add(panelLabelsInternos);
 
         // Envolvemos en un GridBagLayout externo únicamente para que el bloque mantenga el centrado vertical con respecto a la tarjeta,
         // pero obligando a que su contenido interno se empuje hacia el extremo izquierdo (WEST)
@@ -594,7 +510,7 @@ public class PortalVeterinario extends JFrame {
         gbcCentro.anchor = GridBagConstraints.WEST; // <-- Fuerza la alineación hacia la izquierda
         gbcCentro.weightx = 1.0;                    // <-- Toma el espacio restante para empujar el badge a la derecha
         panelAlineacionWrapper.add(panelContenidoCentral, gbcCentro);
-        
+
         itemTurno.add(panelAlineacionWrapper, BorderLayout.CENTER);
 
         // --- TAG DINÁMICO A LA DERECHA (PÍLDORA) ---
@@ -631,141 +547,71 @@ public class PortalVeterinario extends JFrame {
     }
 
     private JPanel crearFilaAccionEstilizada(String titulo, Color colorFondoIcono, String emojiIcono) {
-    // Reducimos la altura a 52 para que se adapte de forma estilizada a una sola línea
-    JPanel panelFila = new JPanel(new BorderLayout(15, 0));
-    panelFila.setBackground(new Color(248, 250, 252));
-    panelFila.setMaximumSize(new Dimension(320, 52));
-    panelFila.setPreferredSize(new Dimension(320, 52));
-    panelFila.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(241, 245, 249), 1, true), new EmptyBorder(6, 12, 6, 12)
-    ));
-
-    // --- ICONO DE LA ACCIÓN ---
-    JPanel panelCuadroIcono = new JPanel() {
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g;
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(colorFondoIcono);
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
-        }
-    };
-    panelCuadroIcono.setPreferredSize(new Dimension(40, 40));
-    panelCuadroIcono.setLayout(new GridBagLayout());
-
-    JLabel lblEmoji = new JLabel();
-    if (emojiIcono.endsWith(".png")) {
-        try {
-            ImageIcon icono = new ImageIcon(emojiIcono);
-            // Usando tu método de alta calidad o el escalado clásico suave
-            Image imagenEscalada = icono.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
-            lblEmoji.setIcon(new ImageIcon(imagenEscalada));
-        } catch (Exception e) {
-            lblEmoji.setText("?");
-            lblEmoji.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-        }
-    } else {
-        lblEmoji.setText(emojiIcono);
-        lblEmoji.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 18));
-    }
-    panelCuadroIcono.add(lblEmoji);
-    panelFila.add(panelCuadroIcono, BorderLayout.WEST);
-
-    // --- TEXTO DE LA ACCIÓN (SÓLO TÍTULO Y CENTRADO VERTICAL) ---
-    // Usamos GridBagLayout en el contenedor del texto para lograr un centrado vertical absoluto y limpio
-    JPanel panelContenedorTexto = new JPanel(new GridBagLayout());
-    panelContenedorTexto.setOpaque(false);
-    
-    JLabel lblT = new JLabel(titulo);
-    lblT.setFont(new Font("Segoe UI", Font.PLAIN, 12)); // Subido a 14 un toque para destacar más al estar solo
-    lblT.setForeground(new Color(15, 23, 42));
-    
-    GridBagConstraints gbcTexto = new GridBagConstraints();
-    gbcTexto.anchor = GridBagConstraints.WEST; // Alineado firmemente a la izquierda (pegado al ícono)
-    gbcTexto.weightx = 1.0;                    // Empuja lo que esté a la derecha
-    panelContenedorTexto.add(lblT, gbcTexto);
-    
-    panelFila.add(panelContenedorTexto, BorderLayout.CENTER);
-
-    
-    // La envolvemos en un GridBagLayout para que también mantenga el centro vertical perfecto
-    JPanel panelFlechaWrapper = new JPanel(new GridBagLayout());
-    panelFlechaWrapper.setOpaque(false);
-    panelFila.add(panelFlechaWrapper, BorderLayout.EAST);
-
-    return panelFila;
-}
-    private JPanel crearTarjetaTurnoCompleta(Turno t, boolean mostrarVeterinario) {
-        JPanel card = new JPanel(new BorderLayout(15, 0));
-        card.setBackground(new Color(245, 249, 252));
-        card.setMaximumSize(new Dimension(900, 75));
-        card.setPreferredSize(new Dimension(900, 75));
-        card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 230, 240), 1, true), new EmptyBorder(8, 15, 8, 15)
+        // Reducimos la altura a 52 para que se adapte de forma estilizada a una sola línea
+        JPanel panelFila = new JPanel(new BorderLayout(15, 0));
+        panelFila.setBackground(new Color(248, 250, 252));
+        panelFila.setMaximumSize(new Dimension(320, 52));
+        panelFila.setPreferredSize(new Dimension(320, 52));
+        panelFila.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(241, 245, 249), 1, true), new EmptyBorder(6, 12, 6, 12)
         ));
 
-        JLabel lblHora = new JLabel(t.getHora(), SwingConstants.CENTER);
-        lblHora.setFont(fuenteSubtitulos);
-        lblHora.setForeground(Color.WHITE);
-        lblHora.setBackground(new Color(13, 148, 136));
-        lblHora.setOpaque(true);
-        lblHora.setPreferredSize(new Dimension(75, 35));
-        card.add(lblHora, BorderLayout.WEST);
+        // --- ICONO DE LA ACCIÓN ---
+        JPanel panelCuadroIcono = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(colorFondoIcono);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
+            }
+        };
+        panelCuadroIcono.setPreferredSize(new Dimension(40, 40));
+        panelCuadroIcono.setLayout(new GridBagLayout());
 
-        JPanel panelTextos = new JPanel(new GridLayout(2, 1, 0, 2));
-        panelTextos.setOpaque(false);
-
-        String infoPrincipal = "Paciente: " + t.getAnimal().getNombre() + " (" + t.getTipo().getDescripcion() + ") - Duración: " + t.getTipo().getDuracionMinutos() + " min.";
-        JLabel lblInfo = new JLabel(infoPrincipal);
-        lblInfo.setFont(fuenteSubtitulos);
-
-        String infoSecundaria = "Fecha: " + t.getFecha() + " | Estado: " + t.getEstado() + " | Responsable: " + t.getAnimal().getResponsable().getNombre() + " " + t.getAnimal().getResponsable().getApellido();
-        if (mostrarVeterinario) {
-            infoSecundaria += " | Atendido por: Dr. " + t.getVeterinario().getApellido();
-        }
-        JLabel lblDetalle = new JLabel(infoSecundaria);
-        lblDetalle.setFont(fuenteNormal);
-        lblDetalle.setForeground(Color.GRAY);
-
-        panelTextos.add(lblInfo);
-        panelTextos.add(lblDetalle);
-        card.add(panelTextos, BorderLayout.CENTER);
-
-        JPanel panelAcciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
-        panelAcciones.setOpaque(false);
-
-        if (t.esPendiente()) {
-            JButton btnCompletar = new JButton("✓ Completar");
-            btnCompletar.setFont(fuenteNormal);
-            btnCompletar.setBackground(new Color(22, 163, 74));
-            btnCompletar.setForeground(Color.WHITE);
-            btnCompletar.setFocusPainted(false);
-            btnCompletar.setOpaque(true);
-            btnCompletar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            btnCompletar.addActionListener(e -> {
-                new vista.dialogos.DialogoAtenderTurno(PortalVeterinario.this, controlador, t).setVisible(true);
-                actualizarListaCitasSeccion();
-            });
-            panelAcciones.add(btnCompletar);
+        JLabel lblEmoji = new JLabel();
+        if (emojiIcono.endsWith(".png")) {
+            try {
+                ImageIcon icono = new ImageIcon(emojiIcono);
+                // Usando tu método de alta calidad o el escalado clásico suave
+                Image imagenEscalada = icono.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+                lblEmoji.setIcon(new ImageIcon(imagenEscalada));
+            } catch (Exception e) {
+                lblEmoji.setText("?");
+                lblEmoji.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+            }
         } else {
-            JButton btnComprobante = new JButton("📄 Comprobante");
-            btnComprobante.setFont(fuenteNormal);
-            btnComprobante.setBackground(Color.WHITE);
-            btnComprobante.setForeground(new Color(13, 148, 136));
-            btnComprobante.setFocusPainted(false);
-            btnComprobante.setBorder(new LineBorder(new Color(13, 148, 136), 1, true));
-            btnComprobante.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            btnComprobante.addActionListener(e -> {
-                modelo.ComprobanteTurno comp = new modelo.ComprobanteTurno(t, miVeterinaria.getNombreNegocio());
-                new vista.dialogos.DialogoComprobante(PortalVeterinario.this, comp).setVisible(true);
-            });
-            panelAcciones.add(btnComprobante);
+            lblEmoji.setText(emojiIcono);
+            lblEmoji.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 18));
         }
+        panelCuadroIcono.add(lblEmoji);
+        panelFila.add(panelCuadroIcono, BorderLayout.WEST);
 
-        card.add(panelAcciones, BorderLayout.EAST);
+        // --- TEXTO DE LA ACCIÓN (SÓLO TÍTULO Y CENTRADO VERTICAL) ---
+        // Usamos GridBagLayout en el contenedor del texto para lograr un centrado vertical absoluto y limpio
+        JPanel panelContenedorTexto = new JPanel(new GridBagLayout());
+        panelContenedorTexto.setOpaque(false);
 
-        return card;
+        JLabel lblT = new JLabel(titulo);
+        lblT.setFont(new Font("Segoe UI", Font.PLAIN, 12)); // Subido a 14 un toque para destacar más al estar solo
+        lblT.setForeground(new Color(15, 23, 42));
+
+        GridBagConstraints gbcTexto = new GridBagConstraints();
+        gbcTexto.anchor = GridBagConstraints.WEST; // Alineado firmemente a la izquierda (pegado al ícono)
+        gbcTexto.weightx = 1.0;                    // Empuja lo que esté a la derecha
+        panelContenedorTexto.add(lblT, gbcTexto);
+
+        panelFila.add(panelContenedorTexto, BorderLayout.CENTER);
+
+        // La envolvemos en un GridBagLayout para que también mantenga el centro vertical perfecto
+        JPanel panelFlechaWrapper = new JPanel(new GridBagLayout());
+        panelFlechaWrapper.setOpaque(false);
+        panelFila.add(panelFlechaWrapper, BorderLayout.EAST);
+
+        return panelFila;
     }
+
+
 
     private JPanel crearCardEstadisticaSuperior(String valor, String etiqueta, Color fondo, Color colorTexto, String iconStr) {
         JPanel card = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 1)) {
@@ -839,7 +685,7 @@ public class PortalVeterinario extends JFrame {
         return panel;
     }
 
-   private JPanel crearMiniContadorInferior(String valor, String etiqueta, Color fondo, Color colorTexto, String rutaIcono) {
+    private JPanel crearMiniContadorInferior(String valor, String etiqueta, Color fondo, Color colorTexto, String rutaIcono) {
         // Modificamos el dibujo para remover por completo las esquinas redondeadas
         JPanel panel = new JPanel(new BorderLayout(12, 0)) {
             @Override
@@ -847,11 +693,11 @@ public class PortalVeterinario extends JFrame {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                
+
                 // 1. Fondo completamente recto (sin border-radius)
                 g2.setColor(fondo);
                 g2.fillRect(0, 0, getWidth(), getHeight());
-                
+
                 // 2. Contorno sutil y fino de 1px recto estilo "Especialidad"
                 Color colorBordeSuave = new Color(
                         Math.max(0, fondo.getRed() - 25),
@@ -859,17 +705,17 @@ public class PortalVeterinario extends JFrame {
                         Math.max(0, fondo.getBlue() - 15)
                 );
                 g2.setColor(colorBordeSuave);
-                g2.setStroke(new BasicStroke(1.0f)); 
+                g2.setStroke(new BasicStroke(1.0f));
                 g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
-                
+
                 g2.dispose();
             }
         };
         panel.setOpaque(false);
-        
+
         // Mantenemos el padding interno y las dimensiones de 56px de alto para que no se achate
         panel.setBorder(new EmptyBorder(8, 14, 8, 14));
-        panel.setPreferredSize(new Dimension(135, 56)); 
+        panel.setPreferredSize(new Dimension(135, 56));
 
         // --- ÍCONO EN ALTA RESOLUCIÓN ---
         JLabel lblIcono = new JLabel();
@@ -883,7 +729,7 @@ public class PortalVeterinario extends JFrame {
             lblIcono.setFont(new Font("Segoe UI", Font.BOLD, 14));
             lblIcono.setForeground(colorTexto);
         }
-        
+
         JPanel panelIconoWrapper = new JPanel(new GridBagLayout());
         panelIconoWrapper.setOpaque(false);
         panelIconoWrapper.add(lblIcono);
@@ -896,21 +742,22 @@ public class PortalVeterinario extends JFrame {
         JLabel lblVal = new JLabel(valor);
         lblVal.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblVal.setForeground(colorTexto);
-        
+
         JLabel lblE = new JLabel(etiqueta);
         lblE.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         lblE.setForeground(new Color(100, 116, 139));
 
         panelTxt.add(lblVal);
         panelTxt.add(lblE);
-        
+
         panel.add(panelTxt, BorderLayout.CENTER);
 
         return panel;
     }
+
     private JButton crearBotonMenuNav(String titulo, String icono, String claveCapa) {
         BotonMenuNav btn = new BotonMenuNav(titulo, icono, claveCapa);
-        
+
         // Vinculamos la acción de cambiar de sección
         btn.addActionListener(e -> {
             // 1. Cambiamos la sección en el CardLayout
@@ -923,7 +770,7 @@ public class PortalVeterinario extends JFrame {
             } else if (claveCapa.equals("PANTALLA_MAS")) {
                 ((vista.paneles.PanelMas) panelContenedorSecciones.getComponent(5)).actualizar();
             } else if (claveCapa.equals("PANTALLA_CITAS")) {
-                actualizarListaCitasSeccion();
+                panelCitas.actualizar();
             }
             navegadorCapas.show(panelContenedorSecciones, claveCapa);
 
@@ -938,11 +785,12 @@ public class PortalVeterinario extends JFrame {
                 }
             }
         });
-        
+
         return btn;
     }
 
     private static class BadgeRedondeado extends JLabel {
+
         private Color bgColor;
         private Color borderColor;
 
@@ -973,6 +821,7 @@ public class PortalVeterinario extends JFrame {
     }
 
     private static class PildoraBadge extends JLabel {
+
         private Color bgColor = Color.WHITE;
 
         public PildoraBadge(String text) {
@@ -1044,7 +893,7 @@ public class PortalVeterinario extends JFrame {
     // CLASE INTERNA: Modificada con soporte para efecto Hover (Rollover)
     // =========================================================================
     private static class ModernScrollBarUI extends javax.swing.plaf.basic.BasicScrollBarUI {
-        
+
         // Diseña el "track" (el fondo por donde se desliza la barra)
         @Override
         protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
@@ -1059,10 +908,10 @@ public class PortalVeterinario extends JFrame {
             }
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            
+
             // --- LÓGICA DE HOVER / DRAG DINÁMICO ---
             Color colorFinal;
-            
+
             if (isDragging) {
                 // Si el usuario la está arrastrando: Gris Slate Oscuro (#64748B)
                 colorFinal = new Color(100, 116, 139);
@@ -1073,13 +922,13 @@ public class PortalVeterinario extends JFrame {
                 // Estado base pasivo: Tu gris suave original (#CBD5E1)
                 colorFinal = new Color(203, 213, 225);
             }
-            
+
             g2.setColor(colorFinal);
             // ----------------------------------------
-            
+
             // Dibujamos la barra con un margen de 2px a los costados y esquinas redondeadas
-            g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2, 
-                             thumbBounds.width - 4, thumbBounds.height - 4, 8, 8);
+            g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2,
+                    thumbBounds.width - 4, thumbBounds.height - 4, 8, 8);
             g2.dispose();
         }
 
@@ -1104,7 +953,7 @@ public class PortalVeterinario extends JFrame {
             return btn;
         }
     }
-    
+
     // =========================================================================
     // CLASE INTERNA: Botón de Navegación Profesional con Hover y Active Dinámicos
     // =========================================================================
@@ -1112,10 +961,11 @@ public class PortalVeterinario extends JFrame {
     // CLASE INTERNA: Botón de Navegación Profesional (Área de Hover Corregida)
     // =========================================================================
     private class BotonMenuNav extends JButton {
+
         private final String claveCapa;
         private boolean mouseEncima = false;
         private boolean activo = false;
-        
+
         // Colores de la captura de pantalla
         private final Color colorFondoVerdeSuave = new Color(240, 253, 250); // Menta clarito #F0FDFA
         private final Color colorTextoVerdeOscuro = new Color(13, 148, 136); // Teal / Esmeralda #0D9488
@@ -1123,20 +973,20 @@ public class PortalVeterinario extends JFrame {
 
         public BotonMenuNav(String titulo, String icono, String claveCapa) {
             this.claveCapa = claveCapa;
-            
+
             // Configuración base estética de Swing
             setFocusPainted(false);
             setContentAreaFilled(false);
             setBorderPainted(false);
             setOpaque(false);
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            
+
             // REDISEÑO DEL TAMAÑO: Reducimos el ancho preferido para que la celda invisible no sea gigante
             // Le damos un padding interno generoso a los lados (24px) para que el fondo verde abrace al texto cómodamente
-            setPreferredSize(new Dimension(85, 70)); 
+            setPreferredSize(new Dimension(85, 70));
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBorder(new EmptyBorder(8, 20, 8, 20)); // <-- Mantiene el área de clic e ícono perfectamente contenida
-            
+
             // 1. Inicializar y centrar el ícono (PNG o Emoji)
             JLabel lblIcon = new JLabel();
             lblIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -1153,12 +1003,12 @@ public class PortalVeterinario extends JFrame {
                 lblIcon.setText(icono);
                 lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
             }
-            
+
             // 2. Inicializar y centrar el texto inferior
             JLabel lblTitulo = new JLabel(titulo);
             lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 12));
             lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-            
+
             // Añadimos los componentes al botón con un separador vertical
             add(Box.createVerticalGlue());
             add(lblIcon);
@@ -1200,14 +1050,14 @@ public class PortalVeterinario extends JFrame {
             // --- LÓGICA DE RENDERIZADO DINÁMICO (HOVER Y ACTIVE MATCH REAL) ---
             if (activo || mouseEncima) {
                 g2.setColor(colorFondoVerdeSuave);
-                
+
                 // CAMBIO CLAVE: Ahora la píldora toma el ancho exacto del botón visible en vez de un número fijo
                 // Dejamos un margen sutil de 4px a los lados para que se vea redondeado y armónico
-                int x = 6; 
+                int x = 6;
                 int y = 5;
                 int anchoPildora = getWidth() - 12;
                 int altoPildora = getHeight() - 10;
-                
+
                 g2.fillRoundRect(x, y, anchoPildora, altoPildora, 18, 18);
 
                 // Cambiamos las tipografías al verde oscuro corporativo
@@ -1228,5 +1078,3 @@ public class PortalVeterinario extends JFrame {
         }
     }
 }
-
-

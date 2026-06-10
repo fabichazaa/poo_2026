@@ -31,12 +31,12 @@ public class ComprobanteTurno {
     }
 
     public String generarEncabezado() {
-        Animal a = turno.getAnimal();
-        Veterinario v = turno.getVeterinario();
-        return "=========================================\n"
-             + "   COMPROBANTE DE ATENCIÓN VETERINARIA   \n"
-             + "=========================================\n"
-             + "Veterinaria: " + nombreVeterinaria() + "\n"
+
+        return """
+               =========================================
+                  COMPROBANTE DE ATENCI\u00d3N VETERINARIA   
+               =========================================
+               Veterinaria: """ + nombreVeterinaria() + "\n"
              + "Comprobante N°: " + turno.getIdTurno() + "\n"
              + "Emitido: " + fechaEmision + "\n"
              + "-----------------------------------------\n";
@@ -51,10 +51,11 @@ public class ComprobanteTurno {
         sb.append("  Especie: ").append(a.getEspecie()).append("\n");
         sb.append("  Edad: ").append(a.calcularEdad()).append(" años\n");
         sb.append("  Alimentación: ").append(a.getTipoAlimentacion().getDescripcion()).append("\n");
-        if (a instanceof Perro) {
-            sb.append("  Raza: ").append(((Perro) a).getRaza()).append("\n");
-        } else if (a instanceof Gato) {
-            sb.append("  Raza: ").append(((Gato) a).getRaza()).append("\n");
+        switch (a) {
+            case Perro perro -> sb.append("  Raza: ").append(perro.getRaza()).append("\n");
+            case Gato gato -> sb.append("  Raza: ").append(gato.getRaza()).append("\n");
+            default -> {
+            }
         }
         sb.append("  ID: ").append(a.getIdAnimal()).append("\n");
         if (r != null) {

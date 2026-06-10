@@ -194,9 +194,7 @@ public class ControladorVeterinaria {
     }
 
     private void cargarMedicamentosYVacunas() {
-        Veterinario vet1 = veterinaria.getListaVeterinarios().get(0);
-        Veterinario vet2 = veterinaria.getListaVeterinarios().get(1);
-
+       
         Animal hulk   = buscarAnimal("Hulk");
         Animal luna   = buscarAnimal("Luna");
         Animal mishi  = buscarAnimal("Mishi");
