@@ -101,7 +101,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         panelCentral.add(Box.createVerticalStrut(12));
 
         comboMedicamento = new JComboBox<>(
-            controlador.getVeterinaria().getCatalogoMedicamentos().toArray(new Medicamento[0])
+            controlador.getVeterinaria().getCatalogoMedicamentos().toArray(Medicamento[]::new)
         );
         comboMedicamento.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
             JLabel lbl = new JLabel(value == null ? "" :

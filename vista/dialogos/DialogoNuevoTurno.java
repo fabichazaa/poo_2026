@@ -2,7 +2,6 @@ package vista.dialogos;
 
 import controlador.ControladorVeterinaria;
 import java.awt.*;
-import java.awt.event.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -21,12 +20,11 @@ public class DialogoNuevoTurno extends JDialog {
     private JComboBox<Animal> comboAnimales;
     private TipoTurno tipoSeleccionado = null;
     private TimeSlotButton slotSeleccionado = null;
+    @SuppressWarnings("unused")
     private String prioridadSeleccionada = "Normal";
     private JTextField campoFecha;
     private JTextArea campoNotas;
     private JLabel lblError;
-    private SwitchButton switchRecordatorio;
-
     // Etiquetas del Resumen
     private JLabel lblResumenPacienteVal;
     private JLabel lblResumenTipoVal;
@@ -180,7 +178,7 @@ public class DialogoNuevoTurno extends JDialog {
         for (Responsable c : controlador.getVeterinaria().getListaClientes()) {
             todos.addAll(c.getMascotas());
         }
-        comboAnimales = new JComboBox<>(todos.toArray(new Animal[0]));
+        comboAnimales = new JComboBox<>(todos.toArray(Animal[]::new));
         comboAnimales.setBackground(new Color(248, 250, 252));
         comboAnimales.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
         comboAnimales.setMaximumSize(new Dimension(Integer.MAX_VALUE, 20));
@@ -471,14 +469,17 @@ public class DialogoNuevoTurno extends JDialog {
         lblCounter.setHorizontalAlignment(SwingConstants.RIGHT);
 
         campoNotas.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 update();
             }
 
+            @Override
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
                 update();
             }
 
+            @Override
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
                 update();
             }
@@ -652,14 +653,17 @@ public class DialogoNuevoTurno extends JDialog {
         });
 
         campoFecha.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 update();
             }
 
+            @Override
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
                 update();
             }
 
+            @Override
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
                 update();
             }
@@ -768,7 +772,7 @@ public class DialogoNuevoTurno extends JDialog {
             return;
         }
 
-        turnoCreado = controlador.registrarTurno(fechaTxt, horaTxt, vet, animal, tipoSeleccionado);
+        turnoCreado = controlador.registrarTurno(fechaTxt, horaTxt, vet, animal, tipoSeleccionado, observaciones);
         if (turnoCreado != null) {
             if (!observaciones.isEmpty()) {
                 turnoCreado.setObservaciones(observaciones);
@@ -1058,58 +1062,6 @@ public class DialogoNuevoTurno extends JDialog {
             int textY = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
             g2.setColor(getForeground());
             g2.drawString(timeText, textX, textY);
-
-            g2.dispose();
-        }
-    }
-
-    // Helper SwitchButton class
-    private static class SwitchButton extends JComponent {
-
-        private boolean selected = false;
-        private final List<ActionListener> listeners = new ArrayList<>();
-
-        public SwitchButton() {
-            setPreferredSize(new Dimension(45, 24));
-            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseClicked(java.awt.event.MouseEvent e) {
-                    selected = !selected;
-                    repaint();
-                    for (ActionListener al : listeners) {
-                        al.actionPerformed(new java.awt.event.ActionEvent(SwitchButton.this, 0, "toggle"));
-                    }
-                }
-            });
-        }
-
-        public boolean isSelected() {
-            return selected;
-        }
-
-        public void setSelected(boolean b) {
-            this.selected = b;
-            repaint();
-        }
-
-        public void addActionListener(ActionListener al) {
-            listeners.add(al);
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            Color bg = selected ? new Color(13, 148, 136) : new Color(203, 213, 225);
-            g2.setColor(bg);
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), getHeight(), getHeight());
-
-            g2.setColor(Color.WHITE);
-            int size = getHeight() - 4;
-            int x = selected ? getWidth() - size - 2 : 2;
-            g2.fillOval(x, 2, size, size);
 
             g2.dispose();
         }

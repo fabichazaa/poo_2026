@@ -2,6 +2,7 @@ package vista;
 
 import controlador.ControladorVeterinaria;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,11 +17,11 @@ public class PortalVeterinario extends JFrame {
     private final Veterinario veterinarioLogueado;
 
     // Componentes para la navegación por capas
-    private JPanel panelContenedorSecciones;
-    private CardLayout navegadorCapas;
+    private final JPanel panelContenedorSecciones;
+    private final CardLayout navegadorCapas;
 
     // Componentes de la sección Citas
-    private vista.paneles.PanelCitas panelCitas;
+    private final vista.paneles.PanelCitas panelCitas;
 
     // Variables globales de fuentes
     private Font fuenteTitulo;
@@ -99,12 +100,12 @@ public class PortalVeterinario extends JFrame {
         ));
 
         // Pasamos: Texto, Ruta del Icono y Clave de la Pantalla asociada
-        JButton btnInicio = crearBotonMenuNav("Inicio", "imagenes/emojis/casa.png", "PANTALLA_INICIO");
-        JButton btnRegistros = crearBotonMenuNav("Registros", "imagenes/emojis/patitas.png", "PANTALLA_REGISTROS");
-        JButton btnAdopcion = crearBotonMenuNav("Adopción", "🐾", "PANTALLA_ADOPCION");
-        JButton btnNotas = crearBotonMenuNav("Notas", "📝", "PANTALLA_NOTAS");
-        JButton btnCitas = crearBotonMenuNav("Turnos", "imagenes/emojis/calendario.png", "PANTALLA_CITAS");
-        JButton btnMas = crearBotonMenuNav("Más", "💬", "PANTALLA_MAS");
+        JButton btnInicio = crearBotonMenuNav("Inicio", "imagenes/emojis/casa.png", "🏠", "PANTALLA_INICIO");
+        JButton btnRegistros = crearBotonMenuNav("Registros", null, "📋", "PANTALLA_REGISTROS");
+        JButton btnAdopcion = crearBotonMenuNav("Adopción", "imagenes/emojis/patitas.png", "🐾", "PANTALLA_ADOPCION");
+        JButton btnNotas = crearBotonMenuNav("Notas", null, "📝", "PANTALLA_NOTAS");
+        JButton btnCitas = crearBotonMenuNav("Turnos", "imagenes/emojis/calendario.png", "📅", "PANTALLA_CITAS");
+        JButton btnMas = crearBotonMenuNav("Más", null, "➕", "PANTALLA_MAS");
 
         // Al iniciar la app, la sección activa es Inicio, por lo tanto lo marcamos
         ((BotonMenuNav) btnInicio).setActivo(true);
@@ -206,7 +207,7 @@ public class PortalVeterinario extends JFrame {
 
             JLabel lblIconoUser = new JLabel(iconoEscalado);
             panelFotoPerfil.add(lblIconoUser);
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Error al renderizar en alta definición: " + e.getMessage());
             JLabel lblIconoUser = new JLabel("👨‍⚕️");
             lblIconoUser.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 50));
@@ -422,8 +423,6 @@ public class PortalVeterinario extends JFrame {
         return panelDashboard;
     }
 
-
-
     private JPanel crearTarjetaTurnoVisual(Turno t) {
         JPanel itemTurno = new JPanel(new BorderLayout(15, 0));
         itemTurno.setBackground(new Color(248, 250, 252));
@@ -519,23 +518,23 @@ public class PortalVeterinario extends JFrame {
         lblBadgePildora.setBorder(new EmptyBorder(4, 12, 4, 12));
 
         switch (t.getTipo()) {
-            case CIRUGIA:
+            case CIRUGIA -> {
                 lblBadgePildora.setCustomBackground(new Color(254, 226, 226));
                 lblBadgePildora.setForeground(new Color(220, 38, 38));
-                break;
-            case CONSULTA_GENERAL:
+            }
+            case CONSULTA_GENERAL -> {
                 lblBadgePildora.setCustomBackground(new Color(219, 234, 254));
                 lblBadgePildora.setForeground(new Color(37, 99, 235));
-                break;
-            case ANALISIS:
+            }
+            case ANALISIS -> {
                 lblBadgePildora.setCustomBackground(new Color(243, 232, 255));
                 lblBadgePildora.setForeground(new Color(147, 51, 234));
-                break;
-            default:
+            }
+            default -> {
                 lblBadgePildora.setCustomBackground(new Color(220, 252, 231));
                 lblBadgePildora.setForeground(new Color(22, 163, 74));
                 lblBadgePildora.setText("Vacunación");
-                break;
+            }
         }
 
         JPanel panelBadgeWrapper = new JPanel(new GridBagLayout());
@@ -611,63 +610,6 @@ public class PortalVeterinario extends JFrame {
         return panelFila;
     }
 
-
-
-    private JPanel crearCardEstadisticaSuperior(String valor, String etiqueta, Color fondo, Color colorTexto, String iconStr) {
-        JPanel card = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 1)) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-                g2.setColor(fondo);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 15, 15);
-
-                g2.dispose();
-            }
-        };
-        card.setOpaque(false);
-        card.setBorder(BorderFactory.createLineBorder(colorTexto, 1, true));
-        card.setPreferredSize(new Dimension(110, 42));
-
-        JLabel lblIcono = new JLabel();
-        if (iconStr.endsWith(".png")) {
-            try {
-                ImageIcon icono = new ImageIcon(iconStr);
-                Image imagenEscalada = icono.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-                lblIcono.setIcon(new ImageIcon(imagenEscalada));
-            } catch (Exception e) {
-                lblIcono.setText("?");
-                lblIcono.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-                lblIcono.setForeground(colorTexto);
-            }
-        } else {
-            lblIcono.setText(iconStr);
-            lblIcono.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-            lblIcono.setForeground(colorTexto);
-        }
-
-        JLabel lblVal = new JLabel(valor);
-        lblVal.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        lblVal.setForeground(colorTexto);
-
-        JLabel lblEt = new JLabel(etiqueta);
-        lblEt.setFont(new Font("Segoe UI", Font.PLAIN, 10));
-        lblEt.setForeground(new Color(100, 116, 139));
-
-        JPanel panelTextos = new JPanel(new GridLayout(2, 1, 0, -2));
-        panelTextos.setOpaque(false);
-        panelTextos.add(lblVal);
-        panelTextos.add(lblEt);
-
-        card.add(lblIcono);
-        card.add(panelTextos);
-        return card;
-    }
-
     private JPanel crearMiniBadgeInformación(String titulo, String valor) {
         JPanel panel = new JPanel(new GridLayout(2, 1, 0, 1));
         panel.setBackground(new Color(240, 253, 250));
@@ -724,7 +666,7 @@ public class PortalVeterinario extends JFrame {
             java.awt.image.BufferedImage imgBuffer = javax.imageio.ImageIO.read(archivoImagen);
             ImageIcon iconoEscalado = escalarImagenAltaCalidad(imgBuffer, 22, 22);
             lblIcono.setIcon(iconoEscalado);
-        } catch (Exception e) {
+        } catch (IOException e) {
             lblIcono.setText("•");
             lblIcono.setFont(new Font("Segoe UI", Font.BOLD, 14));
             lblIcono.setForeground(colorTexto);
@@ -755,22 +697,25 @@ public class PortalVeterinario extends JFrame {
         return panel;
     }
 
-    private JButton crearBotonMenuNav(String titulo, String icono, String claveCapa) {
-        BotonMenuNav btn = new BotonMenuNav(titulo, icono, claveCapa);
+    private JButton crearBotonMenuNav(String titulo, String icono, String unicodeIcon, String claveCapa) {
+        BotonMenuNav btn = new BotonMenuNav(titulo, icono, unicodeIcon, claveCapa);
 
         // Vinculamos la acción de cambiar de sección
         btn.addActionListener(e -> {
             // 1. Cambiamos la sección en el CardLayout
-            if (claveCapa.equals("PANTALLA_REGISTROS")) {
-                ((vista.paneles.PanelRegistros) panelContenedorSecciones.getComponent(2)).actualizar();
-            } else if (claveCapa.equals("PANTALLA_ADOPCION")) {
-                ((vista.paneles.PanelAdopcion) panelContenedorSecciones.getComponent(3)).actualizar();
-            } else if (claveCapa.equals("PANTALLA_NOTAS")) {
-                ((vista.paneles.PanelNotas) panelContenedorSecciones.getComponent(4)).actualizar();
-            } else if (claveCapa.equals("PANTALLA_MAS")) {
-                ((vista.paneles.PanelMas) panelContenedorSecciones.getComponent(5)).actualizar();
-            } else if (claveCapa.equals("PANTALLA_CITAS")) {
-                panelCitas.actualizar();
+            switch (claveCapa) {
+                case "PANTALLA_REGISTROS" ->
+                    ((vista.paneles.PanelRegistros) panelContenedorSecciones.getComponent(2)).actualizar();
+                case "PANTALLA_ADOPCION" ->
+                    ((vista.paneles.PanelAdopcion) panelContenedorSecciones.getComponent(3)).actualizar();
+                case "PANTALLA_NOTAS" ->
+                    ((vista.paneles.PanelNotas) panelContenedorSecciones.getComponent(4)).actualizar();
+                case "PANTALLA_MAS" ->
+                    ((vista.paneles.PanelMas) panelContenedorSecciones.getComponent(5)).actualizar();
+                case "PANTALLA_CITAS" ->
+                    panelCitas.actualizar();
+                default -> {
+                }
             }
             navegadorCapas.show(panelContenedorSecciones, claveCapa);
 
@@ -778,8 +723,7 @@ public class PortalVeterinario extends JFrame {
             JPanel panelMenu = (JPanel) btn.getParent();
             if (panelMenu != null) {
                 for (Component comp : panelMenu.getComponents()) {
-                    if (comp instanceof BotonMenuNav) {
-                        BotonMenuNav b = (BotonMenuNav) comp;
+                    if (comp instanceof BotonMenuNav b) {
                         b.setActivo(b == btn); // True solo para el botón cliqueado
                     }
                 }
@@ -791,8 +735,8 @@ public class PortalVeterinario extends JFrame {
 
     private static class BadgeRedondeado extends JLabel {
 
-        private Color bgColor;
-        private Color borderColor;
+        private final Color bgColor;
+        private final Color borderColor;
 
         public BadgeRedondeado(String text, Color background, Color border) {
             super(text, SwingConstants.CENTER);
@@ -862,7 +806,7 @@ public class PortalVeterinario extends JFrame {
             UIManager.put("Label.font", fuenteBaseUI);
             UIManager.put("Button.font", fuenteBaseUI);
             UIManager.put("ComboBox.font", fuenteBaseUI);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
             System.out.println("No se pudo cargar la fuente del sistema UI.");
         }
 
@@ -955,14 +899,10 @@ public class PortalVeterinario extends JFrame {
     }
 
     // =========================================================================
-    // CLASE INTERNA: Botón de Navegación Profesional con Hover y Active Dinámicos
-    // =========================================================================
-    // =========================================================================
     // CLASE INTERNA: Botón de Navegación Profesional (Área de Hover Corregida)
     // =========================================================================
     private class BotonMenuNav extends JButton {
 
-        private final String claveCapa;
         private boolean mouseEncima = false;
         private boolean activo = false;
 
@@ -971,9 +911,7 @@ public class PortalVeterinario extends JFrame {
         private final Color colorTextoVerdeOscuro = new Color(13, 148, 136); // Teal / Esmeralda #0D9488
         private final Color colorTextoGrisBase = new Color(100, 116, 139);   // Gris Slate #64748B
 
-        public BotonMenuNav(String titulo, String icono, String claveCapa) {
-            this.claveCapa = claveCapa;
-
+        public BotonMenuNav(String titulo, String icono, String unicodeIcon, String claveCapa) {
             // Configuración base estética de Swing
             setFocusPainted(false);
             setContentAreaFilled(false);
@@ -990,18 +928,22 @@ public class PortalVeterinario extends JFrame {
             // 1. Inicializar y centrar el ícono (PNG o Emoji)
             JLabel lblIcon = new JLabel();
             lblIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
-            if (icono.endsWith(".png")) {
+            if (icono != null && new java.io.File(icono).exists()) {
                 try {
-                    ImageIcon imageIcon = new ImageIcon(icono);
-                    Image imagenEscalada = imageIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH);
-                    lblIcon.setIcon(new ImageIcon(imagenEscalada));
+                    // ImageIcon icon = new ImageIcon(icono);
+                    // Image scaled = icon.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+                    // lblIcon.setIcon(new ImageIcon(scaled));
+                    ImageIcon icon = new ImageIcon(icono);
+                    ImageIcon iconoEscalado = escalarImagenAltaCalidad(icon.getImage(), 32, 32);
+                    lblIcon.setIcon(iconoEscalado);
                 } catch (Exception e) {
-                    lblIcon.setText("?");
-                    lblIcon.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+                    lblIcon.setText(unicodeIcon);
+                    lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
                 }
             } else {
-                lblIcon.setText(icono);
-                lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
+                lblIcon.setText(unicodeIcon);
+                lblIcon.setBorder(new EmptyBorder(2,1,1,1));
+                lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 18));
             }
 
             // 2. Inicializar y centrar el texto inferior

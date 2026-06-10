@@ -173,7 +173,7 @@ public class PanelAdopcion extends JPanel {
         Frame frame = owner instanceof Frame ? (Frame) owner : null;
 
         List<Animal> todos = controlador.obtenerTodosLosAnimales();
-        Animal[] arr = todos.toArray(new Animal[0]);
+        Animal[] arr = todos.toArray(Animal[]::new);
         Animal seleccionado = (Animal) JOptionPane.showInputDialog(
             frame,
             "Seleccioná la mascota que querés poner en adopción:",

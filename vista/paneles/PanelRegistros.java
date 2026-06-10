@@ -2,17 +2,18 @@ package vista.paneles;
 
 import controlador.ControladorVeterinaria;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import modelo.*;
 
-public class PanelRegistros extends JPanel {
+public final class PanelRegistros extends JPanel {
 
     private final ControladorVeterinaria controlador;
-    private JPanel panelGrillaPacientes;
-    private JTextField txtBuscar;
+    private final JPanel panelGrillaPacientes;
+    private final JTextField txtBuscar;
     private String filtroEspecieActual = "Todos";
     private String filtroEstadoActual = "Todos";
 
@@ -107,10 +108,10 @@ public class PanelRegistros extends JPanel {
 
         for (Animal a : todosLosAnimales) {
             // 1. Filtrar por texto (Nombre, Raza o Dueño)
-            boolean coincideTexto = busqueda.isEmpty() || 
+            boolean coincideTexto = busqueda.isEmpty() ||
                     a.getNombre().toLowerCase().contains(busqueda) ||
-                    (a instanceof Perro && ((Perro)a).getRaza().toLowerCase().contains(busqueda)) ||
-                    (a instanceof Gato && ((Gato)a).getRaza().toLowerCase().contains(busqueda)) ||
+                    (a instanceof Perro && ((Perro) a).getRaza().toLowerCase().contains(busqueda)) ||
+                    (a instanceof Gato && ((Gato) a).getRaza().toLowerCase().contains(busqueda)) ||
                     a.getResponsable().getApellido().toLowerCase().contains(busqueda);
 
             // 2. Filtrar por tipo de objeto (Polimorfismo)
@@ -118,8 +119,20 @@ public class PanelRegistros extends JPanel {
                     (filtroEspecieActual.equals("Perro") && a instanceof Perro) ||
                     (filtroEspecieActual.equals("Gato") && a instanceof Gato);
 
-            // 3. Filtrar por estado clínico
-           panelGrillaPacientes.add(crearTarjetaPacienteHD(a));
+            // 3. Filtrar por estado clínico (si existe el filtro, asumir coincidencia por defecto)
+            boolean coincideEstado = true;
+            try {
+                // Si la clase tiene un filtroEstadoActual, úsalo (evita dependencias fuertes)
+                // Aquí sólo mantenemos la variable para futuras condiciones.
+                // Por ahora no hay lógica adicional, así que queda true.
+            } catch (Exception ignored) {
+                // no-op
+            }
+
+            // Agregar sólo si pasa los filtros aplicados
+            if (coincideTexto && coincideEspecie && coincideEstado) {
+                panelGrillaPacientes.add(crearTarjetaPacienteHD(a));
+            }
         }
 
         panelGrillaPacientes.revalidate();
@@ -215,7 +228,7 @@ public class PanelRegistros extends JPanel {
             g2.drawImage(imgBuffer, 0, 0, 55, 55, null);
             g2.dispose();
             lblIcono.setIcon(new ImageIcon(resizedImg));
-        } catch (Exception e) {
+        } catch (IOException e) {
             lblIcono.setText(a instanceof Perro ? "🐕" : "🐈");
             lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 36));
         }
@@ -230,12 +243,12 @@ public class PanelRegistros extends JPanel {
         panelInfoCentral.setOpaque(false);
         panelInfoCentral.setLayout(new BoxLayout(panelInfoCentral, BoxLayout.Y_AXIS));
 
-        JLabel lblNombre = new JLabel(a.getNombre(), SwingConstants.CENTER);
+        JLabel lblNombre = new JLabel((a != null && a.getNombre() != null) ? a.getNombre() : "Sin nombre", SwingConstants.CENTER);
         lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 15));
         lblNombre.setForeground(colorTextoOscuro);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        String razaStr = (a instanceof Perro) ? ((Perro) a).getRaza() : ((Gato) a).getRaza();
+        String razaStr = (a != null && a instanceof Perro) ? ((Perro) a).getRaza() : (a != null && a instanceof Gato) ? ((Gato) a).getRaza() : "Sin raza";
         JLabel lblRaza = new JLabel(razaStr, SwingConstants.CENTER);
         lblRaza.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         lblRaza.setForeground(new Color(148, 163, 184));
@@ -257,7 +270,7 @@ public class PanelRegistros extends JPanel {
         panelDatosGrid.setOpaque(false);
         panelDatosGrid.setBorder(new EmptyBorder(10, 5, 5, 5));
 
-        agregarFilaFicha(panelDatosGrid, "Dueño", a.getResponsable().getNombre());
+        agregarFilaFicha(panelDatosGrid, "Dueño", (a != null && a.getResponsable() != null && a.getResponsable().getNombre() != null) ? a.getResponsable().getNombre() : "Sin asignar");
         agregarFilaFicha(panelDatosGrid, "Edad", "3 años"); // Aquí podés calcular dinámicamente con Period
         agregarFilaFicha(panelDatosGrid, "Próx. turno", "06 Jun 2026");
 
@@ -334,24 +347,6 @@ public class PanelRegistros extends JPanel {
         });
 
         return btn;
-    }
-
-    private JLabel crearBadgeVisual(String texto, Color fondo, Color textoColor) {
-        JLabel badge = new JLabel(texto, SwingConstants.CENTER) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(fondo);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        badge.setFont(new Font("Segoe UI", Font.BOLD, 10));
-        badge.setForeground(textoColor);
-        badge.setBorder(new EmptyBorder(2, 8, 2, 8));
-        return badge;
     }
 
     private void agregarFilaFicha(JPanel panel, String clave, String valor) {

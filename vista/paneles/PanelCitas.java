@@ -20,17 +20,17 @@ public class PanelCitas extends JPanel {
     private final Color colorFondoGris = new Color(241, 245, 249);
     private final Color colorTeal = new Color(13, 148, 136);
 
-    private JPanel panelListaGrouped;
-    private JLabel lblStatHoyVal;
-    private JLabel lblStatPendVal;
-    private JLabel lblStatRealVal;
-    private JLabel lblCountTurnos;
+    private final JPanel panelListaGrouped;
+    private final JLabel lblStatHoyVal;
+    private final JLabel lblStatPendVal;
+    private final JLabel lblStatRealVal;
+    private final JLabel lblCountTurnos;
 
     private String filtroTipo = "Todos";
     private boolean verPasados = false;
 
     private final List<String> tiposDeFiltro = List.of("Todos", "Consulta", "Vacuna", "Análisis", "Cirugía", "Seguimiento");
-    private JPanel panelFiltrosGrid;
+    private final JPanel panelFiltrosGrid;
 
     public PanelCitas(ControladorVeterinaria controlador) {
         this.controlador = controlador;
@@ -138,9 +138,9 @@ public class PanelCitas extends JPanel {
         panelStats.setBackground(Color.WHITE);
         panelStats.setBorder(new EmptyBorder(0, 0, 5, 0));
 
-        panelStats.add(crearCardEstadistica("Hoy", "Hoy", new Color(240, 249, 255), new Color(14, 116, 144), "imagenes/emojis/calendario.png", "", lblStatHoyVal = new JLabel("0")));
-        panelStats.add(crearCardEstadistica("Pendientes", "Pendientes", new Color(254, 243, 199), new Color(180, 83, 9), "imagenes/emojis/reloj_arena.png", "⏳", lblStatPendVal = new JLabel("0")));
-        panelStats.add(crearCardEstadistica("Realizados", "Realizados", new Color(236, 253, 245), new Color(4, 120, 87), "imagenes/emojis/exito.png", "✅", lblStatRealVal = new JLabel("0")));
+        panelStats.add(crearCardEstadistica("Hoy", new Color(240, 249, 255), new Color(14, 116, 144), "imagenes/emojis/calendario.png", "", lblStatHoyVal = new JLabel("0")));
+        panelStats.add(crearCardEstadistica("Pendientes", new Color(254, 243, 199), new Color(180, 83, 9), "imagenes/emojis/reloj_arena.png", "⏳", lblStatPendVal = new JLabel("0")));
+        panelStats.add(crearCardEstadistica("Realizados", new Color(236, 253, 245), new Color(4, 120, 87), "imagenes/emojis/exito.png", "✅", lblStatRealVal = new JLabel("0")));
 
         panelControles.add(panelStats);
         panelControles.add(Box.createVerticalStrut(12));
@@ -220,10 +220,14 @@ public class PanelCitas extends JPanel {
         refrescarFiltrosUI();
 
         // Update counts and list
-        actualizar();
+        actualizarInterno();
     }
 
     public void actualizar() {
+        actualizarInterno();
+    }
+
+    private void actualizarInterno() {
         // Recalcular estadísticas
         Veterinario vet = controlador.getVeterinarioLogueado();
         if (vet == null) {
@@ -394,7 +398,7 @@ public class PanelCitas extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(new Color(13, 148, 136)); // Teal-600
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 g2.dispose();
             }
         };
@@ -408,6 +412,7 @@ public class PanelCitas extends JPanel {
         JLabel lblFechaText = new JLabel(niceDate);
         lblFechaText.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
         lblFechaText.setForeground(Color.WHITE);
+        lblFechaText.setBorder(new EmptyBorder(0, 0, 1, 2));
         badge.add(lblFechaText);
 
         header.add(badge, BorderLayout.WEST);
@@ -430,15 +435,15 @@ public class PanelCitas extends JPanel {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 g2.setColor(Color.WHITE);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36);
                 g2.setColor(new Color(226, 232, 240));
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 36, 36);
                 g2.dispose();
             }
         };
         card.setOpaque(false);
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 64));
-        card.setPreferredSize(new Dimension(800, 64));
+        card.setPreferredSize(new Dimension(520, 64));
         card.setBorder(new EmptyBorder(8, 16, 8, 16));
         card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -459,23 +464,18 @@ public class PanelCitas extends JPanel {
 
         // 2. ACCENT BAR (Teal/Red/etc)
         Color accentColor;
-        switch (t.getTipo()) {
-            case CIRUGIA:
-                accentColor = new Color(236, 72, 153); // Pink-500
-                break;
-            case CONSULTA_GENERAL:
-                accentColor = new Color(59, 130, 246); // Blue-500
-                break;
-            case ANALISIS:
-                accentColor = new Color(139, 92, 246); // Purple-500
-                break;
-            case VACUNACION:
-                accentColor = new Color(16, 185, 129); // Green-500
-                break;
-            default:
-                accentColor = new Color(249, 115, 22); // Orange-500
-                break;
-        }
+        accentColor = switch (t.getTipo()) {
+            case CIRUGIA ->
+                new Color(236, 72, 153);
+            case CONSULTA_GENERAL ->
+                new Color(59, 130, 246);
+            case ANALISIS ->
+                new Color(139, 92, 246);
+            case VACUNACION ->
+                new Color(16, 185, 129);
+            default ->
+                new Color(249, 115, 22);
+        };
 
         JPanel panelAccent = new JPanel() {
             @Override
@@ -513,14 +513,14 @@ public class PanelCitas extends JPanel {
                 g2.dispose();
             }
         };
-        panelAvatar.setPreferredSize(new Dimension(36, 36));
+        panelAvatar.setPreferredSize(new Dimension(48, 48));
         panelAvatar.setOpaque(false);
 
         JLabel lblAvatar = new JLabel();
         try {
             String path = (t.getAnimal() instanceof Perro) ? "imagenes/emojis/perro.png" : "imagenes/emojis/gato.png";
             ImageIcon img = new ImageIcon(path);
-            Image scaled = img.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+            Image scaled = img.getImage().getScaledInstance(36, 36, Image.SCALE_SMOOTH);
             lblAvatar.setIcon(new ImageIcon(scaled));
         } catch (Exception e) {
             lblAvatar.setText(t.getAnimal() instanceof Perro ? "🐕" : "🐈");
@@ -545,6 +545,7 @@ public class PanelCitas extends JPanel {
         // Animal name + Tipo Badge Row
         JPanel panelRow1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
         panelRow1.setOpaque(false);
+        panelRow1.setMinimumSize(new Dimension(250, 20));
         panelRow1.setBorder(new EmptyBorder(6, 0, 0, 0));
         panelRow1.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -562,22 +563,22 @@ public class PanelCitas extends JPanel {
         String pillText = t.getTipo().getDescripcion();
         Color pBg, pFore;
         switch (t.getTipo()) {
-            case CIRUGIA:
+            case CIRUGIA -> {
                 pBg = new Color(254, 226, 226);
                 pFore = new Color(220, 38, 38);
-                break;
-            case CONSULTA_GENERAL:
+            }
+            case CONSULTA_GENERAL -> {
                 pBg = new Color(219, 234, 254);
                 pFore = new Color(37, 99, 235);
-                break;
-            case ANALISIS:
+            }
+            case ANALISIS -> {
                 pBg = new Color(243, 232, 255);
                 pFore = new Color(147, 51, 234);
-                break;
-            default:
+            }
+            default -> {
                 pBg = new Color(220, 252, 231);
                 pFore = new Color(22, 163, 74);
-                break;
+            }
         }
 
         JLabel lblPill = new JLabel(pillText) {
@@ -610,8 +611,31 @@ public class PanelCitas extends JPanel {
         panelInfo.add(lblOwner);
 
         gbc.gridx = 3;
-        gbc.weightx = 1.0;
+        gbc.weightx = 0.0;
         card.add(panelInfo, gbc);
+
+        JPanel PanelDescription = new JPanel();
+        PanelDescription.setOpaque(false);
+        PanelDescription.setAlignmentX(Component.LEFT_ALIGNMENT);
+        PanelDescription.setBorder(new EmptyBorder(6, 12, 0, 12));
+
+        JLabel lblTitleDescription = new JLabel("Nota:");
+        lblName.setFont(CargadorFuentes.cargar(13f).deriveFont(Font.BOLD));
+        lblName.setForeground(new Color(15, 23, 42)); // Slate-900
+        PanelDescription.add(lblTitleDescription);
+        // Description Row
+        String descriptionStr = t.getObservaciones();
+        JLabel lblDescrption = new JLabel(descriptionStr);
+        lblDescrption.setFont(CargadorFuentes.cargar(11f));
+        lblDescrption.setForeground(new Color(100, 116, 139));
+        lblDescrption.setBorder(new EmptyBorder(6, 6, 6, 0));
+        lblDescrption.setAlignmentX(Component.LEFT_ALIGNMENT);
+        PanelDescription.add(lblDescrption);
+
+        gbc.gridx = 4;
+        gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        card.add(PanelDescription, gbc);
 
         // 5. ACTION CHEVRON / CANCEL (East)
         JPanel panelAcciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 12));
@@ -631,6 +655,7 @@ public class PanelCitas extends JPanel {
                     super.paintComponent(g);
                 }
             };
+
             btnCancel.setPreferredSize(new Dimension(60, 24));
             btnCancel.setBorder(new EmptyBorder(2, 0, 0, 0));
             btnCancel.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.PLAIN));
@@ -638,8 +663,20 @@ public class PanelCitas extends JPanel {
             btnCancel.setContentAreaFilled(false);
             btnCancel.setBorderPainted(false);
             btnCancel.setFocusPainted(false);
-            btnCancel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             btnCancel.setToolTipText("Cancelar Turno");
+            btnCancel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    // Color cuando el mouse entra al botón
+                    btnCancel.setBackground(Color.CYAN);
+                    btnCancel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Cambia el cursor a mano
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    btnCancel.setBackground(Color.LIGHT_GRAY);
+                }
+            });
             btnCancel.addActionListener(e -> {
                 int res = JOptionPane.showConfirmDialog(PanelCitas.this,
                         "¿Estás seguro de que deseas cancelar el turno de " + t.getAnimal().getNombre() + "?",
@@ -657,8 +694,8 @@ public class PanelCitas extends JPanel {
         // lblChevron.setFont(new Font("Segoe UI", Font.BOLD, 14));
         // lblChevron.setForeground(new Color(203, 213, 225));
         // panelAcciones.add(lblChevron);
-        gbc.gridx = 4;
-        gbc.weightx = 0.0;
+        gbc.gridx = 5;
+        gbc.weightx = 1.0;
         card.add(panelAcciones, gbc);
 
         // Click actions
@@ -711,7 +748,7 @@ public class PanelCitas extends JPanel {
                 displayHour = 12;
             }
             return String.format("%02d:%s %s", displayHour, min, suffix);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             return militaryTime;
         }
     }
@@ -722,7 +759,7 @@ public class PanelCitas extends JPanel {
             LocalDate date = LocalDate.parse(dateStr, parser);
             LocalDate todaySystem = LocalDate.of(2026, 6, 6); // Matches PortalVeterinario fixed today
 
-            String formatted = date.getDayOfMonth() + " " + date.getMonth().getDisplayName(TextStyle.SHORT, new java.util.Locale("es", "AR")) + " " + date.getYear();
+            String formatted = date.getDayOfMonth() + " " + date.getMonth().getDisplayName(TextStyle.SHORT, java.util.Locale.forLanguageTag("es-AR")) + " " + date.getYear();
             // capitalize first letter of month
             String[] tokens = formatted.split(" ");
             if (tokens.length == 3) {
@@ -766,7 +803,7 @@ public class PanelCitas extends JPanel {
         return btn;
     }
 
-    private JPanel crearCardEstadistica(String valKey, String label, Color bg, Color text, String iconPath, String unicodeIcon, JLabel lblVal) {
+    private JPanel crearCardEstadistica(String label, Color bg, Color text, String iconPath, String unicodeIcon, JLabel lblVal) {
         JPanel card = new JPanel(new BorderLayout(8, 0)) {
             @Override
             protected void paintComponent(Graphics g) {
