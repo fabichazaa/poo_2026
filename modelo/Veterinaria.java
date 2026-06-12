@@ -144,13 +144,13 @@ public class Veterinaria {
     }
 
     private void cargarCatalogoDemo() {
-        agregarMedicamentoAlCatalogo(new Medicamento("SEN-001", "Amoxicilina 500mg"));
-        agregarMedicamentoAlCatalogo(new Medicamento("SEN-002", "Meloxicam 5mg"));
-        agregarMedicamentoAlCatalogo(new Medicamento("SEN-003", "Dipirona"));
-        agregarMedicamentoAlCatalogo(new Medicamento("SEN-004", "Ivermectina"));
-        agregarMedicamentoAlCatalogo(new Medicamento("SEN-005", "Cefalexina 500mg"));
-        agregarMedicamentoAlCatalogo(new Medicamento("SEN-006", "Metronidazol 250mg"));
-        agregarMedicamentoAlCatalogo(new Medicamento("SEN-007", "Enalapril 10mg"));
-        agregarMedicamentoAlCatalogo(new Medicamento("SEN-008", "Omeprazol 20mg"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-001", "Amoxicilina 500mg", "Antibiótico"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-002", "Meloxicam 5mg", "Analgésico / Antiinflamatorio"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-003", "Dipirona", "Analgésico / Antipirético"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-004", "Ivermectina", "Antiparasitario"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-005", "Cefalexina 500mg", "Antibiótico"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-006", "Metronidazol 250mg", "Antiparasitario / Antibacteriano"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-007", "Enalapril 10mg", "Cardiovascular / Antihipertensivo"));
+        agregarMedicamentoAlCatalogo(new Medicamento("SEN-008", "Omeprazol 20mg", "Protector Gástrico"));
     }
 }

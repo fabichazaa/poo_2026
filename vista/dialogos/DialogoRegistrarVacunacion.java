@@ -13,41 +13,58 @@ import javax.swing.border.*;
 import modelo.*;
 import recursos.CargadorFuentes;
 
-public class DialogoRecetarMedicamento extends JDialog {
+public class DialogoRegistrarVacunacion extends JDialog {
 
     private final ControladorVeterinaria controlador;
     private final Animal animal;
-    private boolean recetado = false;
+    private boolean registrado = false;
 
-    private JRadioButton radioCatalogo;
-    private JRadioButton radioMagistral;
+    private JTextField txtBuscarVacuna;
+    private JComboBox<Vacuna> comboVacuna;
 
-    private JPanel panelDelCatalogo;
-    private JPanel panelMagistral;
-
-    private JTextField txtBuscarMed;
-    private JComboBox<Medicamento> comboMedicamento;
-    private JTextField txtMedMagistral;
-
-    private JTextField campoDosis;
+    private JTextField campoTipoDosis;
     private JTextField campoVia;
+    private JTextField campoLote;
 
-    private JTextField campoFrecuencia;
-    private JTextField campoFechaInicio;
+    private JTextField campoFechaAplicacion;
     private JTextField campoVigenciaDias;
+    private JTextField campoProximaDosis;
 
-    private JTextArea areaIndicaciones;
+    private JTextArea areaObservaciones;
     private JLabel lblError;
 
-    public DialogoRecetarMedicamento(Window owner, ControladorVeterinaria controlador, Animal animal) {
-        super(owner, "Recetar medicamento — " + animal.getNombre(), Dialog.ModalityType.APPLICATION_MODAL);
+    private final List<Vacuna> listaVacunasSemilla = new ArrayList<>();
+
+    public DialogoRegistrarVacunacion(Window owner, ControladorVeterinaria controlador, Animal animal) {
+        super(owner, "Registrar vacunación — " + animal.getNombre(), Dialog.ModalityType.APPLICATION_MODAL);
         this.controlador = controlador;
         this.animal = animal;
+        inicializarSemillaVacunas();
         construir();
     }
 
-    public boolean isRecetado() {
-        return recetado;
+    public boolean isRegistrado() {
+        return registrado;
+    }
+
+    private void inicializarSemillaVacunas() {
+        // Semilla de vacunas estándar para mostrar en el catálogo con descripciones atractivas
+        Vacuna v1 = new Vacuna("VAC-001", "Antirrábica", 365);
+        v1.setSubtitulo("Nobivac Rabies");
+        Vacuna v2 = new Vacuna("VAC-002", "Triple Felina", 365);
+        v2.setSubtitulo("Nobivac Tricat Trio");
+        Vacuna v3 = new Vacuna("VAC-003", "Parvovirus Canino", 365);
+        v3.setSubtitulo("Nobivac Parvo");
+        Vacuna v4 = new Vacuna("VAC-004", "Quíntuple Canina", 365);
+        v4.setSubtitulo("Defensor 5");
+        Vacuna v5 = new Vacuna("VAC-005", "Leucemia Felina", 365);
+        v5.setSubtitulo("Nobivac FeLV");
+
+        listaVacunasSemilla.add(v1);
+        listaVacunasSemilla.add(v2);
+        listaVacunasSemilla.add(v3);
+        listaVacunasSemilla.add(v4);
+        listaVacunasSemilla.add(v5);
     }
 
     private void construir() {
@@ -57,7 +74,6 @@ public class DialogoRecetarMedicamento extends JDialog {
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
 
-        // Borde redondeado simulado para toda la ventana usando un panel principal con borde
         JPanel panelFondo = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -74,15 +90,14 @@ public class DialogoRecetarMedicamento extends JDialog {
         panelFondo.setBorder(new EmptyBorder(1, 1, 1, 1));
 
         // ==========================================
-        //  HEADER BANNER (Green/Teal)
+        //  HEADER BANNER (Purple/Violet)
         // ==========================================
         JPanel headerPanel = new JPanel(new BorderLayout(12, 0)) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(recursos.Color.PRIMARY);
-                // Llenar solo la parte superior con esquinas redondeadas
+                g2.setColor(new Color(147, 51, 234)); // Purple Dark
                 g2.fillRoundRect(0, 0, getWidth(), getHeight() + 20, 24, 24);
                 g2.dispose();
             }
@@ -94,7 +109,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         textHeader.setOpaque(false);
         textHeader.setLayout(new BoxLayout(textHeader, BoxLayout.Y_AXIS));
 
-        JLabel lblTitulo = new JLabel("Recetar Medicamento");
+        JLabel lblTitulo = new JLabel("Registrar Vacunación");
         lblTitulo.setFont(CargadorFuentes.cargar(16f).deriveFont(Font.BOLD));
         lblTitulo.setForeground(Color.WHITE);
 
@@ -106,7 +121,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         }
         JLabel lblSub = new JLabel("Para: " + animal.getNombre() + " (" + raza + " · " + animal.getEspecie() + ")");
         lblSub.setFont(CargadorFuentes.cargar(12f));
-        lblSub.setForeground(new Color(226, 240, 238));
+        lblSub.setForeground(new Color(243, 232, 255));
 
         textHeader.add(lblTitulo);
         textHeader.add(Box.createVerticalStrut(2));
@@ -128,86 +143,46 @@ public class DialogoRecetarMedicamento extends JDialog {
         panelFondo.add(headerPanel, BorderLayout.NORTH);
 
         // ==========================================
-        //  FORM BODY (White background)
+        //  FORM BODY (White)
         // ==========================================
         JPanel bodyPanel = new JPanel();
         bodyPanel.setOpaque(false);
         bodyPanel.setLayout(new BoxLayout(bodyPanel, BoxLayout.Y_AXIS));
         bodyPanel.setBorder(new EmptyBorder(20, 24, 20, 24));
 
-        // TIPO DE MEDICAMENTO (Selector de radios)
-        JLabel lblTipo = new JLabel("TIPO DE MEDICAMENTO");
-        lblTipo.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblTipo.setForeground(recursos.Color.MUTED);
-        lblTipo.setAlignmentX(Component.LEFT_ALIGNMENT);
-        bodyPanel.add(lblTipo);
+        // VACUNA DEL CATÁLOGO
+        JLabel lblVac = new JLabel("VACUNA DEL CATÁLOGO");
+        lblVac.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
+        lblVac.setForeground(recursos.Color.MUTED);
+        lblVac.setAlignmentX(Component.LEFT_ALIGNMENT);
+        bodyPanel.add(lblVac);
         bodyPanel.add(Box.createVerticalStrut(6));
 
-        JPanel panelRadios = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 0));
-        panelRadios.setOpaque(false);
-        panelRadios.setAlignmentX(Component.LEFT_ALIGNMENT);
-        radioCatalogo = new JRadioButton("Del catálogo", true);
-        radioMagistral = new JRadioButton("Manual", false);
-        ButtonGroup grupo = new ButtonGroup();
-        grupo.add(radioCatalogo);
-        grupo.add(radioMagistral);
-        radioCatalogo.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
-        radioMagistral.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
-        radioCatalogo.setOpaque(false);
-        radioMagistral.setOpaque(false);
-        radioCatalogo.setForeground(recursos.Color.INK);
-        radioMagistral.setForeground(recursos.Color.INK);
-
-        radioCatalogo.addActionListener(e -> actualizarVisibilidad());
-        radioMagistral.addActionListener(e -> actualizarVisibilidad());
-
-        panelRadios.add(radioCatalogo);
-        panelRadios.add(radioMagistral);
-        bodyPanel.add(panelRadios);
-        bodyPanel.add(Box.createVerticalStrut(14));
-
-        // PANEL SELECTOR DE MEDICAMENTO (INTERMITENTE)
-        JPanel panelMedSelector = new JPanel(new CardLayout());
-        panelMedSelector.setOpaque(false);
-        panelMedSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        // CARD DEL CATÁLOGO
-        panelDelCatalogo = new JPanel();
-        panelDelCatalogo.setOpaque(false);
-        panelDelCatalogo.setLayout(new BoxLayout(panelDelCatalogo, BoxLayout.Y_AXIS));
-
-        JLabel lblCat = new JLabel("BUSCAR PRODUCTO DEL CATÁLOGO");
-        lblCat.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblCat.setForeground(recursos.Color.MUTED);
-        lblCat.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelDelCatalogo.add(lblCat);
-        panelDelCatalogo.add(Box.createVerticalStrut(6));
-
-        // Input buscador
-        txtBuscarMed = new PlaceHolderTextField("🔍 Escribí para buscar medicamento...");
-        txtBuscarMed.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
-        txtBuscarMed.setPreferredSize(new Dimension(0, 38));
-        txtBuscarMed.setBorder(BorderFactory.createCompoundBorder(
+        // Buscador reactivo
+        txtBuscarVacuna = new PlaceHolderTextField("🔍 Escribí para buscar vacuna...");
+        txtBuscarVacuna.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+        txtBuscarVacuna.setPreferredSize(new Dimension(0, 38));
+        txtBuscarVacuna.setBorder(BorderFactory.createCompoundBorder(
                 new LineBorder(new Color(226, 232, 240), 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
-        txtBuscarMed.setFont(CargadorFuentes.cargar(12f));
-        txtBuscarMed.setForeground(recursos.Color.INK);
-        txtBuscarMed.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelDelCatalogo.add(txtBuscarMed);
-        panelDelCatalogo.add(Box.createVerticalStrut(8));
+        txtBuscarVacuna.setFont(CargadorFuentes.cargar(12f));
+        txtBuscarVacuna.setForeground(recursos.Color.INK);
+        txtBuscarVacuna.setAlignmentX(Component.LEFT_ALIGNMENT);
+        bodyPanel.add(txtBuscarVacuna);
+        bodyPanel.add(Box.createVerticalStrut(8));
 
-        // ComboBox de medicamentos
-        comboMedicamento = new JComboBox<>();
-        comboMedicamento.setMaximumSize(new Dimension(Integer.MAX_VALUE, 52));
-        comboMedicamento.setPreferredSize(new Dimension(0, 52));
-        comboMedicamento.setFont(CargadorFuentes.cargar(12f));
-        comboMedicamento.setAlignmentX(Component.LEFT_ALIGNMENT);
-        comboMedicamento.setBackground(Color.WHITE);
-        comboMedicamento.setBorder(new LineBorder(new Color(226, 232, 240), 1, true));
+        // JComboBox de vacunas
+        comboVacuna = new JComboBox<>();
+        comboVacuna.setMaximumSize(new Dimension(Integer.MAX_VALUE, 56));
+        comboVacuna.setPreferredSize(new Dimension(0, 52));
+        comboVacuna.setFont(CargadorFuentes.cargar(12f));
+        comboVacuna.setAlignmentX(Component.LEFT_ALIGNMENT);
+        comboVacuna.setBackground(Color.WHITE);
+        comboVacuna.setBorder(new LineBorder(new Color(226, 232, 240), 1, true));
 
-        // Renderer personalizado
-        comboMedicamento.setRenderer(new DefaultListCellRenderer() {
+        // Renderer personalizado con jeringa
+        comboVacuna.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JPanel panel = new JPanel(new BorderLayout(10, 0));
@@ -217,27 +192,27 @@ public class DialogoRecetarMedicamento extends JDialog {
                 boolean isItemSelected = isSelected && index != -1;
 
                 if (isItemSelected) {
-                    panel.setBackground(recursos.Color.PRIMARY);
+                    panel.setBackground(new Color(147, 51, 234));
                 } else {
                     panel.setBackground(Color.WHITE);
                 }
 
-                if (value instanceof Medicamento) {
-                    Medicamento m = (Medicamento) value;
-                    JLabel lblIcon = new JLabel("💊");
+                if (value instanceof Vacuna) {
+                    Vacuna v = (Vacuna) value;
+                    JLabel lblIcon = new JLabel("💉");
                     lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
 
                     JPanel textPanel = new JPanel();
                     textPanel.setOpaque(false);
                     textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
 
-                    JLabel lblNombre = new JLabel(m.getCodigoSenasa() + " — " + m.getNombreMedicamento());
+                    JLabel lblNombre = new JLabel(v.getCodigoSenasa() + " — " + v.getNombreMedicamento());
                     lblNombre.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
                     lblNombre.setForeground(isItemSelected ? Color.WHITE : recursos.Color.INK);
 
-                    JLabel lblSub = new JLabel(m.getSubtitulo().isEmpty() ? "Medicamento" : m.getSubtitulo());
+                    JLabel lblSub = new JLabel(v.getSubtitulo().isEmpty() ? "Vacuna" : v.getSubtitulo());
                     lblSub.setFont(CargadorFuentes.cargar(10f));
-                    lblSub.setForeground(isItemSelected ? new Color(226, 240, 238) : recursos.Color.MUTED);
+                    lblSub.setForeground(isItemSelected ? new Color(243, 232, 255) : recursos.Color.MUTED);
 
                     textPanel.add(lblNombre);
                     textPanel.add(lblSub);
@@ -248,41 +223,10 @@ public class DialogoRecetarMedicamento extends JDialog {
                 return panel;
             }
         });
-
-        panelDelCatalogo.add(comboMedicamento);
-
-        // CARD MAGISTRAL
-        panelMagistral = new JPanel();
-        panelMagistral.setOpaque(false);
-        panelMagistral.setLayout(new BoxLayout(panelMagistral, BoxLayout.Y_AXIS));
-
-        JLabel lblMag = new JLabel("NOMBRE DEL MEDICAMENTO MAGISTRAL / MANUAL");
-        lblMag.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblMag.setForeground(recursos.Color.MUTED);
-        lblMag.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelMagistral.add(lblMag);
-        panelMagistral.add(Box.createVerticalStrut(6));
-
-        txtMedMagistral = new PlaceHolderTextField("Ej: Amoxicilina suspensión especial");
-        txtMedMagistral.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
-        txtMedMagistral.setPreferredSize(new Dimension(0, 38));
-        txtMedMagistral.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
-                new EmptyBorder(8, 12, 8, 12)
-        ));
-        txtMedMagistral.setFont(CargadorFuentes.cargar(12f));
-        txtMedMagistral.setForeground(recursos.Color.INK);
-        txtMedMagistral.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelMagistral.add(txtMedMagistral);
-        panelMagistral.add(Box.createVerticalStrut(8));
-
-        panelMedSelector.add(panelDelCatalogo, "catalogo");
-        panelMedSelector.add(panelMagistral, "magistral");
-
-        bodyPanel.add(panelMedSelector);
+        bodyPanel.add(comboVacuna);
         bodyPanel.add(Box.createVerticalStrut(14));
 
-        // DOSIS & VÍA (2 columnas)
+        // TIPO DE DOSIS & VÍA
         JPanel gridDosisVia = new JPanel(new GridLayout(1, 2, 16, 0));
         gridDosisVia.setOpaque(false);
         gridDosisVia.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -291,27 +235,27 @@ public class DialogoRecetarMedicamento extends JDialog {
         JPanel pDosis = new JPanel();
         pDosis.setOpaque(false);
         pDosis.setLayout(new BoxLayout(pDosis, BoxLayout.Y_AXIS));
-        JLabel lblDosis = new JLabel("DOSIS");
+        JLabel lblDosis = new JLabel("TIPO DE DOSIS");
         lblDosis.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
         lblDosis.setForeground(recursos.Color.MUTED);
-        campoDosis = new PlaceHolderTextField("Ej: 1 comprimido");
-        campoDosis.setBorder(BorderFactory.createCompoundBorder(
+        campoTipoDosis = new JTextField("Dosis anual");
+        campoTipoDosis.setBorder(BorderFactory.createCompoundBorder(
                 new LineBorder(new Color(226, 232, 240), 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
-        campoDosis.setFont(CargadorFuentes.cargar(12f));
-        campoDosis.setForeground(recursos.Color.INK);
+        campoTipoDosis.setFont(CargadorFuentes.cargar(12f));
+        campoTipoDosis.setForeground(recursos.Color.INK);
         pDosis.add(lblDosis);
         pDosis.add(Box.createVerticalStrut(6));
-        pDosis.add(campoDosis);
+        pDosis.add(campoTipoDosis);
 
         JPanel pVia = new JPanel();
         pVia.setOpaque(false);
         pVia.setLayout(new BoxLayout(pVia, BoxLayout.Y_AXIS));
-        JLabel lblVia = new JLabel("VÍA DE ADMINISTRACIÓN");
+        JLabel lblVia = new JLabel("VÍA");
         lblVia.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
         lblVia.setForeground(recursos.Color.MUTED);
-        campoVia = new JTextField("Oral");
+        campoVia = new JTextField("Subcutánea");
         campoVia.setBorder(BorderFactory.createCompoundBorder(
                 new LineBorder(new Color(226, 232, 240), 1, true),
                 new EmptyBorder(8, 12, 8, 12)
@@ -327,35 +271,39 @@ public class DialogoRecetarMedicamento extends JDialog {
         bodyPanel.add(gridDosisVia);
         bodyPanel.add(Box.createVerticalStrut(14));
 
-        // FRECUENCIA, FECHA INICIO, VIGENCIA (3 columnas)
+        // NÚMERO DE LOTE
+        JLabel lblLote = new JLabel("NÚMERO DE LOTE (recomendado)");
+        lblLote.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
+        lblLote.setForeground(recursos.Color.MUTED);
+        lblLote.setAlignmentX(Component.LEFT_ALIGNMENT);
+        bodyPanel.add(lblLote);
+        bodyPanel.add(Box.createVerticalStrut(6));
+
+        campoLote = new PlaceHolderTextField("Ej: LOT2026-A4892");
+        campoLote.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+        campoLote.setPreferredSize(new Dimension(0, 38));
+        campoLote.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(226, 232, 240), 1, true),
+                new EmptyBorder(8, 12, 8, 12)
+        ));
+        campoLote.setFont(CargadorFuentes.cargar(12f));
+        campoLote.setForeground(recursos.Color.INK);
+        campoLote.setAlignmentX(Component.LEFT_ALIGNMENT);
+        bodyPanel.add(campoLote);
+        bodyPanel.add(Box.createVerticalStrut(14));
+
+        // FECHA DE APLICACIÓN, VIGENCIA, PRÓXIMA DOSIS
         JPanel gridTres = new JPanel(new GridLayout(1, 3, 12, 0));
         gridTres.setOpaque(false);
         gridTres.setAlignmentX(Component.LEFT_ALIGNMENT);
         gridTres.setMaximumSize(new Dimension(Integer.MAX_VALUE, 65));
 
-        JPanel pFrec = new JPanel();
-        pFrec.setOpaque(false);
-        pFrec.setLayout(new BoxLayout(pFrec, BoxLayout.Y_AXIS));
-        JLabel lblFrec = new JLabel("FRECUENCIA");
-        lblFrec.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblFrec.setForeground(recursos.Color.MUTED);
-        campoFrecuencia = new JTextField("Cada 12hs");
-        campoFrecuencia.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
-                new EmptyBorder(8, 12, 8, 12)
-        ));
-        campoFrecuencia.setFont(CargadorFuentes.cargar(12f));
-        campoFrecuencia.setForeground(recursos.Color.INK);
-        pFrec.add(lblFrec);
-        pFrec.add(Box.createVerticalStrut(6));
-        pFrec.add(campoFrecuencia);
-
-        JPanel pInicio = new JPanel();
-        pInicio.setOpaque(false);
-        pInicio.setLayout(new BoxLayout(pInicio, BoxLayout.Y_AXIS));
-        JLabel lblInicio = new JLabel("FECHA DE INICIO");
-        lblInicio.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblInicio.setForeground(recursos.Color.MUTED);
+        JPanel pAplic = new JPanel();
+        pAplic.setOpaque(false);
+        pAplic.setLayout(new BoxLayout(pAplic, BoxLayout.Y_AXIS));
+        JLabel lblAplic = new JLabel("FECHA APLICACIÓN");
+        lblAplic.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
+        lblAplic.setForeground(recursos.Color.MUTED);
 
         JPanel dateWrapper = new JPanel(new BorderLayout(6, 0)) {
             @Override
@@ -372,19 +320,19 @@ public class DialogoRecetarMedicamento extends JDialog {
         dateWrapper.setOpaque(false);
         dateWrapper.setBorder(new EmptyBorder(8, 10, 8, 10));
 
-        campoFechaInicio = new JTextField(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        campoFechaInicio.setBorder(null);
-        campoFechaInicio.setOpaque(false);
-        campoFechaInicio.setFont(CargadorFuentes.cargar(12f));
-        campoFechaInicio.setForeground(recursos.Color.INK);
+        campoFechaAplicacion = new JTextField(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        campoFechaAplicacion.setBorder(null);
+        campoFechaAplicacion.setOpaque(false);
+        campoFechaAplicacion.setFont(CargadorFuentes.cargar(12f));
+        campoFechaAplicacion.setForeground(recursos.Color.INK);
         JLabel lblCalIcon = new JLabel("📅");
         lblCalIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
-        dateWrapper.add(campoFechaInicio, BorderLayout.CENTER);
+        dateWrapper.add(campoFechaAplicacion, BorderLayout.CENTER);
         dateWrapper.add(lblCalIcon, BorderLayout.EAST);
 
-        pInicio.add(lblInicio);
-        pInicio.add(Box.createVerticalStrut(6));
-        pInicio.add(dateWrapper);
+        pAplic.add(lblAplic);
+        pAplic.add(Box.createVerticalStrut(6));
+        pAplic.add(dateWrapper);
 
         JPanel pVig = new JPanel();
         pVig.setOpaque(false);
@@ -392,7 +340,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         JLabel lblVig = new JLabel("VIGENCIA (DÍAS)");
         lblVig.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
         lblVig.setForeground(recursos.Color.MUTED);
-        campoVigenciaDias = new JTextField("7");
+        campoVigenciaDias = new JTextField("365");
         campoVigenciaDias.setBorder(BorderFactory.createCompoundBorder(
                 new LineBorder(new Color(226, 232, 240), 1, true),
                 new EmptyBorder(8, 12, 8, 12)
@@ -403,33 +351,54 @@ public class DialogoRecetarMedicamento extends JDialog {
         pVig.add(Box.createVerticalStrut(6));
         pVig.add(campoVigenciaDias);
 
-        gridTres.add(pFrec);
-        gridTres.add(pInicio);
+        JPanel pProx = new JPanel();
+        pProx.setOpaque(false);
+        pProx.setLayout(new BoxLayout(pProx, BoxLayout.Y_AXIS));
+        JLabel lblProx = new JLabel("PRÓXIMA DOSIS");
+        lblProx.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
+        lblProx.setForeground(recursos.Color.MUTED);
+
+        campoProximaDosis = new JTextField();
+        campoProximaDosis.setEditable(false);
+        campoProximaDosis.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(243, 232, 255), 1, true), // purple border
+                new EmptyBorder(8, 12, 8, 12)
+        ));
+        campoProximaDosis.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
+        campoProximaDosis.setBackground(new Color(243, 232, 255)); // Light purple background
+        campoProximaDosis.setForeground(new Color(147, 51, 234)); // Purple text
+
+        pProx.add(lblProx);
+        pProx.add(Box.createVerticalStrut(6));
+        pProx.add(campoProximaDosis);
+
+        gridTres.add(pAplic);
         gridTres.add(pVig);
+        gridTres.add(pProx);
         bodyPanel.add(gridTres);
         bodyPanel.add(Box.createVerticalStrut(14));
 
-        // INDICACIONES PARA EL DUEÑO
-        JLabel lblInd = new JLabel("INDICACIONES PARA EL DUEÑO (opcional)");
-        lblInd.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblInd.setForeground(recursos.Color.MUTED);
-        lblInd.setAlignmentX(Component.LEFT_ALIGNMENT);
-        bodyPanel.add(lblInd);
+        // OBSERVACIONES
+        JLabel lblObs = new JLabel("OBSERVACIONES (opcional)");
+        lblObs.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
+        lblObs.setForeground(recursos.Color.MUTED);
+        lblObs.setAlignmentX(Component.LEFT_ALIGNMENT);
+        bodyPanel.add(lblObs);
         bodyPanel.add(Box.createVerticalStrut(6));
 
-        areaIndicaciones = new PlaceHolderTextArea("Ej: Administrar con alimento para evitar malestar gástrico...", 4, 20);
-        areaIndicaciones.setFont(CargadorFuentes.cargar(12f));
-        areaIndicaciones.setForeground(recursos.Color.INK);
-        areaIndicaciones.setLineWrap(true);
-        areaIndicaciones.setWrapStyleWord(true);
+        areaObservaciones = new PlaceHolderTextArea("Reacciones post-vacunación, condiciones especiales del animal...", 3, 20);
+        areaObservaciones.setFont(CargadorFuentes.cargar(12f));
+        areaObservaciones.setForeground(recursos.Color.INK);
+        areaObservaciones.setLineWrap(true);
+        areaObservaciones.setWrapStyleWord(true);
 
-        JScrollPane scrollInd = new JScrollPane(areaIndicaciones);
-        scrollInd.setBorder(new LineBorder(new Color(226, 232, 240), 1, true));
-        scrollInd.getViewport().setBackground(Color.WHITE);
-        scrollInd.setAlignmentX(Component.LEFT_ALIGNMENT);
-        scrollInd.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
-        scrollInd.setPreferredSize(new Dimension(0, 100));
-        bodyPanel.add(scrollInd);
+        JScrollPane scrollObs = new JScrollPane(areaObservaciones);
+        scrollObs.setBorder(new LineBorder(new Color(226, 232, 240), 1, true));
+        scrollObs.getViewport().setBackground(Color.WHITE);
+        scrollObs.setAlignmentX(Component.LEFT_ALIGNMENT);
+        scrollObs.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
+        scrollObs.setPreferredSize(new Dimension(0, 90));
+        bodyPanel.add(scrollObs);
 
         bodyPanel.add(Box.createVerticalStrut(8));
 
@@ -460,9 +429,9 @@ public class DialogoRecetarMedicamento extends JDialog {
         ));
         btnCancelar.addActionListener(e -> dispose());
 
-        JButton btnConfirmar = new JButton("💊 Confirmar receta");
+        JButton btnConfirmar = new JButton("💉 Registrar vacunación");
         btnConfirmar.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
-        btnConfirmar.setBackground(recursos.Color.PRIMARY);
+        btnConfirmar.setBackground(new Color(147, 51, 234));
         btnConfirmar.setForeground(Color.WHITE);
         btnConfirmar.setFocusPainted(false);
         btnConfirmar.setOpaque(true);
@@ -471,12 +440,12 @@ public class DialogoRecetarMedicamento extends JDialog {
         btnConfirmar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                btnConfirmar.setBackground(recursos.Color.PRIMARY_DEEP);
+                btnConfirmar.setBackground(new Color(126, 34, 206)); // darker purple
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                btnConfirmar.setBackground(recursos.Color.PRIMARY);
+                btnConfirmar.setBackground(new Color(147, 51, 234));
             }
         });
         btnConfirmar.addActionListener(e -> intentarConfirmar());
@@ -488,18 +457,56 @@ public class DialogoRecetarMedicamento extends JDialog {
 
         add(panelFondo, BorderLayout.CENTER);
 
-        // Cargar catálogo e inicializar el buscador reactivo
-        inicializarCatalogo();
+        // Listeners reactivos para el cálculo de fecha
+        inicializarListeners();
     }
 
-    private void inicializarCatalogo() {
-        ArrayList<Medicamento> catalogo = controlador.getVeterinaria().getCatalogoMedicamentos();
+    private void inicializarListeners() {
+        // Cálculo reactivo
+        javax.swing.event.DocumentListener calculador = new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                calcular();
+            }
 
-        // Llenar combo inicialmente
-        refrescarCombo(catalogo);
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                calcular();
+            }
 
-        // Buscador reactivo
-        txtBuscarMed.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                calcular();
+            }
+
+            private void calcular() {
+                try {
+                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate aplic = LocalDate.parse(campoFechaAplicacion.getText().trim(), fmt);
+                    int vigencia = Integer.parseInt(campoVigenciaDias.getText().trim());
+                    if (vigencia >= 0) {
+                        LocalDate prox = aplic.plusDays(vigencia);
+                        campoProximaDosis.setText(prox.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                    } else {
+                        campoProximaDosis.setText("—");
+                    }
+                } catch (Exception ex) {
+                    campoProximaDosis.setText("—");
+                }
+            }
+        };
+
+        campoFechaAplicacion.getDocument().addDocumentListener(calculador);
+        campoVigenciaDias.getDocument().addDocumentListener(calculador);
+
+        // Forzar cálculo inicial
+        try {
+            LocalDate aplic = LocalDate.parse(campoFechaAplicacion.getText().trim(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            int vig = Integer.parseInt(campoVigenciaDias.getText().trim());
+            campoProximaDosis.setText(aplic.plusDays(vig).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        } catch (Exception ex) {
+            campoProximaDosis.setText("—");
+        }
+
+        // Buscador reactivo para vacunas
+        txtBuscarVacuna.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 filtrar();
             }
@@ -513,89 +520,63 @@ public class DialogoRecetarMedicamento extends JDialog {
             }
 
             private void filtrar() {
-                String query = txtBuscarMed.getText().trim().toLowerCase();
-                if (query.equals("escribí para buscar medicamento...")) {
+                String query = txtBuscarVacuna.getText().trim().toLowerCase();
+                if (query.equals("escribí para buscar vacuna...")) {
                     query = "";
                 }
-                ArrayList<Medicamento> filtrado = new ArrayList<>();
-                for (Medicamento m : catalogo) {
-                    if (m.getNombreMedicamento().toLowerCase().contains(query)
-                            || m.getCodigoSenasa().toLowerCase().contains(query)
-                            || m.getSubtitulo().toLowerCase().contains(query)) {
-                        filtrado.add(m);
+                ArrayList<Vacuna> filtrado = new ArrayList<>();
+                for (Vacuna v : listaVacunasSemilla) {
+                    if (v.getNombreMedicamento().toLowerCase().contains(query)
+                            || v.getCodigoSenasa().toLowerCase().contains(query)
+                            || v.getSubtitulo().toLowerCase().contains(query)) {
+                        filtrado.add(v);
                     }
                 }
                 refrescarCombo(filtrado);
             }
         });
 
-        actualizarVisibilidad();
+        refrescarCombo(listaVacunasSemilla);
     }
 
-    private void refrescarCombo(List<Medicamento> items) {
-        comboMedicamento.removeAllItems();
-        for (Medicamento m : items) {
-            comboMedicamento.addItem(m);
-        }
-    }
-
-    private void actualizarVisibilidad() {
-        CardLayout cl = (CardLayout) panelDelCatalogo.getParent().getLayout();
-        if (radioCatalogo.isSelected()) {
-            cl.show(panelDelCatalogo.getParent(), "catalogo");
-        } else {
-            cl.show(panelDelCatalogo.getParent(), "magistral");
+    private void refrescarCombo(List<Vacuna> items) {
+        comboVacuna.removeAllItems();
+        for (Vacuna v : items) {
+            comboVacuna.addItem(v);
         }
     }
 
     private void intentarConfirmar() {
         lblError.setText(" ");
-        String nombreMed;
-        String codigoSenasa;
-        boolean esMagistral = radioMagistral.isSelected();
-
-        if (esMagistral) {
-            nombreMed = txtMedMagistral.getText().trim();
-            if (nombreMed.isEmpty() || nombreMed.equals("Ej: Amoxicilina suspensión especial")) {
-                lblError.setText("Por favor ingrese el nombre del medicamento magistral.");
-                return;
-            }
-            // Generar código interno
-            codigoSenasa = "MAG-" + String.format("%04d", (int) (Math.random() * 10000));
-        } else {
-            Medicamento sel = (Medicamento) comboMedicamento.getSelectedItem();
-            if (sel == null) {
-                lblError.setText("Por favor seleccione un medicamento del catálogo.");
-                return;
-            }
-            nombreMed = sel.getNombreMedicamento();
-            codigoSenasa = sel.getCodigoSenasa();
+        Vacuna sel = (Vacuna) comboVacuna.getSelectedItem();
+        if (sel == null) {
+            lblError.setText("Por favor seleccione una vacuna.");
+            return;
         }
 
-        String dosis = campoDosis.getText().trim();
-        if (dosis.isEmpty() || dosis.equals("Ej: 1 comprimido")) {
-            lblError.setText("Por favor ingrese la dosis.");
+        String tipoDosis = campoTipoDosis.getText().trim();
+        if (tipoDosis.isEmpty()) {
+            lblError.setText("Por favor ingrese el tipo de dosis.");
             return;
         }
 
         String via = campoVia.getText().trim();
         if (via.isEmpty()) {
-            lblError.setText("Por favor ingrese la vía de administración.");
+            lblError.setText("Por favor ingrese la vía.");
             return;
         }
 
-        String frecuencia = campoFrecuencia.getText().trim();
-        if (frecuencia.isEmpty()) {
-            lblError.setText("Por favor ingrese la frecuencia.");
-            return;
+        String lote = campoLote.getText().trim();
+        if (lote.equals("Ej: LOT2026-A4892")) {
+            lote = "";
         }
 
-        LocalDate fechaInicio;
+        LocalDate fechaAplic;
         try {
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            fechaInicio = LocalDate.parse(campoFechaInicio.getText().trim(), fmt);
+            fechaAplic = LocalDate.parse(campoFechaAplicacion.getText().trim(), fmt);
         } catch (DateTimeParseException ex) {
-            lblError.setText("Fecha de inicio inválida. Use el formato dd/MM/yyyy.");
+            lblError.setText("Fecha de aplicación inválida. Use dd/MM/yyyy.");
             return;
         }
 
@@ -603,36 +584,33 @@ public class DialogoRecetarMedicamento extends JDialog {
         try {
             vigencia = Integer.parseInt(campoVigenciaDias.getText().trim());
             if (vigencia <= 0) {
-                lblError.setText("La vigencia en días debe ser mayor a 0.");
+                lblError.setText("La vigencia debe ser mayor a 0 días.");
                 return;
             }
         } catch (NumberFormatException ex) {
-            lblError.setText("Vigencia inválida. Ingrese un número de días entero.");
+            lblError.setText("Vigencia inválida. Ingrese un número entero.");
             return;
         }
 
-        String indicaciones = areaIndicaciones.getText().trim();
-        if (indicaciones.equals("Ej: Administrar con alimento para evitar malestar gástrico...")) {
-            indicaciones = "";
+        String obs = areaObservaciones.getText().trim();
+        if (obs.equals("Reacciones post-vacunación, condiciones especiales del animal...")) {
+            obs = "";
         }
 
-        // Guardar receta
-        Medicamento med;
-        if (esMagistral) {
-            med = new Medicamento(codigoSenasa, nombreMed, "Magistral");
-        } else {
-            Medicamento sel = (Medicamento) comboMedicamento.getSelectedItem();
-            med = sel;
-        }
+        // Crear vacuna final con la vigencia ingresada
+        Vacuna v = new Vacuna(sel.getCodigoSenasa(), sel.getNombreMedicamento(), vigencia);
+        v.setSubtitulo(sel.getSubtitulo());
 
-        Prescripcion receta = new Prescripcion(
-                med, dosis, via, frecuencia, fechaInicio, vigencia, indicaciones, esMagistral
+        // Crear registro completo de vacunación
+        RegistroVacunacion registro = new RegistroVacunacion(
+                v, fechaAplic, tipoDosis, via, lote, obs
         );
 
-        controlador.recetarMedicamento(animal, receta);
-        recetado = true;
+        // Registrar en el controlador
+        controlador.registrarVacunacion(animal, registro);
+        registrado = true;
 
-        JOptionPane.showMessageDialog(this, "Medicamento recetado con éxito.");
+        JOptionPane.showMessageDialog(this, "Vacunación registrada con éxito.");
         dispose();
     }
 

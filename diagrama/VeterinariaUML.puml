@@ -169,23 +169,52 @@ class Gato {
 '                    HISTORIA CLÍNICA Y MEDICAMENTOS
 ' ============================================================
 class HistoriaClinica {
-    - medicamentosRecetados : ArrayList<Medicamento>
+    - medicamentosRecetados : ArrayList<Prescripcion>
     - registroVacunas : ArrayList<RegistroVacunacion>
     --
     + HistoriaClinica()
     + recetarMedicamento(med: Medicamento) : void
+    + recetarMedicamento(pres: Prescripcion) : void
     + registrarVacuna(reg: RegistroVacunacion) : void
-    + getMedicamentosRecetados() : ArrayList<Medicamento>
+    + getMedicamentosRecetados() : ArrayList<Prescripcion>
     + getRegistroVacunas() : ArrayList<RegistroVacunacion>
 }
 
 class Medicamento {
     - codigoSenasa : String
     - nombreMedicamento : String
+    - subtitulo : String
     --
     + Medicamento(codigoSenasa: String, nombreMedicamento: String)
+    + Medicamento(codigoSenasa: String, nombreMedicamento: String, subtitulo: String)
     + getCodigoSenasa() : String
     + getNombreMedicamento() : String
+    + getSubtitulo() : String
+    + setSubtitulo(subtitulo: String) : void
+}
+
+class Prescripcion {
+    - medicamento : Medicamento
+    - dosis : String
+    - viaAdministracion : String
+    - frecuencia : String
+    - fechaInicio : LocalDate
+    - vigenciaDias : int
+    - indicaciones : String
+    - esMagistral : boolean
+    --
+    + Prescripcion(medicamento: Medicamento, dosis: String, viaAdministracion: String, frecuencia: String, fechaInicio: LocalDate, vigenciaDias: int, indicaciones: String, esMagistral: boolean)
+    + Prescripcion(medicamento: Medicamento)
+    + getMedicamento() : Medicamento
+    + getDosis() : String
+    + getViaAdministracion() : String
+    + getFrecuencia() : String
+    + getFechaInicio() : LocalDate
+    + getVigenciaDias() : int
+    + getIndicaciones() : String
+    + isEsMagistral() : boolean
+    + getNombreMedicamento() : String
+    + getCodigoSenasa() : String
 }
 
 class Vacuna {
@@ -199,12 +228,21 @@ class RegistroVacunacion {
     - vacunaAplicada : Vacuna
     - fechaAplicacion : LocalDate
     - fechaVencimiento : LocalDate
+    - tipoDosis : String
+    - via : String
+    - lote : String
+    - observaciones : String
     --
     + RegistroVacunacion(vacunaAplicada: Vacuna, fechaAplicacion: LocalDate)
+    + RegistroVacunacion(vacunaAplicada: Vacuna, fechaAplicacion: LocalDate, tipoDosis: String, via: String, lote: String, observaciones: String)
     + getVacunaAplicada() : Vacuna
     + getFechaAplicacion() : LocalDate
     + getFechaVencimiento() : LocalDate
     + estaVencida() : boolean 
+    + getTipoDosis() : String
+    + getVia() : String
+    + getLote() : String
+    + getObservaciones() : String
 }
 
 ' ============================================================
@@ -223,7 +261,7 @@ class Turno {
     - tipo : TipoTurno
     - observaciones : String
     --
-    + Turno(idTurno: int, fecha: String, hora: String, veterinario: Veterinario, animal: Animal, tipo: TipoTurno)
+    + Turno(idTurno: int, fecha: String, hora: String, veterinario: Veterinario, animal: Animal, tipo: TipoTurno, observaciones: String)
     + Turno(fecha: String, hora: String, veterinario: Veterinario, animal: Animal, tipo: TipoTurno)
     + completarTurno() : void
     + cancelarTurno() : void
@@ -310,7 +348,8 @@ Veterinaria "1" *-- "0..*" Veterinario : emplea >
 Veterinaria "1" *-- "0..*" Responsable : registra >
 Veterinaria "1" *-- "0..*" Turno : agenda >
 Veterinaria "1" o-- "0..*" Medicamento : cataloga >
-HistoriaClinica "1" o-- "0..*" Medicamento : receta >
+HistoriaClinica "1" *-- "0..*" Prescripcion : contiene >
+Prescripcion "0..*" --> "1" Medicamento : receta >
 HistoriaClinica "1" *-- "0..*" RegistroVacunacion : muestra >
 RegistroVacunacion "0..*" --> "1" Vacuna : contiene >
 

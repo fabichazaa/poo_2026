@@ -12,6 +12,8 @@ colors:
   bg: "#F1F5F9"              # Slate claro grisáceo — Fondo general de la aplicación (Canvas)
   surface: "#FFFFFF"         # Blanco puro — Tarjetas contenedoras, modales y formularios
   border-subtle: "#E2E8F0"   # Gris sutil — Bordes internos de inputs y contenedores menores
+  divider: "#CBD5E1"         # Slate-300 — Divisores y líneas sutiles
+  inactive-text: "#BCCCDC"   # Slate-200 — Textos deshabilitados o cancelados
   
   # Tipografía y Contraste
   ink: "#1E293B"             # Slate oscuro — Títulos principales, nombres de pacientes y texto de alto contraste
@@ -28,6 +30,26 @@ colors:
   
   # Alertas y Notificaciones Directas
   badge-alert: "#EF4444"     # Rojo — Círculos de notificación/atención urgente en avatares
+  
+  # Avatares Específicos
+  avatar-dog: "#FEBA64"      # Naranja pastel — Fondo de avatar para perros
+  avatar-cat: "#7DD3FC"      # Azul claro — Fondo de avatar para gatos
+
+  # Variantes Claras para Badges y Estados
+  red-light: "#FEE2E2"       # Rojo suave — Fondos de badges de peligro o cancelación
+  blue-light: "#DBEAFE"      # Azul suave — Fondos de badges de consulta general
+  blue-dark: "#2563EB"       # Azul fuerte — Texto de badges de consulta general
+  purple-light: "#F3E8FF"    # Morado suave — Fondos de badges de análisis clínicos
+  purple-dark: "#9333EA"     # Morado fuerte — Texto de badges de análisis clínicos
+  success-light: "#DCFCE7"   # Verde suave — Fondos de badges de éxito o vacunación
+
+  # Tarjetas de Estadísticas (Stats)
+  stat-hoy-bg: "#F0F9FF"     # Celeste suave — Fondo de tarjeta de hoy
+  stat-hoy-txt: "#0E7490"    # Celeste oscuro — Texto de tarjeta de hoy
+  stat-pend-bg: "#FEF3C7"    # Ámbar suave — Fondo de tarjeta de pendientes
+  stat-pend-txt: "#B45309"   # Ámbar oscuro — Texto de tarjeta de pendientes
+  stat-real-bg: "#ECFDF5"    # Esmeralda suave — Fondo de tarjeta de realizados
+  stat-real-txt: "#047857"   # Esmeralda oscuro — Texto de tarjeta de realizados
 
 typography:
   main:
@@ -84,6 +106,22 @@ El diseño del ecosistema visual de Happy Paws abandona las interfaces densas y 
 | Cat: Cirugía | \#FF6B00 | Bordes y acentos para turnos de cirugía |
 | Cat: Consulta | \#3B82F6 | Bordes y acentos para consultas generales |
 | Badge Alert | \#EF4444 | Puntos de notificación de urgencia |
+| Divider | \#CBD5E1 | Divisores de scroll y líneas divisorias sutiles |
+| Inactive Text | \#BCCCDC | Textos deshabilitados o turnos cancelados |
+| Avatar Dog | \#FEBA64 | Color de fondo de avatares caninos |
+| Avatar Cat | \#7DD3FC | Color de fondo de avatares felinos |
+| Red Light | \#FEE2E2 | Fondos de badges de alerta/error/cancelación |
+| Blue Light | \#DBEAFE | Fondos de badges de consulta general |
+| Blue Dark | \#2563EB | Texto de badges de consulta general |
+| Purple Light | \#F3E8FF | Fondos de badges de análisis clínicos |
+| Purple Dark | \#9333EA | Texto de badges de análisis clínicos |
+| Success Light | \#DCFCE7 | Fondos de badges de éxito o vacunación |
+| Stat Hoy BG | \#F0F9FF | Fondo de tarjeta estadística de hoy |
+| Stat Hoy TXT | \#0E7490 | Texto de tarjeta estadística de hoy |
+| Stat Pend BG | \#FEF3C7 | Fondo de tarjeta estadística de pendientes |
+| Stat Pend TXT | \#B45309 | Texto de tarjeta estadística de pendientes |
+| Stat Real BG | \#ECFDF5 | Fondo de tarjeta estadística de realizados |
+| Stat Real TXT | \#047857 | Texto de tarjeta estadística de realizados |
 
 ### Primary
 
@@ -99,8 +137,10 @@ El diseño del ecosistema visual de Happy Paws abandona las interfaces densas y 
 ### State Colors
 
 - **Verde Éxito** (`#16A34A`): Estado "completado" en badges, número de atendidos en las estadísticas del dashboard y en el texto de confirmación de un turno finalizado.
+- **Verde Suave** (`#DCFCE7`): Fondo de badges de éxito o vacunación.
 - **Ámbar Pendiente** (`#D97706`): Estado "pendiente" en tarjetas de turno, contador de pendientes en las estadísticas y alertas suaves (ej: vacuna próxima a vencer).
 - **Rojo Error** (`#DC2626`): Estado "cancelado", mensajes de error de validación en formularios y botones de acción destructiva como "Cancelar turno".
+- **Rojo Suave** (`#FEE2E2`): Fondos de badges de alerta o cancelación.
 
 ### Neutral
 
@@ -109,6 +149,16 @@ El diseño del ecosistema visual de Happy Paws abandona las interfaces densas y 
 - **Tinta Corporativa** (`#1E293B`): Texto principal del sistema. Reemplaza al negro absoluto (#000000) con un contraste premium y más descansado para lectura prolongada.
 - **Gris Secundario** (`#64748B`): Texto de descripciones, placeholders en campos de búsqueda, etiquetas de fecha/hora y pies de tarjeta.
 - **Borde** (`#E2E8F0`): Líneas divisorias delgadas (1px), contornos de tarjeta en reposo y bordes de campos de formulario no enfocados.
+- **Divisor Sutil** (`#CBD5E1`): Divisores de scroll y líneas divisorias de scroll bars.
+- **Texto Inactivo** (`#BCCCDC`): Textos deshabilitados, cancelados u opacados en tarjetas inactivas.
+
+### Avatars & Stats Cards
+
+- **Avatar Perro** (`#FEBA64`): Tono naranja pastel para el fondo de avatares de mascotas caninas.
+- **Avatar Gato** (`#7DD3FC`): Tono azul cielo pastel para el fondo de avatares de mascotas felinas.
+- **Tarjeta Hoy** (Fondo `#F0F9FF`, Texto `#0E7490`): Colores celestes específicos de contraste para la tarjeta estadística "Hoy".
+- **Tarjeta Pendientes** (Fondo `#FEF3C7`, Texto `#B45309`): Colores ámbar específicos de contraste para la tarjeta estadística "Pendientes".
+- **Tarjeta Realizados** (Fondo `#ECFDF5`, Texto `#047857`): Colores esmeralda específicos de contraste para la tarjeta estadística "Realizados".
 
 ## 3. Typography
 
@@ -232,3 +282,5 @@ El sistema apuesta por un enfoque **plano pero con jerarquía sutil**. En Java S
 **La Regla del Indicador de Urgencia:** El punto de notificación rojo se colocará de manera exclusiva sobre los avatares para señalar alertas críticas (como planes sanitarios vencidos). Jamás debe emplearse de forma puramente estética.  
 
 **Sombreado Dinámico:** Las tarjetas no deben poseer bordes grises duros en su contorno completo. La separación del fondo se logra mediante un difuminado sutil (drop-shadow perimetral) que añade profundidad sin ensuciar la visual.
+
+**La Regla de la Centralización Visual (Evitar Hardcode):** Queda estrictamente prohibido hardcodear instancias de colores (`new Color(...)`) o fuentes dentro del código de los paneles, diálogos o componentes visuales. Toda utilización de la paleta de colores del sistema de diseño debe realizarse a través de la clase [Color.java](file:///c:/Users/el_be/OneDrive/Desktop/Universidad/desarrollo%20de%20software/Tercer%20cuatrimestre/Programacion%20Orientada%20a%20Objetos/poo_2026/recursos/Color.java) del paquete `recursos` (por ejemplo, `recursos.Color.PRIMARY`). Asimismo, todas las tipografías deben cargarse, gestionarse y derivarse a través de [CargadorFuentes.java](file:///c:/Users/el_be/OneDrive/Desktop/Universidad/desarrollo%20de%20software/Tercer%20cuatrimestre/Programacion%20Orientada%20a%20Objetos/poo_2026/recursos/CargadorFuentes.java). Esto garantiza la coherencia estética global de Happy Paws y simplifica el mantenimiento a largo plazo.
