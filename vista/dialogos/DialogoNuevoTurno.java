@@ -163,30 +163,96 @@ public class DialogoNuevoTurno extends JDialog {
         JPanel panelColIzq = new JPanel();
         panelColIzq.setOpaque(false);
         panelColIzq.setLayout(new BoxLayout(panelColIzq, BoxLayout.Y_AXIS));
-
-        // 1. Card Paciente
-        CardPanel cardPaciente = new CardPanel(new Color(13, 148, 136)); // Teal
+        CardPanel cardPaciente = new CardPanel(recursos.Color.PRIMARY); // Teal
         cardPaciente.setLayout(new BorderLayout(0, 8));
 
         JLabel lblPacienteTit = new JLabel("PACIENTE *");
         lblPacienteTit.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblPacienteTit.setForeground(new Color(100, 116, 139));
+        lblPacienteTit.setForeground(recursos.Color.MUTED);
         cardPaciente.add(lblPacienteTit, BorderLayout.NORTH);
+
+        final List<Animal> todosLosAnimalesBase = new ArrayList<>();
+        for (Responsable c : controlador.getVeterinaria().getListaClientes()) {
+            todosLosAnimalesBase.addAll(c.getMascotas());
+        }
 
         ArrayList<Animal> todos = new ArrayList<>();
         todos.add(null); // placeholder
-        for (Responsable c : controlador.getVeterinaria().getListaClientes()) {
-            todos.addAll(c.getMascotas());
-        }
+        todos.addAll(todosLosAnimalesBase);
+
+        JPanel panelPacienteInputs = new JPanel();
+        panelPacienteInputs.setOpaque(false);
+        panelPacienteInputs.setLayout(new BoxLayout(panelPacienteInputs, BoxLayout.Y_AXIS));
+
+        JTextField txtBuscarPaciente = new JTextField("Buscar por nombre o dueño...");
+        txtBuscarPaciente.setFont(CargadorFuentes.cargar(12f));
+        txtBuscarPaciente.setForeground(recursos.Color.MUTED);
+        txtBuscarPaciente.setPreferredSize(new Dimension(180, 32));
+        txtBuscarPaciente.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
+        txtBuscarPaciente.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(recursos.Color.BORDER, 1, true),
+                new EmptyBorder(0, 10, 0, 10)
+        ));
+
+        txtBuscarPaciente.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (txtBuscarPaciente.getText().equals("Buscar por nombre o dueño...")) {
+                    txtBuscarPaciente.setText("");
+                    txtBuscarPaciente.setForeground(recursos.Color.INK);
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (txtBuscarPaciente.getText().trim().isEmpty()) {
+                    txtBuscarPaciente.setText("Buscar por nombre o dueño...");
+                    txtBuscarPaciente.setForeground(recursos.Color.MUTED);
+                }
+            }
+        });
+
         comboAnimales = new JComboBox<>(todos.toArray(Animal[]::new));
-        comboAnimales.setBackground(new Color(248, 250, 252));
+        comboAnimales.setBackground(recursos.Color.CANVAS_GENERAL);
         comboAnimales.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
-        comboAnimales.setMaximumSize(new Dimension(Integer.MAX_VALUE, 20));
-        comboAnimales.setPreferredSize(new Dimension(180, 20));
+        comboAnimales.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
+        comboAnimales.setPreferredSize(new Dimension(180, 32));
         comboAnimales.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(2, 2, 2, 2)
         ));
+
+        // Live Filter
+        txtBuscarPaciente.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                String query = txtBuscarPaciente.getText().toLowerCase().trim();
+                if (query.equals("buscar por nombre o dueño...")) {
+                    query = "";
+                }
+
+                List<Animal> filtrados = new ArrayList<>();
+                filtrados.add(null); // placeholder
+                for (Animal a : todosLosAnimalesBase) {
+                    boolean coincide = query.isEmpty()
+                            || a.getNombre().toLowerCase().contains(query)
+                            || (a instanceof Perro && ((Perro) a).getRaza().toLowerCase().contains(query))
+                            || (a instanceof Gato && ((Gato) a).getRaza().toLowerCase().contains(query))
+                            || a.getResponsable().getNombre().toLowerCase().contains(query)
+                            || a.getResponsable().getApellido().toLowerCase().contains(query);
+                    if (coincide) {
+                        filtrados.add(a);
+                    }
+                }
+
+                comboAnimales.setModel(new DefaultComboBoxModel<>(filtrados.toArray(Animal[]::new)));
+                if (filtrados.size() == 2) {
+                    comboAnimales.setSelectedIndex(1);
+                } else {
+                    comboAnimales.setSelectedIndex(0);
+                }
+            }
+        });
 
         // Custom Renderer
         comboAnimales.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
@@ -202,10 +268,10 @@ public class DialogoNuevoTurno extends JDialog {
 
             if (value == null) {
                 textLabel.setText("Seleccionar paciente...");
-                textLabel.setForeground(new Color(148, 163, 184)); // Slate-400
+                textLabel.setForeground(recursos.Color.CAT_INACTIVO); // Slate-400
                 try {
                     ImageIcon patIcon = new ImageIcon("imagenes/emojis/patitas.png");
-                    Image scaled = patIcon.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+                    Image scaled = patIcon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
                     iconLabel.setIcon(new ImageIcon(scaled));
                 } catch (Exception e) {
                     iconLabel.setText("🐾");
@@ -215,7 +281,7 @@ public class DialogoNuevoTurno extends JDialog {
                 String text = value.getNombre() + " (" + value.getEspecie() + ") — "
                         + value.getResponsable().getNombre() + " " + value.getResponsable().getApellido();
                 textLabel.setText(text);
-                textLabel.setForeground(new Color(30, 41, 59)); // Slate-800
+                textLabel.setForeground(recursos.Color.INK); // Slate-800
 
                 String imgPath = (value instanceof Perro) ? "imagenes/emojis/perro.png" : "imagenes/emojis/gato.png";
                 try {
@@ -232,17 +298,21 @@ public class DialogoNuevoTurno extends JDialog {
             cellPanel.add(textLabel, BorderLayout.CENTER);
 
             if (isSelected) {
-                cellPanel.setBackground(new Color(13, 148, 136)); // Teal-600
-                textLabel.setForeground(Color.BLACK);
-                iconLabel.setForeground(Color.WHITE);
+                cellPanel.setBackground(recursos.Color.PRIMARY); // Teal-600
+                textLabel.setForeground(recursos.Color.SURFACE);
+                iconLabel.setForeground(recursos.Color.SURFACE);
             } else {
-                cellPanel.setBackground(Color.WHITE);
+                cellPanel.setBackground(recursos.Color.SURFACE);
             }
 
             return cellPanel;
         });
 
-        cardPaciente.add(comboAnimales, BorderLayout.CENTER);
+        panelPacienteInputs.add(txtBuscarPaciente);
+        panelPacienteInputs.add(Box.createVerticalStrut(8));
+        panelPacienteInputs.add(comboAnimales);
+
+        cardPaciente.add(panelPacienteInputs, BorderLayout.CENTER);
         panelColIzq.add(cardPaciente);
 
         panelColIzq.add(Box.createVerticalStrut(12));

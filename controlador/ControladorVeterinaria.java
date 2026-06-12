@@ -76,9 +76,21 @@ public class ControladorVeterinaria {
         }
     }
 
+    public void recetarMedicamento(Animal animal, Prescripcion pres) {
+        if (animal != null && pres != null) {
+            animal.getHistorial().recetarMedicamento(pres);
+        }
+    }
+
     public void registrarVacunacion(Animal animal, Vacuna vacuna, LocalDate fechaAplicacion) {
         if (animal != null && vacuna != null && fechaAplicacion != null) {
             RegistroVacunacion registro = new RegistroVacunacion(vacuna, fechaAplicacion);
+            animal.getHistorial().registrarVacuna(registro);
+        }
+    }
+
+    public void registrarVacunacion(Animal animal, RegistroVacunacion registro) {
+        if (animal != null && registro != null) {
             animal.getHistorial().registrarVacuna(registro);
         }
     }

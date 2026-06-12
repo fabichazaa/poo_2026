@@ -13,12 +13,13 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import modelo.*;
 import recursos.CargadorFuentes;
+import recursos.Color;
 
 public class PanelCitas extends JPanel {
 
     private final ControladorVeterinaria controlador;
-    private final Color colorFondoGris = new Color(241, 245, 249);
-    private final Color colorTeal = new Color(13, 148, 136);
+    private final Color colorFondoGris = Color.BG;
+    private final Color colorTeal = Color.PRIMARY;
 
     private final JPanel panelListaGrouped;
     private final JLabel lblStatHoyVal;
@@ -52,6 +53,7 @@ public class PanelCitas extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 g2.setColor(colorTeal);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                 g2.dispose();
@@ -77,7 +79,7 @@ public class PanelCitas extends JPanel {
 
         JLabel lblTitulo = new JLabel("Mis Turnos");
         lblTitulo.setFont(CargadorFuentes.cargar(18f).deriveFont(Font.BOLD));
-        lblTitulo.setForeground(new Color(30, 41, 59));
+        lblTitulo.setForeground(Color.INK);
 
         Veterinario vetLogueado = controlador.getVeterinarioLogueado();
         String vetStr = (vetLogueado != null)
@@ -85,7 +87,7 @@ public class PanelCitas extends JPanel {
                 : "Veterinario no identificado";
         JLabel lblSubtitle = new JLabel(vetStr);
         lblSubtitle.setFont(CargadorFuentes.cargar(11f));
-        lblSubtitle.setForeground(new Color(100, 116, 139));
+        lblSubtitle.setForeground(Color.MUTED);
 
         panelTitulos.add(lblTitulo);
         panelTitulos.add(lblSubtitle);
@@ -107,7 +109,7 @@ public class PanelCitas extends JPanel {
             }
         };
         btnNuevoTurno.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
-        btnNuevoTurno.setForeground(Color.WHITE);
+        btnNuevoTurno.setForeground(Color.SURFACE);
         btnNuevoTurno.setContentAreaFilled(false);
         btnNuevoTurno.setBorderPainted(false);
         btnNuevoTurno.setFocusPainted(false);
@@ -135,12 +137,12 @@ public class PanelCitas extends JPanel {
         // --- STATS ROW ---
         JPanel panelStats = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         panelStats.setOpaque(false);
-        panelStats.setBackground(Color.WHITE);
+        panelStats.setBackground(Color.SURFACE);
         panelStats.setBorder(new EmptyBorder(0, 0, 5, 0));
 
-        panelStats.add(crearCardEstadistica("Hoy", new Color(240, 249, 255), new Color(14, 116, 144), "imagenes/emojis/calendario.png", "", lblStatHoyVal = new JLabel("0")));
-        panelStats.add(crearCardEstadistica("Pendientes", new Color(254, 243, 199), new Color(180, 83, 9), "imagenes/emojis/reloj_arena.png", "⏳", lblStatPendVal = new JLabel("0")));
-        panelStats.add(crearCardEstadistica("Realizados", new Color(236, 253, 245), new Color(4, 120, 87), "imagenes/emojis/exito.png", "✅", lblStatRealVal = new JLabel("0")));
+        panelStats.add(crearCardEstadistica("Hoy", Color.STAT_HOY_BG, Color.STAT_HOY_TXT, "imagenes/emojis/calendario.png", "", lblStatHoyVal = new JLabel("0")));
+        panelStats.add(crearCardEstadistica("Pendientes", Color.STAT_PEND_BG, Color.STAT_PEND_TXT, "imagenes/emojis/reloj_arena.png", "⏳", lblStatPendVal = new JLabel("0")));
+        panelStats.add(crearCardEstadistica("Realizados", Color.STAT_REAL_BG, Color.STAT_REAL_TXT, "imagenes/emojis/exito.png", "✅", lblStatRealVal = new JLabel("0")));
 
         panelControles.add(panelStats);
         panelControles.add(Box.createVerticalStrut(12));
@@ -163,24 +165,25 @@ public class PanelCitas extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(verPasados ? new Color(13, 148, 136) : Color.WHITE);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g2.setColor(verPasados ? Color.PRIMARY : Color.SURFACE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
 
-                g2.setColor(verPasados ? new Color(13, 148, 136) : new Color(226, 232, 240));
+                g2.setColor(verPasados ? Color.PRIMARY : Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
                 g2.dispose();
                 super.paintComponent(g);
             }
         };
         btnVerPasados.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        btnVerPasados.setForeground(verPasados ? Color.WHITE : new Color(100, 116, 139));
+        btnVerPasados.setForeground(verPasados ? Color.SURFACE : Color.MUTED);
         btnVerPasados.setFocusPainted(false);
         btnVerPasados.setContentAreaFilled(false);
         btnVerPasados.setBorder(new EmptyBorder(6, 14, 6, 14));
         btnVerPasados.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnVerPasados.addActionListener(e -> {
             verPasados = !verPasados;
-            btnVerPasados.setForeground(verPasados ? Color.WHITE : new Color(100, 116, 139));
+            btnVerPasados.setForeground(verPasados ? Color.SURFACE : Color.MUTED);
             btnVerPasados.repaint();
             refrescarGrilla();
         });
@@ -188,7 +191,7 @@ public class PanelCitas extends JPanel {
 
         lblCountTurnos = new JLabel("0 turnos");
         lblCountTurnos.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
-        lblCountTurnos.setForeground(new Color(100, 116, 139));
+        lblCountTurnos.setForeground(Color.MUTED);
         lblCountTurnos.setBorder(new EmptyBorder(4, 8, 0, 0));
         panelFiltrosDer.add(lblCountTurnos);
 
@@ -199,7 +202,7 @@ public class PanelCitas extends JPanel {
 
         // --- LIST GROUPED SCROLLABLE ---
         panelListaGrouped = new JPanel();
-        panelListaGrouped.setBackground(new Color(241, 245, 249));
+        panelListaGrouped.setBackground(Color.BG);
         panelListaGrouped.setLayout(new BoxLayout(panelListaGrouped, BoxLayout.Y_AXIS));
 
         JScrollPane scrollLista = new JScrollPane(panelListaGrouped);
@@ -360,7 +363,7 @@ public class PanelCitas extends JPanel {
             panelVacio.setBorder(new EmptyBorder(40, 20, 40, 20));
             JLabel lblVacio = new JLabel("No hay turnos agendados con los filtros seleccionados");
             lblVacio.setFont(CargadorFuentes.cargar(13f));
-            lblVacio.setForeground(new Color(148, 163, 184));
+            lblVacio.setForeground(Color.CAT_INACTIVO);
             panelVacio.add(lblVacio);
             panelListaGrouped.add(panelVacio);
         } else {
@@ -397,7 +400,8 @@ public class PanelCitas extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(13, 148, 136)); // Teal-600
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g2.setColor(Color.PRIMARY); // Teal-600
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 g2.dispose();
             }
@@ -406,12 +410,12 @@ public class PanelCitas extends JPanel {
 
         JLabel lblCal = new JLabel("📅");
         lblCal.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
-        lblCal.setForeground(Color.WHITE);
+        lblCal.setForeground(Color.SURFACE);
         badge.add(lblCal);
 
         JLabel lblFechaText = new JLabel(niceDate);
         lblFechaText.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblFechaText.setForeground(Color.WHITE);
+        lblFechaText.setForeground(Color.SURFACE);
         lblFechaText.setBorder(new EmptyBorder(0, 0, 1, 2));
         badge.add(lblFechaText);
 
@@ -420,7 +424,7 @@ public class PanelCitas extends JPanel {
         // Contador de turnos del día
         JLabel lblCant = new JLabel(cant + " turnos");
         lblCant.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblCant.setForeground(new Color(148, 163, 184));
+        lblCant.setForeground(Color.CAT_INACTIVO);
         lblCant.setBorder(new EmptyBorder(6, 0, 0, 0));
         header.add(lblCant, BorderLayout.EAST);
 
@@ -434,9 +438,9 @@ public class PanelCitas extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g2.setColor(Color.WHITE);
+                g2.setColor(Color.SURFACE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36);
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 36, 36);
                 g2.dispose();
             }
@@ -455,7 +459,7 @@ public class PanelCitas extends JPanel {
         String horaAMPM = convertToAMPM(t.getHora());
         JLabel lblHora = new JLabel(horaAMPM, SwingConstants.LEFT);
         lblHora.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
-        lblHora.setForeground(new Color(30, 41, 59));
+        lblHora.setForeground(Color.INK);
         lblHora.setPreferredSize(new Dimension(85, 48));
 
         gbc.gridx = 0;
@@ -466,15 +470,15 @@ public class PanelCitas extends JPanel {
         Color accentColor;
         accentColor = switch (t.getTipo()) {
             case CIRUGIA ->
-                new Color(236, 72, 153);
+                Color.CAT_CIRUGIA;
             case CONSULTA_GENERAL ->
-                new Color(59, 130, 246);
+                Color.CAT_CONSULTA;
             case ANALISIS ->
-                new Color(139, 92, 246);
+                Color.CAT_ANALISIS;
             case VACUNACION ->
-                new Color(16, 185, 129);
+                Color.CAT_VACUNA;
             default ->
-                new Color(249, 115, 22);
+                Color.CAT_CONTROL;
         };
 
         JPanel panelAccent = new JPanel() {
@@ -501,7 +505,7 @@ public class PanelCitas extends JPanel {
         card.add(accentWrapper, gbc);
 
         // 3. ANIMAL AVATAR
-        Color avatarBg = (t.getAnimal() instanceof Perro) ? new Color(254, 186, 100) : new Color(125, 211, 252); // Orange or Blue
+        Color avatarBg = (t.getAnimal() instanceof Perro) ? Color.AVATAR_DOG : Color.AVATAR_CAT; // Orange or Blue
         JPanel panelAvatar = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -551,12 +555,12 @@ public class PanelCitas extends JPanel {
 
         JLabel lblName = new JLabel(t.getAnimal().getNombre());
         lblName.setFont(CargadorFuentes.cargar(13f).deriveFont(Font.BOLD));
-        lblName.setForeground(new Color(15, 23, 42)); // Slate-900
+        lblName.setForeground(Color.INK); // Slate-900
         panelRow1.add(lblName);
 
         JLabel lblDiv = new JLabel("—");
         lblDiv.setFont(CargadorFuentes.cargar(12f));
-        lblDiv.setForeground(new Color(203, 213, 225));
+        lblDiv.setForeground(Color.DIVIDER);
         panelRow1.add(lblDiv);
 
         // Badge pill
@@ -564,20 +568,20 @@ public class PanelCitas extends JPanel {
         Color pBg, pFore;
         switch (t.getTipo()) {
             case CIRUGIA -> {
-                pBg = new Color(254, 226, 226);
-                pFore = new Color(220, 38, 38);
+                pBg = Color.RED_LIGHT;
+                pFore = Color.ERROR;
             }
             case CONSULTA_GENERAL -> {
-                pBg = new Color(219, 234, 254);
-                pFore = new Color(37, 99, 235);
+                pBg = Color.BLUE_LIGHT;
+                pFore = Color.BLUE_DARK;
             }
             case ANALISIS -> {
-                pBg = new Color(243, 232, 255);
-                pFore = new Color(147, 51, 234);
+                pBg = Color.PURPLE_LIGHT;
+                pFore = Color.PURPLE_DARK;
             }
             default -> {
-                pBg = new Color(220, 252, 231);
-                pFore = new Color(22, 163, 74);
+                pBg = Color.SUCCESS_LIGHT;
+                pFore = Color.SUCCESS;
             }
         }
 
@@ -605,7 +609,7 @@ public class PanelCitas extends JPanel {
         String ownerStr = t.getAnimal().getResponsable().getNombre() + " " + t.getAnimal().getResponsable().getApellido();
         JLabel lblOwner = new JLabel(ownerStr);
         lblOwner.setFont(CargadorFuentes.cargar(11f));
-        lblOwner.setForeground(new Color(100, 116, 139));
+        lblOwner.setForeground(Color.MUTED);
         lblOwner.setBorder(new EmptyBorder(6, 6, 6, 0));
         lblOwner.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelInfo.add(lblOwner);
@@ -620,14 +624,14 @@ public class PanelCitas extends JPanel {
         PanelDescription.setBorder(new EmptyBorder(6, 12, 0, 12));
 
         JLabel lblTitleDescription = new JLabel("Nota:");
-        lblName.setFont(CargadorFuentes.cargar(13f).deriveFont(Font.BOLD));
-        lblName.setForeground(new Color(15, 23, 42)); // Slate-900
+        lblTitleDescription.setFont(CargadorFuentes.cargar(13f).deriveFont(Font.BOLD));
+        lblTitleDescription.setForeground(Color.INK); // Slate-900
         PanelDescription.add(lblTitleDescription);
         // Description Row
         String descriptionStr = t.getObservaciones();
         JLabel lblDescrption = new JLabel(descriptionStr);
         lblDescrption.setFont(CargadorFuentes.cargar(11f));
-        lblDescrption.setForeground(new Color(100, 116, 139));
+        lblDescrption.setForeground(Color.MUTED);
         lblDescrption.setBorder(new EmptyBorder(6, 6, 6, 0));
         lblDescrption.setAlignmentX(Component.LEFT_ALIGNMENT);
         PanelDescription.add(lblDescrption);
@@ -649,7 +653,7 @@ public class PanelCitas extends JPanel {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                    g2.setColor(new Color(254, 226, 226)); // Red-100
+                    g2.setColor(getBackground());
                     g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                     g2.dispose();
                     super.paintComponent(g);
@@ -659,7 +663,8 @@ public class PanelCitas extends JPanel {
             btnCancel.setPreferredSize(new Dimension(60, 24));
             btnCancel.setBorder(new EmptyBorder(2, 0, 0, 0));
             btnCancel.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.PLAIN));
-            btnCancel.setForeground(new Color(220, 38, 38));
+            btnCancel.setBackground(Color.RED_LIGHT);
+            btnCancel.setForeground(Color.ERROR);
             btnCancel.setContentAreaFilled(false);
             btnCancel.setBorderPainted(false);
             btnCancel.setFocusPainted(false);
@@ -667,14 +672,13 @@ public class PanelCitas extends JPanel {
             btnCancel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    // Color cuando el mouse entra al botón
-                    btnCancel.setBackground(Color.CYAN);
+                    btnCancel.setBackground(Color.RED_LIGHT.darker());
                     btnCancel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Cambia el cursor a mano
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    btnCancel.setBackground(Color.LIGHT_GRAY);
+                    btnCancel.setBackground(Color.RED_LIGHT);
                 }
             });
             btnCancel.addActionListener(e -> {
@@ -714,23 +718,23 @@ public class PanelCitas extends JPanel {
 
             // @Override
             // public void mouseEntered(MouseEvent e) {
-            //     card.setBackground(new Color(248, 250, 252));
-            //     lblChevron.setForeground(new Color(148, 163, 184));
+            //     card.setBackground(Color.CANVAS_GENERAL);
+            //     lblChevron.setForeground(Color.CAT_INACTIVO);
             //     card.repaint();
             // }
             // @Override
             // public void mouseExited(MouseEvent e) {
-            //     card.setBackground(Color.WHITE);
-            //     lblChevron.setForeground(new Color(203, 213, 225));
+            //     card.setBackground(Color.SURFACE);
+            //     lblChevron.setForeground(Color.DIVIDER);
             //     card.repaint();
             // }
         });
 
         // If cancelled or completed, style accordingly
         if (t.getEstado().equals(Turno.ESTADO_CANCELADO)) {
-            lblName.setForeground(new Color(148, 163, 184));
-            lblHora.setForeground(new Color(148, 163, 184));
-            lblOwner.setForeground(new Color(188, 204, 220));
+            lblName.setForeground(Color.CAT_INACTIVO);
+            lblHora.setForeground(Color.CAT_INACTIVO);
+            lblOwner.setForeground(Color.INACTIVE_TEXT);
             card.setEnabled(false);
         }
 
@@ -784,10 +788,11 @@ public class PanelCitas extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 g2.setColor(seleccionado ? colorTeal : Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 if (!seleccionado) {
-                    g2.setColor(new Color(226, 232, 240));
+                    g2.setColor(Color.BORDER);
                     g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
                 }
                 g2.dispose();
@@ -795,7 +800,7 @@ public class PanelCitas extends JPanel {
             }
         };
         btn.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        btn.setForeground(seleccionado ? Color.WHITE : new Color(100, 116, 139));
+        btn.setForeground(seleccionado ? Color.SURFACE : Color.MUTED);
         btn.setFocusPainted(false);
         btn.setContentAreaFilled(false);
         btn.setBorder(new EmptyBorder(6, 14, 6, 14));
@@ -809,6 +814,7 @@ public class PanelCitas extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 g2.setColor(bg);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 g2.setColor(new Color(Math.max(0, bg.getRed() - 15), Math.max(0, bg.getGreen() - 15), Math.max(0, bg.getBlue() - 15)));
@@ -846,7 +852,7 @@ public class PanelCitas extends JPanel {
 
         JLabel lblLbl = new JLabel(label);
         lblLbl.setFont(CargadorFuentes.cargar(9f));
-        lblLbl.setForeground(new Color(100, 116, 139));
+        lblLbl.setForeground(Color.MUTED);
 
         info.add(lblVal);
         info.add(lblLbl);
@@ -868,8 +874,8 @@ public class PanelCitas extends JPanel {
             }
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            Color finalColor = isDragging ? new Color(100, 116, 139)
-                    : (isThumbRollover() ? new Color(148, 163, 184) : new Color(203, 213, 225));
+            Color finalColor = isDragging ? Color.MUTED
+                    : (isThumbRollover() ? Color.CAT_INACTIVO : Color.DIVIDER);
             g2.setColor(finalColor);
             g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2,
                     thumbBounds.width - 4, thumbBounds.height - 4, 8, 8);

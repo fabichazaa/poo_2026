@@ -132,4 +132,28 @@ public final class Color extends java.awt.Color {
      * Gris — Pacientes o estados inactivos. (#94A3B8)
      */
     public static final Color CAT_INACTIVO = new Color(148, 163, 184);
+
+    // ===== ADICIONES DEL SISTEMA DE DISEÑO HAPPY PAWS =====
+    public static final Color DIVIDER = new Color(203, 213, 225);
+    public static final Color INACTIVE_TEXT = new Color(188, 204, 220);
+    
+    // Colores para avatares
+    public static final Color AVATAR_DOG = new Color(254, 186, 100);
+    public static final Color AVATAR_CAT = new Color(125, 211, 252);
+    
+    // Colores claros/pastel y variantes para Badges y Estados
+    public static final Color RED_LIGHT = new Color(254, 226, 226);
+    public static final Color BLUE_LIGHT = new Color(219, 234, 254);
+    public static final Color BLUE_DARK = new Color(37, 99, 235);
+    public static final Color PURPLE_LIGHT = new Color(243, 232, 255);
+    public static final Color PURPLE_DARK = new Color(147, 51, 234);
+    public static final Color SUCCESS_LIGHT = new Color(220, 252, 231);
+    
+    // Colores específicos de las tarjetas de estadísticas
+    public static final Color STAT_HOY_BG = new Color(240, 249, 255);
+    public static final Color STAT_HOY_TXT = new Color(14, 116, 144);
+    public static final Color STAT_PEND_BG = new Color(254, 243, 199);
+    public static final Color STAT_PEND_TXT = new Color(180, 83, 9);
+    public static final Color STAT_REAL_BG = new Color(236, 253, 245);
+    public static final Color STAT_REAL_TXT = new Color(4, 120, 87);
 }
