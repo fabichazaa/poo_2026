@@ -11,6 +11,7 @@ public abstract class Animal {
     private Responsable responsable;
     private final HistoriaClinica historiaClinica;
     private boolean enAdopcion;
+    private boolean activo;
 
     public Animal(String nombre, LocalDate fechaNacimiento, boolean sexo, Responsable responsable) {
         this.idAnimal = generarIdAnimal();
@@ -20,6 +21,7 @@ public abstract class Animal {
         this.responsable = responsable;
         this.historiaClinica = new HistoriaClinica();
         this.enAdopcion = false;
+        this.activo = true;
     }
 
     public Animal(String nombre, LocalDate fechaNacimiento, boolean sexo) {
@@ -40,6 +42,10 @@ public abstract class Animal {
 
     public boolean isSexo() {
         return sexo;
+    }
+
+    public boolean isActivo() { 
+        return activo;
     }
 
     public Responsable getResponsable() {
@@ -70,6 +76,10 @@ public abstract class Animal {
         this.responsable = responsable;
     }
 
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
     private String generarIdAnimal() {
         return UUID.randomUUID().toString();
     }
@@ -81,10 +91,14 @@ public abstract class Animal {
         return LocalDate.now().getYear() - fechaNacimiento.getYear();
     }
 
-    public String getRutaFoto() {
-        return "imagenes/patitas.png";
-    }
+    abstract public String getImagen();
 
+    abstract public String getColorInicioHex();
+
+    abstract public String getColorFinHex();
+
+    abstract public String getCategoriaFiltro();
+    
     public abstract TipoAlimentacion getTipoAlimentacion();
 
     public abstract String getEspecie();

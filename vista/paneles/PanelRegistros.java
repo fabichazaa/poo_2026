@@ -15,11 +15,15 @@ public class PanelRegistros extends JPanel {
     private JTextField txtBuscar;
     private String filtroEspecieActual = "Todos";
     private String filtroEstadoActual = "Todos";
+    
+    // Constante global para evitar fallas de tipeo entre el foco y el filtrado
+    private final String PLACEHOLDER_BUSQUEDA = "Buscar por nombre, raza o dueño...";
 
     // Colores de la paleta corporativa
     private final Color colorFondoGris = new Color(241, 245, 249);
     private final Color colorTealActivo = new Color(13, 148, 136);
     private final Color colorTextoOscuro = new Color(30, 41, 59);
+    private final Color colorTextoGrisBase = new Color(100, 116, 139);
 
     public PanelRegistros(ControladorVeterinaria controlador) {
         this.controlador = controlador;
@@ -28,21 +32,86 @@ public class PanelRegistros extends JPanel {
         setBackground(colorFondoGris);
         setBorder(new EmptyBorder(15, 25, 15, 25));
 
-        // --- 1. BARRA SUPERIOR DE FILTROS Y BÚSQUEDA ---
-        JPanel panelBarraSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 5));
+        // --- 1. BARRA SUPERIOR DE FILTROS Y BÚSQUEDA (MOCKUP STYLE) ---
+        JPanel panelBarraSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 5));
         panelBarraSuperior.setOpaque(false);
 
-        // Campo de búsqueda estilizado
-        txtBuscar = new JTextField("Buscar por nombre, raza o dueño...");
-        txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        txtBuscar.setForeground(new Color(148, 163, 184));
-        txtBuscar.setPreferredSize(new Dimension(350, 36));
-        txtBuscar.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
-                new EmptyBorder(0, 12, 0, 12)
-        ));
-        
-        // Listener en tiempo real para el buscador
+        // Pre-cargamos y escalamos la imagen de la lupa en alta definición
+        final ImageIcon iconoLupaModerno;
+        ImageIcon temporal = null;
+        try {
+            String rutaLupa = "imagenes/emojis/lupa.png"; 
+            java.awt.image.BufferedImage imgBuffer = javax.imageio.ImageIO.read(new java.io.File(rutaLupa));
+            
+            java.awt.image.BufferedImage resizedImg = new java.awt.image.BufferedImage(18, 18, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = resizedImg.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.drawImage(imgBuffer, 0, 0, 18, 18, null);
+            g2.dispose();
+            temporal = new ImageIcon(resizedImg);
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar la imagen de la lupa, usando respaldo de texto.");
+        }
+        iconoLupaModerno = temporal;
+
+        // Inicializamos el JTextField con el dibujo por píxeles de la lupa
+        txtBuscar = new JTextField(PLACEHOLDER_BUSQUEDA) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Fondo blanco redondeado
+                g2.setColor(Color.WHITE);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36);
+                
+                // Borde gris claro muy sutil
+                g2.setColor(new Color(226, 232, 240));
+                g2.setStroke(new BasicStroke(1f));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 36, 36);
+                
+                // Dibujamos la lupa calculando de forma exacta el centro vertical físico
+                if (iconoLupaModerno != null) {
+                    int xLupa = 14; 
+                    int yLupa = (getHeight() - iconoLupaModerno.getIconHeight()) / 2; 
+                    g2.drawImage(iconoLupaModerno.getImage(), xLupa, yLupa, null);
+                } else {
+                    g2.setColor(new Color(148, 163, 184));
+                    g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
+                    g2.drawString("🔍", 14, (getHeight() / 2) + 5);
+                }
+                
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+
+        txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtBuscar.setForeground(new Color(148, 163, 184)); 
+        txtBuscar.setPreferredSize(new Dimension(380, 42));
+        txtBuscar.setOpaque(false);
+        txtBuscar.setBorder(new EmptyBorder(0, 44, 0, 15)); 
+
+        // LÓGICA DE CONTROL DEL PLACEHOLDER (AUTOLIMPIABLE)
+        txtBuscar.addFocusListener(new java.awt.event.FocusListener() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (txtBuscar.getText().equals(PLACEHOLDER_BUSQUEDA)) {
+                    txtBuscar.setText("");
+                    txtBuscar.setForeground(colorTextoOscuro); 
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (txtBuscar.getText().trim().isEmpty()) {
+                    txtBuscar.setText(PLACEHOLDER_BUSQUEDA);
+                    txtBuscar.setForeground(new Color(148, 163, 184)); 
+                }
+            }
+        });
+
+        // Listener en tiempo real para el buscador por caracteres
         txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
@@ -51,48 +120,76 @@ public class PanelRegistros extends JPanel {
         });
         panelBarraSuperior.add(txtBuscar);
 
-        // Agrupación de filtros de Especies (Todos, Perro, Gato)
-        JPanel panelGrupoEspecies = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
+        // --- CONTENEDOR GRUPO ESPECIES (Caja blanca redondeada unificada) ---
+        JPanel panelGrupoEspecies = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(Color.WHITE);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36);
+                g2.setColor(new Color(226, 232, 240));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 36, 36);
+                g2.dispose();
+            }
+        };
         panelGrupoEspecies.setOpaque(false);
-        String[] especies = {"Todos", "Perro", "Gato"};
+        panelGrupoEspecies.setBorder(new EmptyBorder(2, 6, 2, 6));
+        
+        String[] especies = {"Todos", "Perro", "Gato", "Conejo", "Otro"};
         for (String esp : especies) {
-            JButton btnFiltro = crearBotonFiltroPildora(esp, true);
-            panelGrupoEspecies.add(btnFiltro);
+            panelGrupoEspecies.add(crearBotonFiltroPildora(esp, true));
         }
         panelBarraSuperior.add(panelGrupoEspecies);
 
-        // Agrupación de filtros de Estado (Todos, Activo, Inactivo)
-        JPanel panelGrupoEstado = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
+        // --- CONTENEDOR GRUPO ESTADO (Caja blanca redondeada unificada) ---
+        JPanel panelGrupoEstado = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(Color.WHITE);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36);
+                g2.setColor(new Color(226, 232, 240));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 36, 36);
+                g2.dispose();
+            }
+        };
         panelGrupoEstado.setOpaque(false);
+        panelGrupoEstado.setBorder(new EmptyBorder(2, 6, 2, 6));
+        
         String[] estados = {"Todos", "Activo", "Inactivo"};
         for (String est : estados) {
-            JButton btnFiltro = crearBotonFiltroPildora(est, false);
-            panelGrupoEstado.add(btnFiltro);
+            panelGrupoEstado.add(crearBotonFiltroPildora(est, false));
         }
         panelBarraSuperior.add(panelGrupoEstado);
 
         add(panelBarraSuperior, BorderLayout.NORTH);
 
         // --- 2. GRILLA CENTRAL SCROLLABLE DE PACIENTES ---
-        // Usamos un JPanel con GridBagLayout envuelto para que las tarjetas no se deformen en pantallas grandes
         panelGrillaPacientes = new JPanel(new GridLayout(0, 4, 20, 20)); 
         panelGrillaPacientes.setOpaque(false);
 
         JScrollPane scrollGrilla = new JScrollPane(panelGrillaPacientes);
         scrollGrilla.setBorder(null);
-        scrollGrilla.setOpaque(false);
-        scrollGrilla.getViewport().setOpaque(false);
+        scrollGrilla.setOpaque(true);
+        scrollGrilla.getViewport().setOpaque(true);
+        scrollGrilla.setBackground(colorFondoGris);
+        scrollGrilla.getViewport().setBackground(colorFondoGris);
+        scrollGrilla.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
         
-        // Aplicamos tu misma UI de Scroll personalizada que creaste para los turnos
-        scrollGrilla.getVerticalScrollBar().setUnitIncrement(14);
+        // 🔴 CAMBIO CLAVE: Sincronizamos e inyectamos tu UI personalizada de Scroll de alta definición
+        JScrollBar barraVertical = scrollGrilla.getVerticalScrollBar();
+        barraVertical.setUI(new ModernScrollBarUI()); 
+        barraVertical.setPreferredSize(new Dimension(8, 0)); // Ancho delgado y elegante de 8px
+        barraVertical.setOpaque(false);
+        barraVertical.setUnitIncrement(14); // Giro rápido y fluido idéntico al dashboard
         
         add(scrollGrilla, BorderLayout.CENTER);
 
-        // Renderizado inicial
         actualizar();
     }
 
-    // Método público que llama tu PortalVeterinario al cambiar de solapa
     public void actualizar() {
         filtrarYRefrescarGrilla();
     }
@@ -100,124 +197,150 @@ public class PanelRegistros extends JPanel {
     private void filtrarYRefrescarGrilla() {
         panelGrillaPacientes.removeAll();
 
-        // Obtenemos los animales desde tu lógica de negocio
         ArrayList<Animal> todosLosAnimales = controlador.getVeterinaria().getPacientesRegistrados();
         String busqueda = txtBuscar.getText().toLowerCase().trim();
-        if (busqueda.contains("buscar por nombre")) busqueda = "";
+        
+        if (busqueda.equals(PLACEHOLDER_BUSQUEDA.toLowerCase())) {
+            busqueda = "";
+        }
 
         for (Animal a : todosLosAnimales) {
-            // 1. Filtrar por texto (Nombre, Raza o Dueño)
+            // 1. Filtrado por texto (Buscador)
             boolean coincideTexto = busqueda.isEmpty() || 
                     a.getNombre().toLowerCase().contains(busqueda) ||
-                    (a instanceof Perro && ((Perro)a).getRaza().toLowerCase().contains(busqueda)) ||
-                    (a instanceof Gato && ((Gato)a).getRaza().toLowerCase().contains(busqueda)) ||
                     a.getResponsable().getApellido().toLowerCase().contains(busqueda);
 
-            // 2. Filtrar por tipo de objeto (Polimorfismo)
-            boolean coincideEspecie = filtroEspecieActual.equals("Todos") ||
-                    (filtroEspecieActual.equals("Perro") && a instanceof Perro) ||
-                    (filtroEspecieActual.equals("Gato") && a instanceof Gato);
+            // 2. FILTRADO POLIMÓRFICO
+            boolean coincideEspecie = filtroEspecieActual.equals("Todos") || 
+                                    a.getCategoriaFiltro().equals(filtroEspecieActual);
 
-            // 3. Filtrar por estado clínico
-           panelGrillaPacientes.add(crearTarjetaPacienteHD(a));
+            if (coincideTexto && coincideEspecie) {
+                panelGrillaPacientes.add(crearTarjetaPacienteHD(a));
+            }
         }
 
         panelGrillaPacientes.revalidate();
         panelGrillaPacientes.repaint();
     }
 
-    // --- RENDERIZADO HD DE LA TARJETA DE PACIENTE INDIVIDUAL ---
-    private JPanel crearTarjetaPacienteHD(Animal a) {
-        // Marco de la tarjeta con borde superior de color polimórfico (Azul Perro, Celeste Gato)
-        // Alto de la barra decorativa superior y radio de redondeo consistente con las esquinas del mockup
-        int altoBarra = 6;
-        int radioEsquina = 24; 
-
-        // Creamos la tarjeta pintando la barra superior con su respectivo degradado y bordes curvos
-        JPanel card = new JPanel(new BorderLayout(0, 10)) {
+    // --- BOTONES DE FILTRO EN PÍLDORA FLOTANTE ---
+    private JButton crearBotonFiltroPildora(String texto, boolean esDeEspecie) {
+        JButton btn = new JButton(texto) {
             @Override
             protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                // --- CONFIGURACIÓN DEL DEGRADADO DE LA CABECERA ---
-                // Fluirá de forma horizontal (desde X=0 hasta X=ancho de la tarjeta)
-                GradientPaint degradadoCabecera = new GradientPaint(0, 0,  new Color(255, 178, 0), getWidth(), 0, new Color(255, 115, 0));
+                boolean seleccionado = esDeEspecie ? filtroEspecieActual.equals(texto) : filtroEstadoActual.equals(texto);
                 
-                if (a instanceof Gato) {
-                    degradadoCabecera = new GradientPaint(0, 0, new Color(34, 211, 238), getWidth(), 0, new Color(37, 99, 235));
+                if (seleccionado) {
+                    g2.setColor(colorTealActivo);
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
+                    setForeground(Color.WHITE);
+                } else {
+                    setForeground(colorTextoGrisBase);
                 }
                 
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setContentAreaFilled(false);
+        btn.setBorderPainted(false);
+        btn.setOpaque(false);
+        btn.setBorder(new EmptyBorder(8, 16, 8, 16)); 
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        
+        btn.addActionListener(e -> {
+            if (esDeEspecie) {
+                filtroEspecieActual = texto;
+            } else {
+                filtroEstadoActual = texto;
+            }
+            JPanel parent = (JPanel) btn.getParent();
+            if (parent != null) {
+                parent.repaint();
+            }
+            filtrarYRefrescarGrilla();
+        });
+
+        return btn;
+    }
+
+    // --- RENDERIZADO HD DE LA TARJETA DE PACIENTE INDIVIDUAL ---
+    private JPanel crearTarjetaPacienteHD(Animal a) {
+        int altoBarra = 6;
+        int radioEsquina = 24; 
+
+        JPanel card = new JPanel(new BorderLayout(0, 10)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                g2.setColor(Color.WHITE);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), radioEsquina, radioEsquina);
+                
+                Color colorInicio = Color.decode(a.getColorInicioHex());
+                Color colorFin = Color.decode(a.getColorFinHex());
+
+                GradientPaint degradadoCabecera = new GradientPaint(0, 0, colorInicio, 0, getHeight(), colorFin);
                 g2.setPaint(degradadoCabecera);
-                // --------------------------------------------------
                 
-                // Recorte curvo exacto para que el degradado acompañe perfectamente las esquinas redondeadas de la tarjeta blanca
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radioEsquina, radioEsquina));
-                
-                // Dibujamos la barra con el alto estilizado
                 g2.fillRect(0, 0, getWidth(), altoBarra);
+                
+                g2.setClip(null); 
+                g2.setColor(new Color(226, 232, 240));
+                g2.setStroke(new BasicStroke(1f));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radioEsquina, radioEsquina);
                 
                 g2.dispose();
             }
         };
-        card.setBackground(Color.WHITE);
-        card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
-                new EmptyBorder(15, 15, 15, 15)
-        ));
+        card.setOpaque(false);
+        card.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-       // CONTENEDOR AVATAR CENTRAL (Degrade exacto según el mockup)
+        // CONTENEDOR AVATAR CENTRAL (75x75)
         JPanel panelAvatar = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                // --- DEFINICIÓN DE DEGRADADOS DINÁMICOS SEGÚN MOCKUP ---
-                GradientPaint degradadoEspecie;
-                
-                if (a instanceof Perro) {
-                    // Perros: Desde un amarillo/naranja brillante arriba a un naranja fuego abajo
-                    Color colorInicioNaranja = new Color(255, 178, 0); // #FB923C
-                    Color colorFinNaranja = new Color(255, 115, 0);    // #EA580C
-                    degradadoEspecie = new GradientPaint(0, 0, colorInicioNaranja, 0, getHeight(), colorFinNaranja);
-                } else {
-                    // Gatos: Desde un celeste brillante arriba a un azul cian profundo abajo
-                    Color colorInicioCeleste = new Color(34, 211, 238); // #22D3EE
-                    Color colorFinCeleste = new Color(37, 99, 235);    // #2563EB
-                    degradadoEspecie = new GradientPaint(0, 0, colorInicioCeleste, 0, getHeight(), colorFinCeleste);
-                }
+                Color colorInicio = Color.decode(a.getColorInicioHex());
+                Color colorFin = Color.decode(a.getColorFinHex());
+
+                GradientPaint degradadoEspecie = new GradientPaint(0, 0, colorInicio, 0, getHeight(), colorFin);
                 
                 g2.setPaint(degradadoEspecie);
-                // --------------------------------------------------------
-                
-                // Dibujamos el cuadrado redondeado suavizado para el ícono
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
                 g2.dispose();
                 super.paintComponent(g);
             }
         };
         panelAvatar.setPreferredSize(new Dimension(75, 75));
+        panelAvatar.setMinimumSize(new Dimension(75, 75));
+        panelAvatar.setMaximumSize(new Dimension(75, 75));
         panelAvatar.setOpaque(false);
         panelAvatar.setLayout(new GridBagLayout());
 
-        // Carga y remuestreo bilinear HD para el ícono de la mascota
         JLabel lblIcono = new JLabel();
         try {
-            String rutaImg = (a instanceof Perro) ? "imagenes/emojis/perro.png" : "imagenes/emojis/gato.png";
+            String rutaImg = a.getImagen();
             java.awt.image.BufferedImage imgBuffer = javax.imageio.ImageIO.read(new java.io.File(rutaImg));
-            // Escalado premium de alta definición
-            java.awt.image.BufferedImage resizedImg = new java.awt.image.BufferedImage(55, 55, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+            
+            java.awt.image.BufferedImage resizedImg = new java.awt.image.BufferedImage(42, 42, java.awt.image.BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = resizedImg.createGraphics();
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            g2.drawImage(imgBuffer, 0, 0, 55, 55, null);
+            g2.drawImage(imgBuffer, 0, 0, 42, 42, null);
             g2.dispose();
             lblIcono.setIcon(new ImageIcon(resizedImg));
         } catch (Exception e) {
-            lblIcono.setText(a instanceof Perro ? "🐕" : "🐈");
-            lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 36));
+            lblIcono.setText("🐾");
+            lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 30));
         }
         panelAvatar.add(lblIcono);
 
@@ -225,7 +348,7 @@ public class PanelRegistros extends JPanel {
         panelAvatarWrapper.setOpaque(false);
         panelAvatarWrapper.add(panelAvatar);
 
-        // BLOQUE DE IDENTIFICACIÓN (Nombre, Raza y Tags)
+        // BLOQUE DE IDENTIFICACIÓN
         JPanel panelInfoCentral = new JPanel();
         panelInfoCentral.setOpaque(false);
         panelInfoCentral.setLayout(new BoxLayout(panelInfoCentral, BoxLayout.Y_AXIS));
@@ -235,52 +358,89 @@ public class PanelRegistros extends JPanel {
         lblNombre.setForeground(colorTextoOscuro);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        String razaStr = (a instanceof Perro) ? ((Perro) a).getRaza() : ((Gato) a).getRaza();
-        JLabel lblRaza = new JLabel(razaStr, SwingConstants.CENTER);
-        lblRaza.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        lblRaza.setForeground(new Color(148, 163, 184));
-        lblRaza.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Contenedor de Tags (Píldoras)
-        JPanel panelTags = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 0));
+        JPanel panelTags = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         panelTags.setOpaque(false);
         
- 
+        JLabel lblEstadoActivo = new JLabel(a.isActivo() ? "Activo" : "Inactivo", SwingConstants.CENTER) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+                
+                g2.setColor(new Color(220, 252, 231)); 
+                g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
+                
+                g2.setColor(new Color(187, 247, 208)); 
+                g2.setStroke(new BasicStroke(1.2f)); 
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
+                
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        lblEstadoActivo.setFont(new Font("Segoe UI", Font.BOLD, 10));
+        lblEstadoActivo.setForeground(new Color(22, 163, 74));
+        lblEstadoActivo.setBorder(new EmptyBorder(3, 12, 3, 12));
+        panelTags.add(lblEstadoActivo);
+        
         panelInfoCentral.add(lblNombre);
         panelInfoCentral.add(Box.createVerticalStrut(2));
-        panelInfoCentral.add(lblRaza);
-        panelInfoCentral.add(Box.createVerticalStrut(8));
+        panelInfoCentral.add(Box.createVerticalStrut(6));
         panelInfoCentral.add(panelTags);
 
-        // BLOQUE DE DATOS TÉCNICOS (Dueño, Edad, Próximo Turno)
+        // BLOQUE DE DATOS TÉCNICOS
         JPanel panelDatosGrid = new JPanel(new GridLayout(3, 2, 0, 4));
         panelDatosGrid.setOpaque(false);
         panelDatosGrid.setBorder(new EmptyBorder(10, 5, 5, 5));
 
         agregarFilaFicha(panelDatosGrid, "Dueño", a.getResponsable().getNombre());
-        agregarFilaFicha(panelDatosGrid, "Edad", "3 años"); // Aquí podés calcular dinámicamente con Period
+        agregarFilaFicha(panelDatosGrid, "Edad", "3 años"); 
         agregarFilaFicha(panelDatosGrid, "Próx. turno", "06 Jun 2026");
 
         // BOTÓN ACCIÓN INFERIOR
         JButton btnFicha = new JButton("Ver ficha →") {
+            private boolean mouseEncima = false;
+            {
+                setFocusPainted(false);
+                setContentAreaFilled(false);
+                setBorderPainted(false);
+                setOpaque(false);
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                setBorder(new EmptyBorder(8, 0, 8, 0));
+
+                addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
+                    public void mouseEntered(java.awt.event.MouseEvent e) {
+                        mouseEncima = true;
+                        repaint();
+                    }
+                    @Override
+                    public void mouseExited(java.awt.event.MouseEvent e) {
+                        mouseEncima = false;
+                        repaint();
+                    }
+                });
+            }
+
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(248, 250, 252));
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-                g2.setColor(new Color(226, 232, 240));
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
+                
+                if (mouseEncima) {
+                    g2.setColor(new Color(226, 232, 240)); 
+                } else {
+                    g2.setColor(new Color(241, 245, 249)); 
+                }
+                
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16); 
                 g2.dispose();
                 super.paintComponent(g);
             }
         };
         btnFicha.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnFicha.setForeground(new Color(71, 85, 105));
-        btnFicha.setFocusPainted(false);
-        btnFicha.setContentAreaFilled(false);
-        btnFicha.setBorder(new EmptyBorder(8, 0, 8, 0));
-        btnFicha.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnFicha.setForeground(new Color(71, 85, 105)); 
 
         JPanel panelCuerpoTarjeta = new JPanel(new BorderLayout(0, 12));
         panelCuerpoTarjeta.setOpaque(false);
@@ -294,76 +454,67 @@ public class PanelRegistros extends JPanel {
         return card;
     }
 
-    // --- MÉTODOS AUXILIARES DE COMPONENTES ---
-    private JButton crearBotonFiltroPildora(String texto, boolean esDeEspecie) {
-        JButton btn = new JButton(texto) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                
-                boolean seleccionado = esDeEspecie ? filtroEspecieActual.equals(texto) : filtroEstadoActual.equals(texto);
-                g2.setColor(seleccionado ? colorTealActivo : Color.WHITE);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
-                
-                if (!seleccionado) {
-                    g2.setColor(new Color(226, 232, 240));
-                    g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 14, 14);
-                }
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btn.setFocusPainted(false);
-        btn.setContentAreaFilled(false);
-        btn.setBorder(new EmptyBorder(5, 14, 5, 14));
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        
-        // Determinamos la acción al pulsar las píldoras de filtrado superior
-        btn.addActionListener(e -> {
-            if (esDeEspecie) {
-                filtroEspecieActual = texto;
-            } else {
-                filtroEstadoActual = texto;
-            }
-            // Repintar el grupo de botones hermano para actualizar cuál se ve presionado
-            JPanel parent = (JPanel) btn.getParent();
-            if (parent != null) parent.repaint();
-            filtrarYRefrescarGrilla();
-        });
-
-        return btn;
-    }
-
-    private JLabel crearBadgeVisual(String texto, Color fondo, Color textoColor) {
-        JLabel badge = new JLabel(texto, SwingConstants.CENTER) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(fondo);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        badge.setFont(new Font("Segoe UI", Font.BOLD, 10));
-        badge.setForeground(textoColor);
-        badge.setBorder(new EmptyBorder(2, 8, 2, 8));
-        return badge;
-    }
-
     private void agregarFilaFicha(JPanel panel, String clave, String valor) {
         JLabel lblClave = new JLabel(clave);
         lblClave.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblClave.setForeground(new Color(148, 163, 184));
+        lblClave.setForeground(new Color(148, 163, 184)); 
         
         JLabel lblValor = new JLabel(valor, SwingConstants.RIGHT);
-        lblValor.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        lblValor.setForeground(colorTextoOscuro);
+        lblValor.setFont(new Font("Segoe UI", Font.PLAIN, 12)); 
+        lblValor.setForeground(new Color(71, 85, 105)); 
 
         panel.add(lblClave);
         panel.add(lblValor);
+    }
+
+    // =========================================================================
+    // CLASE INTERNA INTEGRADA: Sincroniza la apariencia del scroll del Dashboard
+    // =========================================================================
+    private static class ModernScrollBarUI extends javax.swing.plaf.basic.BasicScrollBarUI {
+        @Override
+        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
+            // Se deja vacío de forma intencional para eliminar el fondo gris rígido clásico
+        }
+
+        @Override
+        protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
+            if (thumbBounds.isEmpty() || !scrollbar.isEnabled()) {
+                return;
+            }
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            
+            Color colorFinal;
+            if (isDragging) {
+                colorFinal = new Color(100, 116, 139); // Gris Slate Oscuro al arrastrar
+            } else if (isThumbRollover()) {
+                colorFinal = new Color(148, 163, 184); // Gris Slate Intermedio en Hover
+            } else {
+                colorFinal = new Color(203, 213, 225); // Estado pasivo original gris suave
+            }
+            
+            g2.setColor(colorFinal);
+            g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2, 
+                             thumbBounds.width - 4, thumbBounds.height - 4, 8, 8);
+            g2.dispose();
+        }
+
+        @Override
+        protected JButton createDecreaseButton(int orientation) {
+            return crearBotonInvisible();
+        }
+
+        @Override
+        protected JButton createIncreaseButton(int orientation) {
+            return crearBotonInvisible();
+        }
+
+        private JButton crearBotonInvisible() {
+            JButton btn = new JButton();
+            btn.setPreferredSize(new Dimension(0, 0));
+            btn.setMinimumSize(new Dimension(0, 0));
+            btn.setMaximumSize(new Dimension(0, 0));
+            return btn;
+        }
     }
 }

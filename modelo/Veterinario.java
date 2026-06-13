@@ -50,7 +50,7 @@ public class Veterinario extends Persona {
         this.turnoTrabajo = turnoTrabajo;
     }
 
-    public String getRutaFoto() {
+    public String getImagen() {
         return "imagenes/vet.jpg";
     }
 

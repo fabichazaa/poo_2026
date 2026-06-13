@@ -45,8 +45,19 @@ public class Perro extends Animal {
         return "Perro";
     }
 
-    @Override
-    public String getRutaFoto() {
-        return "imagenes/perro.png";
+    public String getImagen() {
+        return "imagenes/emojis/perro.png";
+    }
+
+    public String getColorInicioHex() {
+        return "#FFB200";
+    }
+
+    public String getColorFinHex() {
+        return "#FF7300";
+    }
+
+    public String getCategoriaFiltro() {
+        return "Perro";
     }
 }

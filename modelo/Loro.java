@@ -2,21 +2,21 @@ package modelo;
 
 import java.time.LocalDate;
 
-public class Gato extends Animal {
+public class Loro extends Animal {
     private String raza;
-    private boolean esEsterilizado;
+    private boolean necesitaPaseo;
 
-    public Gato(String nombre, LocalDate fechaNacimiento, boolean sexo,
+    public Loro(String nombre, LocalDate fechaNacimiento, boolean sexo,
         Responsable responsable, String raza) {
         super(nombre, fechaNacimiento, sexo, responsable);
         this.raza = raza;
-        this.esEsterilizado = false;
+        this.necesitaPaseo = true;
     }
 
-    public Gato(String nombre, LocalDate fechaNacimiento, boolean sexo, String raza) {
+    public Loro(String nombre, LocalDate fechaNacimiento, boolean sexo, String raza) {
         super(nombre, fechaNacimiento, sexo);
         this.raza = raza;
-        this.esEsterilizado = false;
+        this.necesitaPaseo = true;
     }
 
     public String getRaza() {
@@ -27,37 +27,38 @@ public class Gato extends Animal {
         this.raza = raza;
     }
 
-    public boolean isEsEsterilizado() {
-        return esEsterilizado;
+    public boolean isNecesitaPaseo() {
+        return necesitaPaseo;
     }
 
-    public void setEsEsterilizado(boolean esEsterilizado) {
-        this.esEsterilizado = esEsterilizado;
+    public void setNecesitaPaseo(boolean necesitaPaseo) {
+        this.necesitaPaseo = necesitaPaseo;
     }
 
     @Override
     public TipoAlimentacion getTipoAlimentacion() {
-        return TipoAlimentacion.CARNIVORO_ESTRICTO;
+        return TipoAlimentacion.OMNIVORO;
     }
 
     @Override
     public String getEspecie() {
-        return "Gato";
+        return "Loro";
     }
 
+    @Override
     public String getImagen() {
-        return "imagenes/emojis/gato.png";
+        return "imagenes/emojis/loro.png";
     }
 
     public String getColorInicioHex() {
-        return "#22D3EE";
+        return "#34D399";
     }
 
     public String getColorFinHex() {
-        return "#2563EB";
-    }
+        return "#059669";
+    } 
 
     public String getCategoriaFiltro() {
-        return "Gato";
+        return "Otro";
     }
 }
