@@ -53,40 +53,15 @@ public class DialogoRecetarMedicamento extends JDialog {
     private void construir() {
         setSize(540, 640);
         setUndecorated(true);
+        setShape(new java.awt.geom.RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 24, 24));
         setResizable(false);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
 
-        // Borde redondeado simulado para toda la ventana usando un panel principal con borde
-        JPanel panelFondo = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(Color.WHITE);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
-                g2.setColor(new Color(226, 232, 240));
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
-                g2.dispose();
-            }
-        };
-        panelFondo.setOpaque(false);
-        panelFondo.setBorder(new EmptyBorder(1, 1, 1, 1));
-
         // ==========================================
         //  HEADER BANNER (Green/Teal)
         // ==========================================
-        JPanel headerPanel = new JPanel(new BorderLayout(12, 0)) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(recursos.Color.PRIMARY);
-                // Llenar solo la parte superior con esquinas redondeadas
-                g2.fillRoundRect(0, 0, getWidth(), getHeight() + 20, 24, 24);
-                g2.dispose();
-            }
-        };
+        JPanel headerPanel = new JPanel(new BorderLayout(12, 0));
         headerPanel.setOpaque(false);
         headerPanel.setBorder(new EmptyBorder(16, 24, 16, 24));
 
@@ -99,10 +74,13 @@ public class DialogoRecetarMedicamento extends JDialog {
         lblTitulo.setForeground(Color.WHITE);
 
         String raza = "Mixto";
-        if (animal instanceof Perro) {
-            raza = ((Perro) animal).getRaza();
-        } else if (animal instanceof Gato) {
-            raza = ((Gato) animal).getRaza();
+        switch (animal) {
+            case Perro perro ->
+                raza = perro.getRaza();
+            case Gato gato ->
+                raza = gato.getRaza();
+            default -> {
+            }
         }
         JLabel lblSub = new JLabel("Para: " + animal.getNombre() + " (" + raza + " · " + animal.getEspecie() + ")");
         lblSub.setFont(CargadorFuentes.cargar(12f));
@@ -112,9 +90,26 @@ public class DialogoRecetarMedicamento extends JDialog {
         textHeader.add(Box.createVerticalStrut(2));
         textHeader.add(lblSub);
 
-        JButton btnClose = new JButton("✕");
-        btnClose.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        btnClose.setForeground(Color.WHITE);
+        JButton btnClose = new JButton() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                if (getModel().isRollover()) {
+                    g2.setColor(new Color(255, 255, 255, 40));
+                    g2.fillOval(0, 0, getWidth(), getHeight());
+                }
+                g2.setColor(Color.WHITE);
+                g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                int size = 12;
+                int x = (getWidth() - size) / 2;
+                int y = (getHeight() - size) / 2;
+                g2.drawLine(x, y, x + size, y + size);
+                g2.drawLine(x + size, y, x, y + size);
+                g2.dispose();
+            }
+        };
+        btnClose.setPreferredSize(new Dimension(28, 28));
         btnClose.setOpaque(false);
         btnClose.setContentAreaFilled(false);
         btnClose.setBorderPainted(false);
@@ -124,6 +119,32 @@ public class DialogoRecetarMedicamento extends JDialog {
 
         headerPanel.add(textHeader, BorderLayout.CENTER);
         headerPanel.add(btnClose, BorderLayout.EAST);
+
+        // Borde redondeado simulado para toda la ventana usando un panel principal con borde
+        JPanel panelFondo = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+
+                int headerHeight = headerPanel.getHeight() > 0 ? headerPanel.getHeight() : 70;
+                g2.setColor(recursos.Color.PRIMARY);
+                g2.fillRect(0, 0, getWidth(), headerHeight + 1);
+                g2.dispose();
+
+                Graphics2D gBorder = (Graphics2D) g.create();
+                gBorder.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                gBorder.setColor(new Color(226, 232, 240));
+                gBorder.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
+                gBorder.dispose();
+            }
+        };
+        panelFondo.setOpaque(true);
+        panelFondo.setBorder(new EmptyBorder(1, 1, 1, 1));
 
         panelFondo.add(headerPanel, BorderLayout.NORTH);
 
@@ -191,7 +212,8 @@ public class DialogoRecetarMedicamento extends JDialog {
                 new LineBorder(new Color(226, 232, 240), 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
-        txtBuscarMed.setFont(CargadorFuentes.cargar(12f));
+        txtBuscarMed.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+
         txtBuscarMed.setForeground(recursos.Color.INK);
         txtBuscarMed.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelDelCatalogo.add(txtBuscarMed);
@@ -222,8 +244,7 @@ public class DialogoRecetarMedicamento extends JDialog {
                     panel.setBackground(Color.WHITE);
                 }
 
-                if (value instanceof Medicamento) {
-                    Medicamento m = (Medicamento) value;
+                if (value instanceof Medicamento m) {
                     JLabel lblIcon = new JLabel("💊");
                     lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
 
@@ -460,12 +481,26 @@ public class DialogoRecetarMedicamento extends JDialog {
         ));
         btnCancelar.addActionListener(e -> dispose());
 
-        JButton btnConfirmar = new JButton("💊 Confirmar receta");
-        btnConfirmar.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
+        JButton btnConfirmar = new JButton("💊 Confirmar receta") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        btnConfirmar.setFont(new Font("Segoe UI Emoji", Font.BOLD, 12));
+
         btnConfirmar.setBackground(recursos.Color.PRIMARY);
         btnConfirmar.setForeground(Color.WHITE);
         btnConfirmar.setFocusPainted(false);
-        btnConfirmar.setOpaque(true);
+        btnConfirmar.setContentAreaFilled(false);
+        btnConfirmar.setOpaque(false);
+        btnConfirmar.setBorderPainted(false);
         btnConfirmar.setBorder(new EmptyBorder(10, 20, 10, 20));
         btnConfirmar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnConfirmar.addMouseListener(new MouseAdapter() {
@@ -500,14 +535,17 @@ public class DialogoRecetarMedicamento extends JDialog {
 
         // Buscador reactivo
         txtBuscarMed.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 filtrar();
             }
 
+            @Override
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
                 filtrar();
             }
 
+            @Override
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
                 filtrar();
             }
@@ -654,7 +692,7 @@ public class DialogoRecetarMedicamento extends JDialog {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(new Color(148, 163, 184));
-                g2.setFont(getFont().deriveFont(Font.ITALIC));
+                g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
                 Insets insets = getInsets();
                 FontMetrics fm = g2.getFontMetrics();
                 int y = (getHeight() - insets.top - insets.bottom - fm.getHeight()) / 2 + fm.getAscent() + insets.top;

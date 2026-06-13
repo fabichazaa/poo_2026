@@ -14,6 +14,9 @@ import javax.swing.border.EmptyBorder;
 import modelo.*;
 import recursos.CargadorFuentes;
 import recursos.Color;
+import recursos.ImageLoader;
+import vista.componentes.ModernScrollBarUI;
+
 
 public class PanelCitas extends JPanel {
 
@@ -63,13 +66,12 @@ public class PanelCitas extends JPanel {
         panelLogo.setOpaque(false);
         JLabel lblLogoIcon = new JLabel("🐾");
         lblLogoIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
-        try {
-            ImageIcon icon = new ImageIcon("imagenes/logo.png");
-            Image scaled = icon.getImage().getScaledInstance(36, 36, Image.SCALE_SMOOTH);
-            lblLogoIcon.setIcon(new ImageIcon(scaled));
+        ImageIcon icon = ImageLoader.loadScaled("imagenes/logo.png", 36, 36);
+        if (icon.getImage() != null && icon.getIconWidth() > 0) {
+            lblLogoIcon.setIcon(icon);
             lblLogoIcon.setText("");
-        } catch (Exception e) {
         }
+
         panelLogo.add(lblLogoIcon);
         panelHeaderIzq.add(panelLogo);
 
@@ -102,12 +104,13 @@ public class PanelCitas extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g2.setColor(colorTeal);
+                g2.setColor(getBackground());
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 g2.dispose();
                 super.paintComponent(g);
             }
         };
+        btnNuevoTurno.setBackground(colorTeal);
         btnNuevoTurno.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
         btnNuevoTurno.setForeground(Color.SURFACE);
         btnNuevoTurno.setContentAreaFilled(false);
@@ -115,6 +118,17 @@ public class PanelCitas extends JPanel {
         btnNuevoTurno.setFocusPainted(false);
         btnNuevoTurno.setPreferredSize(new Dimension(130, 36));
         btnNuevoTurno.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnNuevoTurno.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnNuevoTurno.setBackground(recursos.Color.PRIMARY_DEEP);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnNuevoTurno.setBackground(colorTeal);
+            }
+        });
         btnNuevoTurno.addActionListener(e -> {
             Frame parent = (Frame) SwingUtilities.getWindowAncestor(PanelCitas.this);
             vista.dialogos.DialogoNuevoTurno d = new vista.dialogos.DialogoNuevoTurno(parent, controlador);
@@ -333,20 +347,14 @@ public class PanelCitas extends JPanel {
         }
 
         // Ordenar cronológicamente: fecha y hora
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         turnosFiltrados.sort((t1, t2) -> {
-            try {
-                LocalDate d1 = LocalDate.parse(t1.getFecha(), dtf);
-                LocalDate d2 = LocalDate.parse(t2.getFecha(), dtf);
-                int cmp = d1.compareTo(d2);
-                if (cmp != 0) {
-                    return cmp;
-                }
-                return t1.getHora().compareTo(t2.getHora());
-            } catch (Exception e) {
-                return 0;
+            int cmp = t1.getFechaParsed().compareTo(t2.getFechaParsed());
+            if (cmp != 0) {
+                return cmp;
             }
+            return t1.getHoraParsed().compareTo(t2.getHoraParsed());
         });
+
 
         // Agrupar por fecha
         Map<String, List<Turno>> agrupados = new LinkedHashMap<>();
@@ -521,16 +529,16 @@ public class PanelCitas extends JPanel {
         panelAvatar.setOpaque(false);
 
         JLabel lblAvatar = new JLabel();
-        try {
-            String path = (t.getAnimal() instanceof Perro) ? "imagenes/emojis/perro.png" : "imagenes/emojis/gato.png";
-            ImageIcon img = new ImageIcon(path);
-            Image scaled = img.getImage().getScaledInstance(36, 36, Image.SCALE_SMOOTH);
-            lblAvatar.setIcon(new ImageIcon(scaled));
-        } catch (Exception e) {
+        String path = (t.getAnimal() instanceof Perro) ? "imagenes/emojis/perro.png" : "imagenes/emojis/gato.png";
+        ImageIcon img = ImageLoader.loadScaled(path, 36, 36);
+        if (img.getImage() != null && img.getIconWidth() > 0) {
+            lblAvatar.setIcon(img);
+        } else {
             lblAvatar.setText(t.getAnimal() instanceof Perro ? "🐕" : "🐈");
             lblAvatar.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 18));
         }
         panelAvatar.add(lblAvatar);
+
 
         JPanel avatarWrapper = new JPanel(new GridBagLayout());
         avatarWrapper.setOpaque(false);
@@ -618,28 +626,29 @@ public class PanelCitas extends JPanel {
         gbc.weightx = 0.0;
         card.add(panelInfo, gbc);
 
-        JPanel PanelDescription = new JPanel();
-        PanelDescription.setOpaque(false);
-        PanelDescription.setAlignmentX(Component.LEFT_ALIGNMENT);
-        PanelDescription.setBorder(new EmptyBorder(6, 12, 0, 12));
+        JPanel panelDescription = new JPanel();
+        panelDescription.setOpaque(false);
+        panelDescription.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelDescription.setBorder(new EmptyBorder(6, 12, 0, 12));
 
         JLabel lblTitleDescription = new JLabel("Nota:");
         lblTitleDescription.setFont(CargadorFuentes.cargar(13f).deriveFont(Font.BOLD));
         lblTitleDescription.setForeground(Color.INK); // Slate-900
-        PanelDescription.add(lblTitleDescription);
+        panelDescription.add(lblTitleDescription);
         // Description Row
         String descriptionStr = t.getObservaciones();
-        JLabel lblDescrption = new JLabel(descriptionStr);
-        lblDescrption.setFont(CargadorFuentes.cargar(11f));
-        lblDescrption.setForeground(Color.MUTED);
-        lblDescrption.setBorder(new EmptyBorder(6, 6, 6, 0));
-        lblDescrption.setAlignmentX(Component.LEFT_ALIGNMENT);
-        PanelDescription.add(lblDescrption);
+        JLabel lblDescription = new JLabel(descriptionStr);
+        lblDescription.setFont(CargadorFuentes.cargar(11f));
+        lblDescription.setForeground(Color.MUTED);
+        lblDescription.setBorder(new EmptyBorder(6, 6, 6, 0));
+        lblDescription.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelDescription.add(lblDescription);
 
         gbc.gridx = 4;
         gbc.gridy = 0;
         gbc.weightx = 0.0;
-        card.add(PanelDescription, gbc);
+        card.add(panelDescription, gbc);
+
 
         // 5. ACTION CHEVRON / CANCEL (East)
         JPanel panelAcciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 12));
@@ -828,19 +837,17 @@ public class PanelCitas extends JPanel {
 
         JLabel lblIcon = new JLabel();
         lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
-        if (iconPath != null && new java.io.File(iconPath).exists()) {
-            try {
-                ImageIcon icon = new ImageIcon(iconPath);
-                Image scaled = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
-                lblIcon.setIcon(new ImageIcon(scaled));
-            } catch (Exception e) {
-                lblIcon.setText(unicodeIcon);
-                lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
-            }
+        ImageIcon icon = null;
+        if (iconPath != null) {
+            icon = ImageLoader.loadScaled(iconPath, 24, 24);
+        }
+        if (icon != null && icon.getImage() != null && icon.getIconWidth() > 0) {
+            lblIcon.setIcon(icon);
         } else {
             lblIcon.setText(unicodeIcon);
             lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
         }
+
         card.add(lblIcon, BorderLayout.WEST);
 
         JPanel info = new JPanel();
@@ -860,44 +867,5 @@ public class PanelCitas extends JPanel {
 
         return card;
     }
-
-    private static class ModernScrollBarUI extends javax.swing.plaf.basic.BasicScrollBarUI {
-
-        @Override
-        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
-        }
-
-        @Override
-        protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
-            if (thumbBounds.isEmpty() || !scrollbar.isEnabled()) {
-                return;
-            }
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            Color finalColor = isDragging ? Color.MUTED
-                    : (isThumbRollover() ? Color.CAT_INACTIVO : Color.DIVIDER);
-            g2.setColor(finalColor);
-            g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2,
-                    thumbBounds.width - 4, thumbBounds.height - 4, 8, 8);
-            g2.dispose();
-        }
-
-        @Override
-        protected JButton createDecreaseButton(int orientation) {
-            return crearBotonInvisible();
-        }
-
-        @Override
-        protected JButton createIncreaseButton(int orientation) {
-            return crearBotonInvisible();
-        }
-
-        private JButton crearBotonInvisible() {
-            JButton btn = new JButton();
-            btn.setPreferredSize(new Dimension(0, 0));
-            btn.setMinimumSize(new Dimension(0, 0));
-            btn.setMaximumSize(new Dimension(0, 0));
-            return btn;
-        }
-    }
 }
+
