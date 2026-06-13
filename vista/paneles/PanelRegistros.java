@@ -16,9 +16,12 @@ public class PanelRegistros extends JPanel {
     private String filtroEspecieActual = "Todos";
     private String filtroEstadoActual = "Todos";
     
+    // Variables globales para que el botón de volver de la ficha pueda restaurar la pantalla
+    private JPanel panelBarraSuperior;
+    private JScrollPane scrollGrilla;
+    
     // Constante global para evitar fallas de tipeo entre el foco y el filtrado
-    private final String PLACEHOLDER_BUSQUEDA = "Buscar por nombre, raza o dueño...";
-
+    private final String PLACEHOLDER_BUSQUEDA = "Buscar por nombre del paciente...";
     // Colores de la paleta corporativa
     private final Color colorFondoGris = new Color(241, 245, 249);
     private final Color colorTealActivo = new Color(13, 148, 136);
@@ -33,7 +36,7 @@ public class PanelRegistros extends JPanel {
         setBorder(new EmptyBorder(15, 25, 15, 25));
 
         // --- 1. BARRA SUPERIOR DE FILTROS Y BÚSQUEDA (MOCKUP STYLE) ---
-        JPanel panelBarraSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 5));
+        panelBarraSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 5));
         panelBarraSuperior.setOpaque(false);
 
         // Pre-cargamos y escalamos la imagen de la lupa en alta definición
@@ -170,7 +173,11 @@ public class PanelRegistros extends JPanel {
         panelGrillaPacientes = new JPanel(new GridLayout(0, 4, 20, 20)); 
         panelGrillaPacientes.setOpaque(false);
 
-        JScrollPane scrollGrilla = new JScrollPane(panelGrillaPacientes);
+        JPanel contenedorGrillaInmóvil = new JPanel(new BorderLayout());
+        contenedorGrillaInmóvil.setOpaque(false);
+        contenedorGrillaInmóvil.add(panelGrillaPacientes, BorderLayout.NORTH);
+
+        scrollGrilla = new JScrollPane(contenedorGrillaInmóvil);
         scrollGrilla.setBorder(null);
         scrollGrilla.setOpaque(true);
         scrollGrilla.getViewport().setOpaque(true);
@@ -178,12 +185,11 @@ public class PanelRegistros extends JPanel {
         scrollGrilla.getViewport().setBackground(colorFondoGris);
         scrollGrilla.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
         
-        // 🔴 CAMBIO CLAVE: Sincronizamos e inyectamos tu UI personalizada de Scroll de alta definición
         JScrollBar barraVertical = scrollGrilla.getVerticalScrollBar();
         barraVertical.setUI(new ModernScrollBarUI()); 
-        barraVertical.setPreferredSize(new Dimension(8, 0)); // Ancho delgado y elegante de 8px
+        barraVertical.setPreferredSize(new Dimension(8, 0));
         barraVertical.setOpaque(false);
-        barraVertical.setUnitIncrement(14); // Giro rápido y fluido idéntico al dashboard
+        barraVertical.setUnitIncrement(14);
         
         add(scrollGrilla, BorderLayout.CENTER);
 
@@ -194,7 +200,7 @@ public class PanelRegistros extends JPanel {
         filtrarYRefrescarGrilla();
     }
 
-    private void filtrarYRefrescarGrilla() {
+   private void filtrarYRefrescarGrilla() {
         panelGrillaPacientes.removeAll();
 
         ArrayList<Animal> todosLosAnimales = controlador.getVeterinaria().getPacientesRegistrados();
@@ -205,16 +211,17 @@ public class PanelRegistros extends JPanel {
         }
 
         for (Animal a : todosLosAnimales) {
-            // 1. Filtrado por texto (Buscador)
             boolean coincideTexto = busqueda.isEmpty() || 
-                    a.getNombre().toLowerCase().contains(busqueda) ||
-                    a.getResponsable().getApellido().toLowerCase().contains(busqueda);
+                    a.getNombre().toLowerCase().contains(busqueda);
 
-            // 2. FILTRADO POLIMÓRFICO
             boolean coincideEspecie = filtroEspecieActual.equals("Todos") || 
                                     a.getCategoriaFiltro().equals(filtroEspecieActual);
 
-            if (coincideTexto && coincideEspecie) {
+            boolean coincideEstado = filtroEstadoActual.equals("Todos") || 
+                                    (filtroEstadoActual.equals("Activo") && a.isActivo()) || 
+                                    (filtroEstadoActual.equals("Inactivo") && !a.isActivo());
+
+            if (coincideTexto && coincideEspecie && coincideEstado) {
                 panelGrillaPacientes.add(crearTarjetaPacienteHD(a));
             }
         }
@@ -223,7 +230,6 @@ public class PanelRegistros extends JPanel {
         panelGrillaPacientes.repaint();
     }
 
-    // --- BOTONES DE FILTRO EN PÍLDORA FLOTANTE ---
     private JButton crearBotonFiltroPildora(String texto, boolean esDeEspecie) {
         JButton btn = new JButton(texto) {
             @Override
@@ -269,10 +275,15 @@ public class PanelRegistros extends JPanel {
         return btn;
     }
 
-    // --- RENDERIZADO HD DE LA TARJETA DE PACIENTE INDIVIDUAL ---
     private JPanel crearTarjetaPacienteHD(Animal a) {
         int altoBarra = 6;
         int radioEsquina = 24; 
+
+        Color colorGrisCabeceraInicio = new Color(148, 163, 184); 
+        Color colorGrisCabeceraFin = new Color(100, 116, 139);    
+        Color colorGrisTagFondo = new Color(241, 245, 249);       
+        Color colorGrisTagBorde = new Color(226, 232, 240);       
+        Color colorGrisTagTexto = new Color(71, 85, 105);         
 
         JPanel card = new JPanel(new BorderLayout(0, 10)) {
             @Override
@@ -283,8 +294,8 @@ public class PanelRegistros extends JPanel {
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), radioEsquina, radioEsquina);
                 
-                Color colorInicio = Color.decode(a.getColorInicioHex());
-                Color colorFin = Color.decode(a.getColorFinHex());
+                Color colorInicio = a.isActivo() ? Color.decode(a.getColorInicioHex()) : colorGrisCabeceraInicio;
+                Color colorFin = a.isActivo() ? Color.decode(a.getColorFinHex()) : colorGrisCabeceraFin;
 
                 GradientPaint degradadoCabecera = new GradientPaint(0, 0, colorInicio, 0, getHeight(), colorFin);
                 g2.setPaint(degradadoCabecera);
@@ -303,15 +314,19 @@ public class PanelRegistros extends JPanel {
         card.setOpaque(false);
         card.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // CONTENEDOR AVATAR CENTRAL (75x75)
+        Dimension tamanoFijoTarjeta = new Dimension(200, 300);
+        card.setPreferredSize(tamanoFijoTarjeta);
+        card.setMinimumSize(tamanoFijoTarjeta);
+        card.setMaximumSize(tamanoFijoTarjeta);
+        
         JPanel panelAvatar = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                Color colorInicio = Color.decode(a.getColorInicioHex());
-                Color colorFin = Color.decode(a.getColorFinHex());
+                Color colorInicio = a.isActivo() ? Color.decode(a.getColorInicioHex()) : colorGrisCabeceraInicio;
+                Color colorFin = a.isActivo() ? Color.decode(a.getColorFinHex()) : colorGrisCabeceraFin;
 
                 GradientPaint degradadoEspecie = new GradientPaint(0, 0, colorInicio, 0, getHeight(), colorFin);
                 
@@ -348,7 +363,6 @@ public class PanelRegistros extends JPanel {
         panelAvatarWrapper.setOpaque(false);
         panelAvatarWrapper.add(panelAvatar);
 
-        // BLOQUE DE IDENTIFICACIÓN
         JPanel panelInfoCentral = new JPanel();
         panelInfoCentral.setOpaque(false);
         panelInfoCentral.setLayout(new BoxLayout(panelInfoCentral, BoxLayout.Y_AXIS));
@@ -368,10 +382,13 @@ public class PanelRegistros extends JPanel {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
                 
-                g2.setColor(new Color(220, 252, 231)); 
+                Color fondoTag = a.isActivo() ? new Color(220, 252, 231) : colorGrisTagFondo;
+                Color bordeTag = a.isActivo() ? new Color(187, 247, 208) : colorGrisTagBorde;
+                
+                g2.setColor(fondoTag); 
                 g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
                 
-                g2.setColor(new Color(187, 247, 208)); 
+                g2.setColor(bordeTag); 
                 g2.setStroke(new BasicStroke(1.2f)); 
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
                 
@@ -380,7 +397,10 @@ public class PanelRegistros extends JPanel {
             }
         };
         lblEstadoActivo.setFont(new Font("Segoe UI", Font.BOLD, 10));
-        lblEstadoActivo.setForeground(new Color(22, 163, 74));
+        
+        Color colorTextoTag = a.isActivo() ? new Color(22, 163, 74) : colorGrisTagTexto;
+        lblEstadoActivo.setForeground(colorTextoTag);
+        
         lblEstadoActivo.setBorder(new EmptyBorder(3, 12, 3, 12));
         panelTags.add(lblEstadoActivo);
         
@@ -389,7 +409,6 @@ public class PanelRegistros extends JPanel {
         panelInfoCentral.add(Box.createVerticalStrut(6));
         panelInfoCentral.add(panelTags);
 
-        // BLOQUE DE DATOS TÉCNICOS
         JPanel panelDatosGrid = new JPanel(new GridLayout(3, 2, 0, 4));
         panelDatosGrid.setOpaque(false);
         panelDatosGrid.setBorder(new EmptyBorder(10, 5, 5, 5));
@@ -442,6 +461,25 @@ public class PanelRegistros extends JPanel {
         btnFicha.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btnFicha.setForeground(new Color(71, 85, 105)); 
 
+        // 🔥 LOGICA CORREGIDA: El listener se agrega sobre el objeto de manera normal y externa
+        btnFicha.addActionListener(e -> {
+            this.removeAll();
+            
+            FichaPaciente vistaPerfil = new FichaPaciente(a, () -> {
+                this.removeAll();
+                this.setLayout(new BorderLayout(0, 15));
+                this.add(panelBarraSuperior, BorderLayout.NORTH);
+                this.add(scrollGrilla, BorderLayout.CENTER);
+                this.actualizar();
+            });
+            
+            this.setLayout(new BorderLayout());
+            this.add(vistaPerfil, BorderLayout.CENTER);
+            
+            this.revalidate();
+            this.repaint();
+        });
+
         JPanel panelCuerpoTarjeta = new JPanel(new BorderLayout(0, 12));
         panelCuerpoTarjeta.setOpaque(false);
         panelCuerpoTarjeta.add(panelInfoCentral, BorderLayout.NORTH);
@@ -467,14 +505,9 @@ public class PanelRegistros extends JPanel {
         panel.add(lblValor);
     }
 
-    // =========================================================================
-    // CLASE INTERNA INTEGRADA: Sincroniza la apariencia del scroll del Dashboard
-    // =========================================================================
     private static class ModernScrollBarUI extends javax.swing.plaf.basic.BasicScrollBarUI {
         @Override
-        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
-            // Se deja vacío de forma intencional para eliminar el fondo gris rígido clásico
-        }
+        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
 
         @Override
         protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
@@ -486,11 +519,11 @@ public class PanelRegistros extends JPanel {
             
             Color colorFinal;
             if (isDragging) {
-                colorFinal = new Color(100, 116, 139); // Gris Slate Oscuro al arrastrar
+                colorFinal = new Color(100, 116, 139); 
             } else if (isThumbRollover()) {
-                colorFinal = new Color(148, 163, 184); // Gris Slate Intermedio en Hover
+                colorFinal = new Color(148, 163, 184); 
             } else {
-                colorFinal = new Color(203, 213, 225); // Estado pasivo original gris suave
+                colorFinal = new Color(203, 213, 225); 
             }
             
             g2.setColor(colorFinal);

@@ -7,13 +7,14 @@ public abstract class Animal {
     private final String idAnimal;
     private String nombre;
     private LocalDate fechaNacimiento;
-    private final boolean sexo;
+    private final boolean sexo; // True: macho, False: hembra
     private Responsable responsable;
     private final HistoriaClinica historiaClinica;
     private boolean enAdopcion;
     private boolean activo;
+    private float peso;
 
-    public Animal(String nombre, LocalDate fechaNacimiento, boolean sexo, Responsable responsable) {
+    public Animal(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, Responsable responsable) {
         this.idAnimal = generarIdAnimal();
         this.nombre = nombre;
         this.fechaNacimiento = fechaNacimiento;
@@ -21,11 +22,12 @@ public abstract class Animal {
         this.responsable = responsable;
         this.historiaClinica = new HistoriaClinica();
         this.enAdopcion = false;
+        this.peso = peso;
         this.activo = true;
     }
 
-    public Animal(String nombre, LocalDate fechaNacimiento, boolean sexo) {
-        this(nombre, fechaNacimiento, sexo, null);
+    public Animal(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso) {
+        this(nombre, fechaNacimiento, sexo, peso, null);
     }
 
     public String getIdAnimal() {
@@ -40,7 +42,7 @@ public abstract class Animal {
         return fechaNacimiento;
     }
 
-    public boolean isSexo() {
+    public boolean getSexo() {
         return sexo;
     }
 
@@ -58,6 +60,10 @@ public abstract class Animal {
 
     public boolean isEnAdopcion() {
         return enAdopcion;
+    }
+
+    public float getPeso() {
+        return peso;
     }
 
     public void setEnAdopcion(boolean enAdopcion) {
@@ -80,6 +86,9 @@ public abstract class Animal {
         this.activo = activo;
     }
 
+    public void setPeso(float peso) { 
+        this.peso = peso;
+    }
     private String generarIdAnimal() {
         return UUID.randomUUID().toString();
     }

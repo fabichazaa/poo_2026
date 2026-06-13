@@ -6,15 +6,15 @@ public class Perro extends Animal {
     private String raza;
     private boolean necesitaPaseo;
 
-    public Perro(String nombre, LocalDate fechaNacimiento, boolean sexo,
+    public Perro(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso,
         Responsable responsable, String raza) {
-        super(nombre, fechaNacimiento, sexo, responsable);
+        super(nombre, fechaNacimiento, sexo, peso, responsable);
         this.raza = raza;
         this.necesitaPaseo = true;
     }
 
-    public Perro(String nombre, LocalDate fechaNacimiento, boolean sexo, String raza) {
-        super(nombre, fechaNacimiento, sexo);
+    public Perro(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, String raza) {
+        super(nombre, fechaNacimiento, sexo, peso);
         this.raza = raza;
         this.necesitaPaseo = true;
     }
