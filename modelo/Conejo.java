@@ -2,21 +2,21 @@ package modelo;
 
 import java.time.LocalDate;
 
-public class Perro extends Animal {
+public class Conejo extends Animal {
     private String raza;
-    private boolean necesitaPaseo;
+    private boolean esEsterilizado;
 
-    public Perro(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso,
+    public Conejo(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso,
         Responsable responsable, String raza) {
         super(nombre, fechaNacimiento, sexo, peso, responsable);
         this.raza = raza;
-        this.necesitaPaseo = true;
+        this.esEsterilizado = false;
     }
 
-    public Perro(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, String raza) {
+    public Conejo(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, String raza) {
         super(nombre, fechaNacimiento, sexo, peso);
         this.raza = raza;
-        this.necesitaPaseo = true;
+        this.esEsterilizado = false;
     }
 
     public String getRaza() {
@@ -27,37 +27,38 @@ public class Perro extends Animal {
         this.raza = raza;
     }
 
-    public boolean isNecesitaPaseo() {
-        return necesitaPaseo;
+    public boolean isEsEsterilizado() {
+        return esEsterilizado;
     }
 
-    public void setNecesitaPaseo(boolean necesitaPaseo) {
-        this.necesitaPaseo = necesitaPaseo;
+    public void setEsEsterilizado(boolean esEsterilizado) {
+        this.esEsterilizado = esEsterilizado;
     }
 
     @Override
     public TipoAlimentacion getTipoAlimentacion() {
-        return TipoAlimentacion.OMNIVORO;
+        return TipoAlimentacion.CARNIVORO_ESTRICTO;
     }
 
     @Override
     public String getEspecie() {
-        return "Perro";
+        return "Conejo";
     }
 
+    @Override
     public String getImagen() {
-        return "imagenes/emojis/perro.png";
+        return "imagenes/emojis/conejo.png";
     }
 
     public String getColorInicioHex() {
-        return "#FFB200";
+        return "#F472B6";
     }
-
+        
     public String getColorFinHex() {
-        return "#FF7300";
+        return "#DB2777";
     }
 
     public String getCategoriaFiltro() {
-        return "Perro";
+        return "Conejo";
     }
 }

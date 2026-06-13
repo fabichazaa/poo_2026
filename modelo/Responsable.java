@@ -4,8 +4,8 @@ import java.util.ArrayList;
 public class Responsable extends Persona {
     private final ArrayList<Animal> mascotas;
 
-    public Responsable(String DNI, String nombre, String apellido, Direccion direccion) {
-        super(DNI, nombre, apellido, direccion);
+    public Responsable(String DNI, String nombre, String apellido, String celular, Direccion direccion) {
+        super(DNI, nombre, apellido, celular, direccion);
         this.mascotas = new ArrayList<>();
     }
 

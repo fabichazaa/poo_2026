@@ -156,22 +156,23 @@ public class ControladorVeterinaria {
     }
 
     private void cargarEquipo() {
-        Veterinario vet1 = new Veterinario("22333444", "Carlos", "Páez", "MP-9854");
+        // 🔥 MODIFICADO: Agregamos el parámetro celular intermedio que hereda de Persona
+        Veterinario vet1 = new Veterinario("22333444", "Carlos", "Páez", "+54 11 9999-8888", null, "MP-9854");
         vet1.setEspecialidad("Cirugía");
         vet1.setTurnoTrabajo("Mañana");
         veterinaria.registrarVeterinario(vet1);
 
-        Veterinario vet2 = new Veterinario("55555555", "Laura", "Gómez", "MP-1024");
+        Veterinario vet2 = new Veterinario("55555555", "Laura", "Gómez", "+54 11 9999-7777", null, "MP-1024");
         vet2.setEspecialidad("Clínica médica");
         vet2.setTurnoTrabajo("Tarde");
         veterinaria.registrarVeterinario(vet2);
 
-        Veterinario vet3 = new Veterinario("38765432", "Ana", "Ruiz", "MP-2050");
+        Veterinario vet3 = new Veterinario("38765432", "Ana", "Ruiz", "+54 11 9999-6666", null, "MP-2050");
         vet3.setEspecialidad("Dermatología");
         vet3.setTurnoTrabajo("Mañana");
         veterinaria.registrarVeterinario(vet3);
 
-        Veterinario vet4 = new Veterinario("42987654", "Miguel", "Torres", "MP-3080");
+        Veterinario vet4 = new Veterinario("42987654", "Miguel", "Torres", "+54 11 9999-5555", null, "MP-3080");
         vet4.setEspecialidad("Cardiología");
         vet4.setTurnoTrabajo("Tarde");
         veterinaria.registrarVeterinario(vet4);
@@ -183,47 +184,69 @@ public class ControladorVeterinaria {
         Direccion dir3 = new Direccion("Boulevard de los Perros", 456, "Recoleta");
         Direccion dir4 = new Direccion("Pasaje San Roque", 89, "San Telmo");
 
-        Responsable c1 = new Responsable("12345678", "Claudio", "Chiqui", dir1);
-        Responsable c2 = new Responsable("24678901", "Marta", "Sánchez", dir2);
-        Responsable c3 = new Responsable("31456789", "Ricardo", "López", dir3);
-        Responsable c4 = new Responsable("40876543", "Patricia", "Fernández", dir4);
+        Responsable c1 = new Responsable("12345678", "Claudio", "Chiqui", "+54 11 3476 3465", dir1);
+        Responsable c2 = new Responsable("24678901", "Marta", "Sánchez","+54 11 3476 3465", dir2);
+        Responsable c3 = new Responsable("31456789", "Ricardo", "López","+54 11 3476 3465", dir3);
+        Responsable c4 = new Responsable("40876543", "Patricia", "Fernández", "+54 11 3476 3465",dir4);
         veterinaria.registrarCliente(c1);
         veterinaria.registrarCliente(c2);
         veterinaria.registrarCliente(c3);
         veterinaria.registrarCliente(c4);
 
-        c1.agregarMascota(new Perro("Hulk", LocalDate.of(2023, 4, 15), true, c1, "Dogo de Burdeos"));
-        c1.agregarMascota(new Gato("Luna", LocalDate.of(2025, 8, 20), false, c1, "Siamés"));
-        c1.agregarMascota(new Perro("Cheese", LocalDate.of(2018, 1, 10), true, c1, "Beagle"));
-        c1.agregarMascota(new Gato("Mochi", LocalDate.of(2024, 2, 14), false, c1, "Siamés"));
+        // 🔥 MODIFICADO: Inyectamos el parámetro flotante del peso (ej: 14.5f, 4.2f) según requiere el constructor
+        // Claudio (c1)
+        c1.agregarMascota(new Perro("Hulk",     LocalDate.of(2023, 4, 15), true,  28.0f, c1, "Dogo de Burdeos"));
+        c1.agregarMascota(new Gato ("Luna",     LocalDate.of(2025, 8, 20), false, 4.2f,  c1, "Siamés"));
+        c1.agregarMascota(new Perro("Cheese",   LocalDate.of(2018, 1, 10), true,  11.5f, c1, "Beagle"));
+        c1.agregarMascota(new Gato ("Mochi",    LocalDate.of(2024, 2, 14), false, 3.8f,  c1, "Siamés"));
+        c1.agregarMascota(new Loro ("Pepe",     LocalDate.of(2021, 5, 10), true,  0.4f,  c1, "Amazonas"));
+        c1.agregarMascota(new Conejo("Copito",  LocalDate.of(2025, 1, 12), false, 1.8f,  c1, "Cabeza de León"));
 
-        c2.agregarMascota(new Gato("Mishi", LocalDate.of(2022, 11, 5), false, c2, "Persa"));
-        c2.agregarMascota(new Gato("Bigotes", LocalDate.of(2020, 6, 18), true, c2, "Maine Coon"));
-        c2.agregarMascota(new Perro("Toby", LocalDate.of(2019, 9, 22), true, c2, "Caniche"));
+        // Marta (c2)
+        c2.agregarMascota(new Gato ("Mishi",     LocalDate.of(2022, 11, 5), false, 4.0f,  c2, "Persa"));
+        c2.agregarMascota(new Gato ("Bigotes",   LocalDate.of(2020, 6, 18), true,  6.5f,  c2, "Maine Coon"));
+        c2.agregarMascota(new Perro("Toby",      LocalDate.of(2019, 9, 22), true,  5.2f,  c2, "Caniche"));
+        c2.agregarMascota(new Tortuga("Manuelita", LocalDate.of(1996, 1, 1), true, 2.1f,  c2, "Terrestre"));
+        c2.agregarMascota(new Loro ("Paquito",   LocalDate.of(2015, 3, 22), false, 0.5f,  c2, "Gris Africano"));
 
-        c3.agregarMascota(new Perro("Bobby", LocalDate.of(2021, 3, 11), true, c3, "Golden Retriever"));
-        c3.agregarMascota(new Perro("Rocky", LocalDate.of(2017, 7, 4), true, c3, "Bulldog Inglés"));
+        // Ricardo (c3)
+        c3.agregarMascota(new Perro("Bobby", LocalDate.of(2021, 3, 11), true,  24.3f, c3, "Golden Retriever"));
+        c3.agregarMascota(new Perro("Rocky", LocalDate.of(2017, 7, 4),  true,  13.1f, c3, "Bulldog Francés"));
+        c3.agregarMascota(new Conejo("Tambor", LocalDate.of(2025, 3, 15), false, 2.0f,  c3, "Mini Lop"));
+        c3.agregarMascota(new Tortuga("Rafaela", LocalDate.of(2005, 10, 8), false, 1.9f,  c3, "Caja"));
 
-        c4.agregarMascota(new Gato("Pelusa", LocalDate.of(2024, 5, 30), false, c4, "Angora Turco"));
+        // Patricia (c4)
+        c4.agregarMascota(new Gato ("Pelusa",    LocalDate.of(2024, 5, 30), false, 3.5f,  c4, "Angora Turco"));
+        c4.agregarMascota(new Conejo("Orejas",   LocalDate.of(2024, 8, 4),  true,  2.2f,  c4, "Angora"));
 
-        veterinaria.registrarPaciente(c1.getMascotas().get(0));
-        veterinaria.registrarPaciente(c1.getMascotas().get(1));
-        veterinaria.registrarPaciente(c1.getMascotas().get(2));
-        veterinaria.registrarPaciente(c1.getMascotas().get(3));
-        veterinaria.registrarPaciente(c2.getMascotas().get(0));
-        veterinaria.registrarPaciente(c2.getMascotas().get(1));
-        veterinaria.registrarPaciente(c2.getMascotas().get(2));
-        veterinaria.registrarPaciente(c3.getMascotas().get(0));
-        veterinaria.registrarPaciente(c3.getMascotas().get(1));
-        veterinaria.registrarPaciente(c4.getMascotas().get(0));
+        // Bucle automatizado de registro
+        for (Animal a : c1.getMascotas()) veterinaria.registrarPaciente(a);
+        for (Animal a : c2.getMascotas()) veterinaria.registrarPaciente(a);
+        for (Animal a : c3.getMascotas()) veterinaria.registrarPaciente(a);
+        for (Animal a : c4.getMascotas()) veterinaria.registrarPaciente(a);
+
+        // --- Configuración de Animales Inactivos ---
+        Animal animalInactivo1 = buscarAnimal("Cheese");
+        if (animalInactivo1 != null) {
+            animalInactivo1.setActivo(false);
+        }
+
+        Animal animalInactivo2 = buscarAnimal("Manuelita");
+        if (animalInactivo2 != null) {
+            animalInactivo2.setActivo(false);
+        }
+
+        Animal animalInactivo3 = buscarAnimal("Orejas");
+        if (animalInactivo3 != null) {
+            animalInactivo3.setActivo(false);
+        }
     }
-
+    
     private void cargarMedicamentosYVacunas() {
-
-        Animal hulk = buscarAnimal("Hulk");
-        Animal luna = buscarAnimal("Luna");
-        Animal mishi = buscarAnimal("Mishi");
-        Animal bobby = buscarAnimal("Bobby");
+        Animal hulk   = buscarAnimal("Hulk");
+        Animal luna   = buscarAnimal("Luna");
+        Animal mishi  = buscarAnimal("Mishi");
+        Animal bobby  = buscarAnimal("Bobby");
         Animal cheese = buscarAnimal("Cheese");
 
         if (hulk != null) {
@@ -296,16 +319,21 @@ public class ControladorVeterinaria {
         veterinaria.registrarTurno(tPasado3);
         veterinaria.registrarTurno(tPasado4);
         veterinaria.registrarTurno(tPasado1c);
+        veterinaria.registrarTurno(tPasadoLoro);
         veterinaria.registrarTurno(tHoy1);
         veterinaria.registrarTurno(tHoy2);
         veterinaria.registrarTurno(tHoy3);
         veterinaria.registrarTurno(tHoy4);
         veterinaria.registrarTurno(tHoy5);
         veterinaria.registrarTurno(tHoy6);
+        veterinaria.registrarTurno(tHoyConejo);
+        veterinaria.registrarTurno(tHoyTortuga);
         veterinaria.registrarTurno(tFut1);
         veterinaria.registrarTurno(tFut2);
         veterinaria.registrarTurno(tFut3);
         veterinaria.registrarTurno(tFut4);
+        veterinaria.registrarTurno(tFutConejo2);
+        veterinaria.registrarTurno(tFutConejo3);
         veterinaria.registrarTurno(tCancel);
     }
 

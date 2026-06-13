@@ -9,9 +9,9 @@ public class Veterinario extends Persona {
     private String especialidad;
     private String turnoTrabajo;
 
-    public Veterinario(String DNI, String nombre, String apellido,
+    public Veterinario(String DNI, String nombre, String apellido, String celular,
             Direccion direccion, String matricula) {
-        super(DNI, nombre, apellido, direccion);
+        super(DNI, nombre, apellido,celular, direccion);
         this.matricula = matricula;
         this.turnos = new ArrayList<>();
         this.especialidad = "General";
@@ -50,7 +50,7 @@ public class Veterinario extends Persona {
         this.turnoTrabajo = turnoTrabajo;
     }
 
-    public String getRutaFoto() {
+    public String getImagen() {
         return "imagenes/vet.jpg";
     }
 
