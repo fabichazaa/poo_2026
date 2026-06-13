@@ -85,6 +85,7 @@ public class PortalVeterinario extends JFrame {
 
         panelContenedorSecciones.add(new vista.paneles.PanelRegistros(controlador), "PANTALLA_REGISTROS");
         panelContenedorSecciones.add(new vista.paneles.PanelAdopcion(controlador), "PANTALLA_ADOPCION");
+        panelContenedorSecciones.add(new vista.paneles.PanelMedicamentos(controlador), "PANTALLA_MEDICAMENTOS");
         panelContenedorSecciones.add(new vista.paneles.PanelNotas(controlador), "PANTALLA_NOTAS");
         panelContenedorSecciones.add(new vista.paneles.PanelMas(controlador), "PANTALLA_MAS");
 
@@ -103,6 +104,7 @@ public class PortalVeterinario extends JFrame {
         JButton btnInicio = crearBotonMenuNav("Inicio", "imagenes/emojis/casa.png", "🏠", "PANTALLA_INICIO");
         JButton btnRegistros = crearBotonMenuNav("Registros", "imagenes/emojis/patitas.png", "📋", "PANTALLA_REGISTROS");
         JButton btnAdopcion = crearBotonMenuNav("Adopción", "imagenes/emojis/patitas.png", "🐾", "PANTALLA_ADOPCION");
+        JButton btnMedicamentos = crearBotonMenuNav("Medicamentos","imagenes/emojis/pill.png", "💊", "PANTALLA_MEDICAMENTOS");
         JButton btnNotas = crearBotonMenuNav("Notas", null, "📝", "PANTALLA_NOTAS");
         JButton btnCitas = crearBotonMenuNav("Turnos", "imagenes/emojis/calendario.png", "📅", "PANTALLA_CITAS");
         JButton btnMas = crearBotonMenuNav("Más", null, "➕", "PANTALLA_MAS");
@@ -113,6 +115,7 @@ public class PortalVeterinario extends JFrame {
         panelMenuInferior.add(btnInicio);
         panelMenuInferior.add(btnRegistros);
         panelMenuInferior.add(btnAdopcion);
+        panelMenuInferior.add(btnMedicamentos);
         panelMenuInferior.add(btnNotas);
         panelMenuInferior.add(btnCitas);
         panelMenuInferior.add(btnMas);
@@ -708,10 +711,12 @@ public class PortalVeterinario extends JFrame {
                     ((vista.paneles.PanelRegistros) panelContenedorSecciones.getComponent(2)).actualizar();
                 case "PANTALLA_ADOPCION" ->
                     ((vista.paneles.PanelAdopcion) panelContenedorSecciones.getComponent(3)).actualizar();
+                case "PANTALLA_MEDICAMENTOS" ->
+                    ((vista.paneles.PanelMedicamentos) panelContenedorSecciones.getComponent(4)).actualizar();
                 case "PANTALLA_NOTAS" ->
-                    ((vista.paneles.PanelNotas) panelContenedorSecciones.getComponent(4)).actualizar();
+                    ((vista.paneles.PanelNotas) panelContenedorSecciones.getComponent(5)).actualizar();
                 case "PANTALLA_MAS" ->
-                    ((vista.paneles.PanelMas) panelContenedorSecciones.getComponent(5)).actualizar();
+                    ((vista.paneles.PanelMas) panelContenedorSecciones.getComponent(6)).actualizar();
                 case "PANTALLA_CITAS" ->
                     panelCitas.actualizar();
                 default -> {
