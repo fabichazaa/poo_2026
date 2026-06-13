@@ -156,8 +156,8 @@ public class PanelMedicamentos extends JPanel {
             }
         };
         item.setOpaque(false);
-        item.setBorder(new EmptyBorder(10, 14, 10, 14));
-        item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 64));
+        item.setBorder(new EmptyBorder(14, 18, 14, 18));
+        item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
 
         // Icono y info general
         JPanel panelInfo = new JPanel(new BorderLayout(12, 4));
