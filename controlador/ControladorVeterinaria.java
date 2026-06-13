@@ -287,33 +287,62 @@ public class ControladorVeterinaria {
         Animal rocky = buscarAnimal("Rocky");
         Animal toby = buscarAnimal("Toby");
         Animal pelusa = buscarAnimal("Pelusa");
+        
+        // Variables recuperadas de pacientes especiales
+        Animal pepe = buscarAnimal("Pepe");
+        Animal tambor = buscarAnimal("Tambor");
+        Animal manuelita = buscarAnimal("Manuelita");
+        Animal copito = buscarAnimal("Copito");
+        Animal orejas = buscarAnimal("Orejas");
 
-        Turno tPasado1 = new Turno(1, "02/06/2026", "09:00", vet1, hulk, TipoTurno.CIRUGIA,"Castración inminente :(");
-        Turno tPasado2 = new Turno(2, "02/06/2026", "11:00", vet2, mishi, TipoTurno.CONSULTA_GENERAL,"Observación dientes");
-        Turno tPasado3 = new Turno(3, "04/06/2026", "10:30", vet1, cheese, TipoTurno.ANALISIS,"Orina muy oscura");
-        Turno tPasado4 = new Turno(4, "04/06/2026", "16:00", vet3, bobby, TipoTurno.CONSULTA_GENERAL,"Pelaje se cae mucho");
-        Turno tPasado1c = new Turno(5, "05/06/2026", "08:30", vet1, luna, TipoTurno.VACUNACION,"Anti-Parasitaria");
+        String b1 = "02/06/2026";
+        String b2 = "04/06/2026";
+        String b3 = "06/06/2026";
+        String b4 = "08/06/2026";
+        String b5 = "12/06/2026";
+
+        // --- Turnos Pasados ---
+        Turno tPasado1 = new Turno(1, b1, "09:00", vet1, hulk, TipoTurno.CIRUGIA, "Castración inminente :(");
+        Turno tPasado2 = new Turno(2, b1, "11:00", vet2, mishi, TipoTurno.CONSULTA_GENERAL, "Observación dientes");
+        Turno tPasado3 = new Turno(3, b2, "10:30", vet1, cheese, TipoTurno.ANALISIS, "Orina muy oscura");
+        Turno tPasado4 = new Turno(4, b2, "16:00", vet3, bobby, TipoTurno.CONSULTA_GENERAL, "Pelaje se cae mucho");
+        Turno tPasado1c = new Turno(5, b5, "08:30", vet1, luna, TipoTurno.VACUNACION, "Anti-Parasitaria");
+        Turno tPasadoLoro = new Turno(17, b1, "14:30", vet2, pepe, TipoTurno.CONSULTA_GENERAL, "Revisión de plumas");
+        
         tPasado1.completarTurno();
         tPasado2.completarTurno();
         tPasado3.completarTurno();
         tPasado4.completarTurno();
         tPasado1c.completarTurno();
+        tPasadoLoro.completarTurno();
 
-        Turno tHoy1 = new Turno(6, "06/06/2026", "09:30", vet1, hulk, TipoTurno.CIRUGIA,"Castración inminente :(");
-        Turno tHoy2 = new Turno(7, "06/06/2026", "10:15", vet1, luna, TipoTurno.CONSULTA_GENERAL,"");
-        Turno tHoy3 = new Turno(8, "06/06/2026", "11:45", vet1, hulk, TipoTurno.ANALISIS,"");
-        Turno tHoy4 = new Turno(9, "06/06/2026", "14:00", vet1, mochi, TipoTurno.VACUNACION,"");
-        Turno tHoy5 = new Turno(10, "06/06/2026", "15:30", vet2, mishi, TipoTurno.BANIO,"");
-        Turno tHoy6 = new Turno(11, "06/06/2026", "16:00", vet4, rocky, TipoTurno.CONSULTA_GENERAL,"");
+        // --- Turnos de Hoy ---
+        Turno tHoy1 = new Turno(6, b3, "09:30", vet1, hulk, TipoTurno.CIRUGIA, "Castración inminente :(");
+        Turno tHoy2 = new Turno(7, b3, "10:15", vet1, luna, TipoTurno.CONSULTA_GENERAL, "");
+        Turno tHoy3 = new Turno(8, b3, "11:45", vet1, hulk, TipoTurno.ANALISIS, "");
+        Turno tHoy4 = new Turno(9, b3, "14:00", vet1, mochi, TipoTurno.VACUNACION, "");
+        Turno tHoy5 = new Turno(10, b3, "15:30", vet2, mishi, TipoTurno.BANIO, "");
+        Turno tHoy6 = new Turno(11, b3, "16:00", vet4, rocky, TipoTurno.CONSULTA_GENERAL, "");
+        
+        // 🔥 RESTAURADO: Turnos perdidos de los pacientes de la rama de Fabi
+        Turno tHoyConejo = new Turno(18, b3, "16:45", vet1, tambor, TipoTurno.VACUNACION, "Control anual");
+        Turno tHoyTortuga = new Turno(19, b3, "17:30", vet2, manuelita, TipoTurno.CONSULTA_GENERAL, "Chequeo caparazón");
 
-        Turno tFut1 = new Turno(12, "08/06/2026", "10:00", vet1, bigotes, TipoTurno.CIRUGIA,"");
-        Turno tFut2 = new Turno(13, "10/06/2026", "11:00", vet1, cheese, TipoTurno.VACUNACION,"");
-        Turno tFut3 = new Turno(14, "12/06/2026", "09:00", vet2, toby, TipoTurno.CONSULTA_GENERAL,"");
-        Turno tFut4 = new Turno(15, "15/06/2026", "17:00", vet3, pelusa, TipoTurno.ANALISIS,"");
+        // --- Turnos Futuros ---
+        Turno tFut1 = new Turno(12, b4, "10:00", vet1, bigotes, TipoTurno.CIRUGIA, "");
+        Turno tFut2 = new Turno(13, "10/06/2026", "11:00", vet1, cheese, TipoTurno.VACUNACION, "");
+        Turno tFut3 = new Turno(14, "12/06/2026", "09:00", vet2, toby, TipoTurno.CONSULTA_GENERAL, "");
+        Turno tFut4 = new Turno(15, "15/06/2026", "17:00", vet3, pelusa, TipoTurno.ANALISIS, "");
+        
+        // 🔥 RESTAURADO: Turnos futuros perdidos de la rama de Fabi
+        Turno tFutConejo2 = new Turno(20, b4, "11:30", vet1, copito, TipoTurno.ANALISIS, "Control digestivo");
+        Turno tFutConejo3 = new Turno(21, "11/06/2026", "15:00", vet3, orejas, TipoTurno.CONSULTA_GENERAL, "Revisión oreja izquierda");
 
-        Turno tCancel = new Turno(16, "06/06/2026", "18:00", vet1, luna, TipoTurno.CONSULTA_GENERAL,"");
+        // --- Turnos Cancelados ---
+        Turno tCancel = new Turno(16, b3, "18:00", vet1, luna, TipoTurno.CONSULTA_GENERAL, "");
         tCancel.cancelarTurno();
 
+        // Registro unificado en el sistema (Sin colisiones ni superposiciones)
         veterinaria.registrarTurno(tPasado1);
         veterinaria.registrarTurno(tPasado2);
         veterinaria.registrarTurno(tPasado3);
@@ -336,7 +365,7 @@ public class ControladorVeterinaria {
         veterinaria.registrarTurno(tFutConejo3);
         veterinaria.registrarTurno(tCancel);
     }
-
+    
     private void cargarNotas() {
         agregarNota("Recordar pedir resultados de análisis de Hulk antes del viernes.");
         agregarNota("Reponer stock de Amoxicilina 500mg en mostrador.");
