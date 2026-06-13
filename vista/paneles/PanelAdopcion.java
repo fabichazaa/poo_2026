@@ -124,7 +124,7 @@ public class PanelAdopcion extends JPanel {
         panelIcono.setPreferredSize(new Dimension(54, 54));
         panelIcono.setLayout(new GridBagLayout());
         try {
-            String ruta = a.getRutaFoto();
+            String ruta = a.getImagen();
             ImageIcon icon = new ImageIcon(ruta);
             Image img = icon.getImage().getScaledInstance(36, 36, Image.SCALE_SMOOTH);
             panelIcono.add(new JLabel(new ImageIcon(img)));

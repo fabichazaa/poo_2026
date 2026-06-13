@@ -88,7 +88,7 @@ class Veterinario {
     + setEspecialidad(especialidad: String) : void
     + getTurnoTrabajo() : String
     + setTurnoTrabajo(turnoTrabajo: String) : void
-    + getRutaFoto() : String
+    + getImagen() : String
     + getTurnos() : List<Turno>
     + agregarTurno(t: Turno) : void
 }
@@ -129,7 +129,7 @@ abstract class Animal <<abstract>> {
     + isEnAdopcion() : boolean
     + setEnAdopcion(enAdopcion: boolean) : void
     + calcularEdad() : int
-    + getRutaFoto() : String
+    + getImagen() : String
     + {abstract} getTipoAlimentacion() : TipoAlimentacion
     + {abstract} getEspecie() : String
     + toString() : String
@@ -147,7 +147,7 @@ class Perro {
     + setNecesitaPaseo(necesitaPaseo: boolean) : void
     + getTipoAlimentacion() : TipoAlimentacion
     + getEspecie() : String
-    + getRutaFoto() : String
+    + getImagen() : String
 }
 
 class Gato {
@@ -162,7 +162,7 @@ class Gato {
     + setEsEsterilizado(esEsterilizado: boolean) : void
     + getTipoAlimentacion() : TipoAlimentacion
     + getEspecie() : String
-    + getRutaFoto() : String
+    + getImagen() : String
 }
 
 ' ============================================================

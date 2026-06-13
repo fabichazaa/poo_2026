@@ -2,18 +2,18 @@ package modelo;
 
 import java.time.LocalDate;
 
-public class Perro extends Animal {
+public class Loro extends Animal {
     private String raza;
     private boolean necesitaPaseo;
 
-    public Perro(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso,
+    public Loro(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso,
         Responsable responsable, String raza) {
         super(nombre, fechaNacimiento, sexo, peso, responsable);
         this.raza = raza;
         this.necesitaPaseo = true;
     }
 
-    public Perro(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, String raza) {
+    public Loro(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, String raza) {
         super(nombre, fechaNacimiento, sexo, peso);
         this.raza = raza;
         this.necesitaPaseo = true;
@@ -42,22 +42,23 @@ public class Perro extends Animal {
 
     @Override
     public String getEspecie() {
-        return "Perro";
+        return "Loro";
     }
 
+    @Override
     public String getImagen() {
-        return "imagenes/emojis/perro.png";
+        return "imagenes/emojis/loro.png";
     }
 
     public String getColorInicioHex() {
-        return "#FFB200";
+        return "#34D399";
     }
 
     public String getColorFinHex() {
-        return "#FF7300";
-    }
+        return "#059669";
+    } 
 
     public String getCategoriaFiltro() {
-        return "Perro";
+        return "Otro";
     }
 }

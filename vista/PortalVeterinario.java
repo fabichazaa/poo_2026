@@ -102,7 +102,7 @@ public class PortalVeterinario extends JFrame {
 
         // Pasamos: Texto, Ruta del Icono y Clave de la Pantalla asociada
         JButton btnInicio = crearBotonMenuNav("Inicio", "imagenes/emojis/casa.png", "🏠", "PANTALLA_INICIO");
-        JButton btnRegistros = crearBotonMenuNav("Registros", null, "📋", "PANTALLA_REGISTROS");
+        JButton btnRegistros = crearBotonMenuNav("Registros", "imagenes/emojis/patitas.png", "📋", "PANTALLA_REGISTROS");
         JButton btnAdopcion = crearBotonMenuNav("Adopción", "imagenes/emojis/patitas.png", "🐾", "PANTALLA_ADOPCION");
         JButton btnMedicamentos = crearBotonMenuNav("Medicamentos","imagenes/emojis/pill.png", "💊", "PANTALLA_MEDICAMENTOS");
         JButton btnNotas = crearBotonMenuNav("Notas", null, "📝", "PANTALLA_NOTAS");

@@ -30,18 +30,21 @@ public class Main {
         Direccion dir3 = new Direccion("Las Azucenas", 356, "Del Viso");
         Direccion dir4 = new Direccion("Los Lagos", 81, "Tigre");
 
-        Veterinario vet1 = new Veterinario("7895457", "Paola", "Lopez", dir1, "MAT-001");
-        Veterinario vet2 = new Veterinario("6343431", "Carlos", "Gomez", dir2, "MAT-002");
+        // 🔥 MODIFICADO: Agregamos el celular ("+54...") y pasamos la dirección en la posición correcta
+        Veterinario vet1 = new Veterinario("7895457", "Paola", "Lopez", "+54 11 1111-2222", dir1, "MAT-001");
+        Veterinario vet2 = new Veterinario("6343431", "Carlos", "Gomez", "+54 11 3333-4444", dir2, "MAT-002");
         miVeterinaria.registrarVeterinario(vet1);
         miVeterinaria.registrarVeterinario(vet2);
 
-        Responsable cliente1 = new Responsable("1464564", "Gladys", "Decima", dir3);
-        Responsable cliente2 = new Responsable("9876543", "Juan", "García", dir4);
+        // 🔥 MODIFICADO: Agregamos el parámetro celular intermedio para cumplir con el constructor de Responsable
+        Responsable cliente1 = new Responsable("1464564", "Gladys", "Decima", "+54 11 5555-6666", dir3);
+        Responsable cliente2 = new Responsable("9876543", "Juan", "García", "+54 11 7777-8888", dir4);
         miVeterinaria.registrarCliente(cliente1);
         miVeterinaria.registrarCliente(cliente2);
 
-        Animal mascota1 = new Perro("Perla", java.time.LocalDate.of(2009, 2, 20), false, cliente1, "Salchicha");
-        Animal mascota2 = new Gato("Honey", java.time.LocalDate.of(2019, 11, 5), false, cliente2, "Británico de Pelo Corto");
+        // 🔥 MODIFICADO: Agregamos el peso correspondiente en formato float (ej: 8.5f, 4.3f)
+        Animal mascota1 = new Perro("Perla", java.time.LocalDate.of(2009, 2, 20), false, 8.5f, cliente1, "Salchicha");
+        Animal mascota2 = new Gato("Honey", java.time.LocalDate.of(2019, 11, 5), false, 4.3f, cliente2, "Británico de Pelo Corto");
         cliente1.agregarMascota(mascota1);
         cliente2.agregarMascota(mascota2);
 
