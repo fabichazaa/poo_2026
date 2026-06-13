@@ -4,7 +4,6 @@ import controlador.ControladorVeterinaria;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import modelo.Veterinario;
 import recursos.CargadorFuentes;
 
 public class DialogoLogin extends JDialog {
@@ -113,7 +112,6 @@ public class DialogoLogin extends JDialog {
     private void intentarLogin() {
         String matricula = campoMatricula.getText();
         if (controlador.loginPorMatricula(matricula)) {
-            Veterinario v = controlador.getVeterinarioLogueado();
             exito = true;
             dispose();
         } else {

@@ -44,9 +44,10 @@ public class ControladorVeterinaria {
     }
 
     public boolean loginPorMatricula(String matricula) {
-        if (matricula == null || matricula.isBlank()) return false;
-        String matriculaLimpia = matricula.trim();
-        Veterinario v = veterinaria.buscarVeterinarioPorMatricula(matriculaLimpia);
+        if (matricula == null || matricula.isBlank()) {
+            return false;
+        }
+        Veterinario v = veterinaria.buscarVeterinarioPorMatricula(matricula.trim());
         if (v != null) {
             this.veterinarioLogueado = v;
             return true;
@@ -62,9 +63,9 @@ public class ControladorVeterinaria {
         return veterinarioLogueado != null;
     }
 
-    public Turno registrarTurno(String fecha, String hora, Veterinario vet, Animal animal, TipoTurno tipo) {
+    public Turno registrarTurno(String fecha, String hora, Veterinario vet, Animal animal, TipoTurno tipo, String observaciones) {
         int nuevoId = veterinaria.getListaTurnos().size() + 1;
-        Turno t = new Turno(nuevoId, fecha, hora, vet, animal, tipo);
+        Turno t = new Turno(nuevoId, fecha, hora, vet, animal, tipo, observaciones);
         veterinaria.registrarTurno(t);
         return t;
     }
@@ -75,9 +76,21 @@ public class ControladorVeterinaria {
         }
     }
 
+    public void recetarMedicamento(Animal animal, Prescripcion pres) {
+        if (animal != null && pres != null) {
+            animal.getHistorial().recetarMedicamento(pres);
+        }
+    }
+
     public void registrarVacunacion(Animal animal, Vacuna vacuna, LocalDate fechaAplicacion) {
         if (animal != null && vacuna != null && fechaAplicacion != null) {
             RegistroVacunacion registro = new RegistroVacunacion(vacuna, fechaAplicacion);
+            animal.getHistorial().registrarVacuna(registro);
+        }
+    }
+
+    public void registrarVacunacion(Animal animal, RegistroVacunacion registro) {
+        if (animal != null && registro != null) {
             animal.getHistorial().registrarVacuna(registro);
         }
     }
@@ -89,12 +102,14 @@ public class ControladorVeterinaria {
     }
 
     public void agregarNota(String texto) {
-        if (texto == null || texto.isBlank()) return;
+        if (texto == null || texto.isBlank()) {
+            return;
+        }
         String autor = veterinarioLogueado != null
-            ? veterinarioLogueado.getNombre() + " " + veterinarioLogueado.getApellido()
-            : "Sistema";
+                ? veterinarioLogueado.getNombre() + " " + veterinarioLogueado.getApellido()
+                : "Sistema";
         String nota = "[" + LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
-            + " — " + autor + "] " + texto.trim();
+                + " — " + autor + "] " + texto.trim();
         notas.add(0, nota);
     }
 
@@ -113,12 +128,21 @@ public class ControladorVeterinaria {
     }
 
     public int contarTurnosDelVeterinario(Veterinario v, String estado) {
-        if (v == null) return 0;
+        if (v == null) {
+            return 0;
+        }
         int n = 0;
         for (Turno t : veterinaria.getListaTurnos()) {
-            if (!v.equals(t.getVeterinario())) continue;
-            if (estado == null) { n++; continue; }
-            if (estado.equals(t.getEstado())) n++;
+            if (!v.equals(t.getVeterinario())) {
+                continue;
+            }
+            if (estado == null) {
+                n++;
+                continue;
+            }
+            if (estado.equals(t.getEstado())) {
+                n++;
+            }
         }
         return n;
     }
@@ -253,62 +277,41 @@ public class ControladorVeterinaria {
         Veterinario vet3 = veterinaria.getListaVeterinarios().get(2);
         Veterinario vet4 = veterinaria.getListaVeterinarios().get(3);
 
-        Animal hulk      = buscarAnimal("Hulk");
-        Animal luna      = buscarAnimal("Luna");
-        Animal cheese    = buscarAnimal("Cheese");
-        Animal mochi     = buscarAnimal("Mochi");
-        Animal mishi     = buscarAnimal("Mishi");
-        Animal bigotes   = buscarAnimal("Bigotes");
-        Animal bobby     = buscarAnimal("Bobby");
-        Animal rocky     = buscarAnimal("Rocky");
-        Animal toby      = buscarAnimal("Toby");
-        Animal pelusa    = buscarAnimal("Pelusa");
-        
-        Animal pepe      = buscarAnimal("Pepe");
-        String b1 = "02/06/2026";
-        Animal tambor    = buscarAnimal("Tambor");
-        String b2 = "04/06/2026";
-        Animal manuelita = buscarAnimal("Manuelita");
-        String b3 = "06/06/2026";
-        Animal copito    = buscarAnimal("Copito");
-        String b4 = "08/06/2026";
-        Animal orejas    = buscarAnimal("Orejas");
-        String b5 = "12/06/2026";
+        Animal hulk = buscarAnimal("Hulk");
+        Animal luna = buscarAnimal("Luna");
+        Animal cheese = buscarAnimal("Cheese");
+        Animal mochi = buscarAnimal("Mochi");
+        Animal mishi = buscarAnimal("Mishi");
+        Animal bigotes = buscarAnimal("Bigotes");
+        Animal bobby = buscarAnimal("Bobby");
+        Animal rocky = buscarAnimal("Rocky");
+        Animal toby = buscarAnimal("Toby");
+        Animal pelusa = buscarAnimal("Pelusa");
 
-        Turno tPasado1 = new Turno(1,  b1, "09:00", vet1, hulk,   TipoTurno.CIRUGIA);
-        Turno tPasado2 = new Turno(2,  b1, "11:00", vet2, mishi,  TipoTurno.CONSULTA_GENERAL);
-        Turno tPasado3 = new Turno(3,  b2, "10:30", vet1, cheese, TipoTurno.ANALISIS);
-        Turno tPasado4 = new Turno(4,  b2, "16:00", vet3, bobby,  TipoTurno.CONSULTA_GENERAL);
-        Turno tPasado1c = new Turno(5, b5, "08:30", vet1, luna,   TipoTurno.VACUNACION);
-        
-        Turno tPasadoLoro = new Turno(17, b1, "14:30", vet2, pepe, TipoTurno.CONSULTA_GENERAL);
-        
+        Turno tPasado1 = new Turno(1, "02/06/2026", "09:00", vet1, hulk, TipoTurno.CIRUGIA,"Castración inminente :(");
+        Turno tPasado2 = new Turno(2, "02/06/2026", "11:00", vet2, mishi, TipoTurno.CONSULTA_GENERAL,"Observación dientes");
+        Turno tPasado3 = new Turno(3, "04/06/2026", "10:30", vet1, cheese, TipoTurno.ANALISIS,"Orina muy oscura");
+        Turno tPasado4 = new Turno(4, "04/06/2026", "16:00", vet3, bobby, TipoTurno.CONSULTA_GENERAL,"Pelaje se cae mucho");
+        Turno tPasado1c = new Turno(5, "05/06/2026", "08:30", vet1, luna, TipoTurno.VACUNACION,"Anti-Parasitaria");
         tPasado1.completarTurno();
         tPasado2.completarTurno();
         tPasado3.completarTurno();
         tPasado4.completarTurno();
         tPasado1c.completarTurno();
-        tPasadoLoro.completarTurno();
 
-        Turno tHoy1 = new Turno(6,  b3, "09:30", vet1, hulk,   TipoTurno.CIRUGIA);
-        Turno tHoy2 = new Turno(7,  b3, "10:15", vet1, luna,   TipoTurno.CONSULTA_GENERAL);
-        Turno tHoy3 = new Turno(8,  b3, "11:45", vet1, hulk,   TipoTurno.ANALISIS);
-        Turno tHoy4 = new Turno(9,  b3, "14:00", vet1, mochi,  TipoTurno.VACUNACION);
-        Turno tHoy5 = new Turno(10, b3, "15:30", vet2, mishi,  TipoTurno.BANIO);
-        Turno tHoy6 = new Turno(11, b3, "16:00", vet4, rocky,  TipoTurno.CONSULTA_GENERAL);
-        
-        Turno tHoyConejo = new Turno(18, b3, "16:45", vet1, tambor, TipoTurno.VACUNACION);
-        Turno tHoyTortuga = new Turno(19, b3, "17:30", vet2, manuelita, TipoTurno.CONSULTA_GENERAL);
+        Turno tHoy1 = new Turno(6, "06/06/2026", "09:30", vet1, hulk, TipoTurno.CIRUGIA,"Castración inminente :(");
+        Turno tHoy2 = new Turno(7, "06/06/2026", "10:15", vet1, luna, TipoTurno.CONSULTA_GENERAL,"");
+        Turno tHoy3 = new Turno(8, "06/06/2026", "11:45", vet1, hulk, TipoTurno.ANALISIS,"");
+        Turno tHoy4 = new Turno(9, "06/06/2026", "14:00", vet1, mochi, TipoTurno.VACUNACION,"");
+        Turno tHoy5 = new Turno(10, "06/06/2026", "15:30", vet2, mishi, TipoTurno.BANIO,"");
+        Turno tHoy6 = new Turno(11, "06/06/2026", "16:00", vet4, rocky, TipoTurno.CONSULTA_GENERAL,"");
 
-        Turno tFut1 = new Turno(12, b4, "10:00", vet1, bigotes, TipoTurno.CIRUGIA);
-        Turno tFut2 = new Turno(13, "10/06/2026", "11:00", vet1, cheese,  TipoTurno.VACUNACION);
-        Turno tFut3 = new Turno(14, "12/06/2026", "09:00", vet2, toby,    TipoTurno.CONSULTA_GENERAL);
-        Turno tFut4 = new Turno(15, "15/06/2026", "17:00", vet3, pelusa,  TipoTurno.ANALISIS);
-        
-        Turno tFutConejo2 = new Turno(20, b4, "11:30", vet1, copito, TipoTurno.ANALISIS);
-        Turno tFutConejo3 = new Turno(21, "11/06/2026", "15:00", vet3, orejas, TipoTurno.CONSULTA_GENERAL);
+        Turno tFut1 = new Turno(12, "08/06/2026", "10:00", vet1, bigotes, TipoTurno.CIRUGIA,"");
+        Turno tFut2 = new Turno(13, "10/06/2026", "11:00", vet1, cheese, TipoTurno.VACUNACION,"");
+        Turno tFut3 = new Turno(14, "12/06/2026", "09:00", vet2, toby, TipoTurno.CONSULTA_GENERAL,"");
+        Turno tFut4 = new Turno(15, "15/06/2026", "17:00", vet3, pelusa, TipoTurno.ANALISIS,"");
 
-        Turno tCancel = new Turno(16, b3, "18:00", vet1, luna, TipoTurno.CONSULTA_GENERAL);
+        Turno tCancel = new Turno(16, "06/06/2026", "18:00", vet1, luna, TipoTurno.CONSULTA_GENERAL,"");
         tCancel.cancelarTurno();
 
         veterinaria.registrarTurno(tPasado1);
@@ -344,7 +347,9 @@ public class ControladorVeterinaria {
     private Animal buscarAnimal(String nombre) {
         for (Responsable c : veterinaria.getListaClientes()) {
             for (Animal a : c.getMascotas()) {
-                if (nombre.equals(a.getNombre())) return a;
+                if (nombre.equals(a.getNombre())) {
+                    return a;
+                }
             }
         }
         return null;

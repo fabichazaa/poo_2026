@@ -93,6 +93,12 @@ Ver `diagrama/README.md` para más detalle. Hay 4 versiones:
 - **IntelliJ IDEA / Eclipse / NetBeans**: importar como proyecto Java estándar (no hay `pom.xml` ni `build.gradle`; las carpetas son los paquetes).
 - Compilar desde raíz: `javac -d build modelo/*.java vista/*.java controlador/*.java recursos/*.java Main.java`.
 
+## 🎨 Buenas Prácticas de Desarrollo (Diseño Coherente)
+
+Para mantener la coherencia con el **Design System** de Happy Paws detallado en [DESIGN.md](file:///c:/Users/el_be/OneDrive/Desktop/Universidad/desarrollo%20de%20software/Tercer%20cuatrimestre/Programacion%20Orientada%20a%20Objetos/poo_2026/DESIGN.md):
+- **Evitar Hardcodear Colores:** No crees instancias de colores directamente (`new Color(...)`) en tus componentes visuales. Usa la clase unificada [Color.java](file:///c:/Users/el_be/OneDrive/Desktop/Universidad/desarrollo%20de%20software/Tercer%20cuatrimestre/Programacion%20Orientada%20a%20Objetos/poo_2026/recursos/Color.java) del paquete `recursos` (por ejemplo, `recursos.Color.PRIMARY`).
+- **Evitar Hardcodear Fuentes:** No instancies fuentes genéricas del sistema. Carga, gestiona y deriva los tamaños de las tipografías exclusivamente mediante [CargadorFuentes.java](file:///c:/Users/el_be/OneDrive/Desktop/Universidad/desarrollo%20de%20software/Tercer%20cuatrimestre/Programacion%20Orientada%20a%20Objetos/poo_2026/recursos/CargadorFuentes.java).
+
 ## 👥 Grupo
 
 - Integrante 1 — Fabiola Chazarreta

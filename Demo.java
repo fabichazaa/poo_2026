@@ -62,7 +62,7 @@ public class Demo {
         Animal bobby = v.obtenerTodosLosAnimales().stream()
             .filter(a -> a.getNombre().equals("Bobby")).findFirst().orElseThrow();
         int turnosAntes = v.getListaTurnos().size();
-        Turno nuevo = c.registrarTurno("20/06/2026", "10:00", carlos, bobby, TipoTurno.CONSULTA_GENERAL);
+        Turno nuevo = c.registrarTurno("20/06/2026", "10:00", carlos, bobby, TipoTurno.CONSULTA_GENERAL,"");
         verificar("Se creó un nuevo turno (id != 0)",        nuevo.getIdTurno() > 0);
         verificar("Total turnos += 1",                       v.getListaTurnos().size() == turnosAntes + 1);
         verificar("El nuevo turno está Pendiente",           nuevo.esPendiente());
@@ -168,7 +168,7 @@ public class Demo {
         verificar("obtenerTurnosPorFecha(06/06/2026) ≥ 6", hoy.size() >= 6);
 
         List<Turno> carlosTodos = v.obtenerTurnosDeVeterinario(carlos);
-        verificar("Carlos tiene turnos asignados", carlosTodos.size() > 0);
+        verificar("Carlos tiene turnos asignados", !carlosTodos.isEmpty());
 
         List<Turno> pendientes = v.obtenerTurnosPendientes();
         verificar("Hay turnos pendientes (>=5)", pendientes.size() >= 5);

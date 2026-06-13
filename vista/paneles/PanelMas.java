@@ -211,7 +211,7 @@ public class PanelMas extends JPanel {
             JOptionPane.showMessageDialog(this, "No hay turnos registrados.");
             return null;
         }
-        Turno[] arr = controlador.getVeterinaria().getListaTurnos().toArray(new Turno[0]);
+        Turno[] arr = controlador.getVeterinaria().getListaTurnos().toArray(Turno[]::new);
         Turno sel = (Turno) JOptionPane.showInputDialog(
             SwingUtilities.getWindowAncestor(this),
             "Seleccioná un turno para generar el comprobante:",

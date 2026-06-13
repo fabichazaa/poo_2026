@@ -2,17 +2,18 @@ package vista.paneles;
 
 import controlador.ControladorVeterinaria;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import modelo.*;
 
-public class PanelRegistros extends JPanel {
+public final class PanelRegistros extends JPanel {
 
     private final ControladorVeterinaria controlador;
-    private JPanel panelGrillaPacientes;
-    private JTextField txtBuscar;
+    private final JPanel panelGrillaPacientes;
+    private final JTextField txtBuscar;
     private String filtroEspecieActual = "Todos";
     private String filtroEstadoActual = "Todos";
     
@@ -367,7 +368,7 @@ public class PanelRegistros extends JPanel {
         panelInfoCentral.setOpaque(false);
         panelInfoCentral.setLayout(new BoxLayout(panelInfoCentral, BoxLayout.Y_AXIS));
 
-        JLabel lblNombre = new JLabel(a.getNombre(), SwingConstants.CENTER);
+        JLabel lblNombre = new JLabel((a != null && a.getNombre() != null) ? a.getNombre() : "Sin nombre", SwingConstants.CENTER);
         lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 15));
         lblNombre.setForeground(colorTextoOscuro);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);

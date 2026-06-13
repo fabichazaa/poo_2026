@@ -50,8 +50,8 @@ public class Main {
 
         mascota1.getHistorial().recetarMedicamento(miVeterinaria.getCatalogoMedicamentos().get(0));
 
-        Turno t1 = new Turno(1, "06/06/2026", "10:00", vet1, mascota1, TipoTurno.CONSULTA_GENERAL);
-        Turno t2 = new Turno(2, "06/06/2026", "10:30", vet2, mascota2, TipoTurno.VACUNACION);
+        Turno t1 = new Turno(1, "06/06/2026", "10:00", vet1, mascota1, TipoTurno.CONSULTA_GENERAL,"");
+        Turno t2 = new Turno(2, "06/06/2026", "10:30", vet2, mascota2, TipoTurno.VACUNACION,"");
         miVeterinaria.registrarTurno(t1);
         miVeterinaria.registrarTurno(t2);
 
