@@ -331,10 +331,10 @@ public class DialogoNuevoTurno extends JDialog {
 
         // Creamos los 8 botones de tipo
         TipoTurnoButton btnConsulta = new TipoTurnoButton("Consulta", "imagenes/emojis/estetoscopio.png", "🩺", TipoTurno.CONSULTA_GENERAL);
-        TipoTurnoButton btnAnalisis = new TipoTurnoButton("Análisis", null, "🔬", TipoTurno.ANALISIS);
-        TipoTurnoButton btnCirugia = new TipoTurnoButton("Cirugía", null, "⚕️", TipoTurno.CIRUGIA);
+        TipoTurnoButton btnAnalisis = new TipoTurnoButton("Análisis", "imagenes/emojis/laboratorio.png", "🔬", TipoTurno.ANALISIS);
+        TipoTurnoButton btnCirugia = new TipoTurnoButton("Cirugía", "imagenes/emojis/salud.png", "⚕️", TipoTurno.CIRUGIA);
         TipoTurnoButton btnSeguimiento = new TipoTurnoButton("Seguimiento", "imagenes/emojis/carpeta.png", "📋", TipoTurno.CONSULTA_GENERAL);
-        TipoTurnoButton btnVacunacion = new TipoTurnoButton("Vacunación", null, "💊", TipoTurno.VACUNACION);
+        TipoTurnoButton btnVacunacion = new TipoTurnoButton("Vacunación", "imagenes/emojis/pastilla.png", "💊", TipoTurno.VACUNACION);
         TipoTurnoButton btnEstetica = new TipoTurnoButton("Estética", "imagenes/emojis/manito.png", "✂️", TipoTurno.BANIO);
 
         botonesTipo.add(btnConsulta);
