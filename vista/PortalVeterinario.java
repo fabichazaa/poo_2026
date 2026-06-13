@@ -104,7 +104,7 @@ public class PortalVeterinario extends JFrame {
         JButton btnInicio = crearBotonMenuNav("Inicio", "imagenes/emojis/casa.png", "🏠", "PANTALLA_INICIO");
         JButton btnRegistros = crearBotonMenuNav("Registros", null, "📋", "PANTALLA_REGISTROS");
         JButton btnAdopcion = crearBotonMenuNav("Adopción", "imagenes/emojis/patitas.png", "🐾", "PANTALLA_ADOPCION");
-        JButton btnMedicamentos = crearBotonMenuNav("Medicamentos","", "💊", "PANTALLA_MEDICAMENTOS");
+        JButton btnMedicamentos = crearBotonMenuNav("Medicamentos","imagenes/emojis/pill.png", "💊", "PANTALLA_MEDICAMENTOS");
         JButton btnNotas = crearBotonMenuNav("Notas", null, "📝", "PANTALLA_NOTAS");
         JButton btnCitas = crearBotonMenuNav("Turnos", "imagenes/emojis/calendario.png", "📅", "PANTALLA_CITAS");
         JButton btnMas = crearBotonMenuNav("Más", null, "➕", "PANTALLA_MAS");
@@ -712,7 +712,7 @@ public class PortalVeterinario extends JFrame {
                 case "PANTALLA_ADOPCION" ->
                     ((vista.paneles.PanelAdopcion) panelContenedorSecciones.getComponent(3)).actualizar();
                 case "PANTALLA_MEDICAMENTOS" ->
-                        ((vista.paneles.PanelMedicamentos) panelContenedorSecciones.getComponent(4)).actualizar();
+                    ((vista.paneles.PanelMedicamentos) panelContenedorSecciones.getComponent(4)).actualizar();
                 case "PANTALLA_NOTAS" ->
                     ((vista.paneles.PanelNotas) panelContenedorSecciones.getComponent(5)).actualizar();
                 case "PANTALLA_MAS" ->
