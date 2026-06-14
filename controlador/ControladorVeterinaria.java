@@ -342,6 +342,21 @@ public class ControladorVeterinaria {
         Turno tCancel = new Turno(16, b3, "18:00", vet1, luna, TipoTurno.CONSULTA_GENERAL, "");
         tCancel.cancelarTurno();
 
+        // =========================================================================
+        // 🔥 NUEVO: SET DE PRUEBAS DE TODOS LOS TIPOS DE TURNO ASOCIADOS A HULK
+        // =========================================================================
+        Turno tHulkConsulta  = new Turno(22, "10/06/2026", "08:30", vet2, hulk, TipoTurno.CONSULTA_GENERAL, "Chequeo de tos leve.");
+        Turno tHulkVacuna    = new Turno(23, "11/06/2026", "09:00", vet1, hulk, TipoTurno.VACUNACION, "Refuerzo Quíntuple.");
+        Turno tHulkCirugia   = new Turno(24, "12/06/2026", "11:15", vet1, hulk, TipoTurno.CIRUGIA, "Limpieza sarro dental.");
+        Turno tHulkBanio     = new Turno(25, "13/06/2026", "15:00", vet2, hulk, TipoTurno.BANIO, "Baño sanitario medicado por pulgas.");
+        Turno tHulkAnalisis  = new Turno(26, "14/06/2026", "16:30", vet3, hulk, TipoTurno.ANALISIS, "Muestra raspaje de piel.");
+        Turno tHulkSeguimiento= new Turno(27, "15/06/2026", "10:00", vet1, hulk, TipoTurno.SEGUIMIENTO, "Control de evolución dermatológica.");
+
+        // Simulamos que algunos ya pasaron y fueron completados para llenar el Historial
+        tHulkConsulta.completarTurno();
+        tHulkVacuna.completarTurno();
+        tHulkAnalisis.completarTurno();
+
         // Registro unificado en el sistema (Sin colisiones ni superposiciones)
         veterinaria.registrarTurno(tPasado1);
         veterinaria.registrarTurno(tPasado2);
@@ -363,7 +378,15 @@ public class ControladorVeterinaria {
         veterinaria.registrarTurno(tFut4);
         veterinaria.registrarTurno(tFutConejo2);
         veterinaria.registrarTurno(tFutConejo3);
-        veterinaria.registrarTurno(tCancel);
+        veterinaria.registrarTurno(tCancel); 
+
+        // Registramos las nuevas variables de Hulk en el sistema
+        veterinaria.registrarTurno(tHulkConsulta);
+        veterinaria.registrarTurno(tHulkVacuna);
+        veterinaria.registrarTurno(tHulkCirugia);
+        veterinaria.registrarTurno(tHulkBanio);
+        veterinaria.registrarTurno(tHulkAnalisis);
+        veterinaria.registrarTurno(tHulkSeguimiento);
     }
     
     private void cargarNotas() {
