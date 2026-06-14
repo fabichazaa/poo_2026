@@ -40,13 +40,11 @@ public class Tortuga extends Animal {
         return "imagenes/emojis/tortuga.png";
     }
 
-    @Override
-    public String getColorInicioHex() {
+    public String getColorInicioHexActivo() {
         return "#A3E635";
     }
-
-    @Override
-    public String getColorFinHex() {
+        
+    public String getColorFinHexActivo() {
         return "#4D7C0F";
     }
 

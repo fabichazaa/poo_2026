@@ -343,12 +343,12 @@ public class DialogoNuevoTurno extends JDialog {
         panelTipoGrid.setOpaque(false);
 
         // Creamos los 8 botones de tipo
-        TipoTurnoButton btnConsulta = new TipoTurnoButton("Consulta", "imagenes/emojis/estetoscopio.png", "🩺", TipoTurno.CONSULTA_GENERAL);
-        TipoTurnoButton btnAnalisis = new TipoTurnoButton("Análisis", "imagenes/emojis/laboratorio.png", "🔬", TipoTurno.ANALISIS);
-        TipoTurnoButton btnCirugia = new TipoTurnoButton("Cirugía", "imagenes/emojis/salud.png", "⚕️", TipoTurno.CIRUGIA);
-        TipoTurnoButton btnSeguimiento = new TipoTurnoButton("Seguimiento", "imagenes/emojis/carpeta.png", "📋", TipoTurno.SEGUIMIENTO);
-        TipoTurnoButton btnVacunacion = new TipoTurnoButton("Vacunación", "imagenes/emojis/pastilla.png", "💊", TipoTurno.VACUNACION);
-        TipoTurnoButton btnEstetica = new TipoTurnoButton("Estética", "imagenes/emojis/manito.png", "✂️", TipoTurno.BANIO);
+        TipoTurnoButton btnConsulta = new TipoTurnoButton("Consulta", TipoTurno.CONSULTA_GENERAL);
+        TipoTurnoButton btnAnalisis = new TipoTurnoButton("Análisis", TipoTurno.ANALISIS);
+        TipoTurnoButton btnCirugia = new TipoTurnoButton("Cirugía",  TipoTurno.CIRUGIA);
+        TipoTurnoButton btnSeguimiento = new TipoTurnoButton("Seguimiento", TipoTurno.SEGUIMIENTO);
+        TipoTurnoButton btnVacunacion = new TipoTurnoButton("Vacunación", TipoTurno.VACUNACION);
+        TipoTurnoButton btnEstetica = new TipoTurnoButton("Estética", TipoTurno.BANIO);
 
         botonesTipo.add(btnConsulta);
         botonesTipo.add(btnAnalisis);
@@ -912,7 +912,7 @@ public class DialogoNuevoTurno extends JDialog {
         private final Color colorSelectedBg = new Color(240, 253, 250);
         private final Color colorSelectedBorder = new Color(13, 148, 136);
 
-        public TipoTurnoButton(String texto, String iconPath, String unicodeIcon, TipoTurno tipo) {
+        public TipoTurnoButton(String texto, TipoTurno tipo) {
             this.texto = texto;
             this.tipo = tipo;
 
@@ -925,16 +925,14 @@ public class DialogoNuevoTurno extends JDialog {
 
             JLabel lblIcon = new JLabel();
             lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
-            ImageIcon icon = null;
-            if (iconPath != null) {
-                icon = ImageLoader.loadScaled(iconPath, 16, 16);
-            }
-            if (icon != null && icon.getImage() != null && icon.getIconWidth() > 0) {
-                lblIcon.setIcon(icon);
-            } else {
-                lblIcon.setText(unicodeIcon);
-                lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
-            }
+            try {
+                    ImageIcon icon = new ImageIcon(tipo.getRutaEmoji());
+                    Image scaled = icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+                    lblIcon.setIcon(new ImageIcon(scaled));
+                } catch (Exception e) {
+                    lblIcon.setText(tipo.getEmojiRespaldo());
+                    lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
+                }
 
             JLabel lblText = new JLabel(texto);
             lblText.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));

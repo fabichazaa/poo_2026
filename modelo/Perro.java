@@ -40,13 +40,11 @@ public class Perro extends Animal {
         return "imagenes/emojis/perro.png";
     }
 
-    @Override
-    public String getColorInicioHex() {
+    public String getColorInicioHexActivo() {
         return "#FFB200";
     }
 
-    @Override
-    public String getColorFinHex() {
+    public String getColorFinHexActivo() {
         return "#FF7300";
     }
 

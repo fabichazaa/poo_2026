@@ -96,10 +96,6 @@ public abstract class Animal {
         this.peso = peso;
     }
 
-    public void setRaza(String raza) {
-        this.raza = raza;
-    }
-
     private String generarIdAnimal() {
         return UUID.randomUUID().toString();
     }
@@ -111,11 +107,33 @@ public abstract class Animal {
         return java.time.LocalDate.now().getYear() - fechaNacimiento.getYear();
     }
 
+    public String getStringEstado() {
+        return this.activo ? "Activo" : "Inactivo";
+    }
+
+    public String getStringSexo() {
+        return this.sexo ? "Macho" : "Hembra";
+    }
+
+    public final String getColorInicioHex() {
+        if (!this.activo) {
+            return "#94a3b8";
+        }
+        return getColorInicioHexActivo();
+    }
+
+    public final String getColorFinHex() {
+        if (!this.activo) {
+            return "#64748b";
+        }
+        return getColorFinHexActivo();
+    }
+
     abstract public String getImagen();
 
-    abstract public String getColorInicioHex();
+    abstract public String getColorInicioHexActivo();
 
-    abstract public String getColorFinHex();
+    abstract public String getColorFinHexActivo();
 
     abstract public String getCategoriaFiltro();
     

@@ -2,11 +2,9 @@ package vista.paneles;
 
 import controlador.ControladorVeterinaria;
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import modelo.*;
 
 public final class PanelRegistros extends JPanel {
@@ -17,13 +15,10 @@ public final class PanelRegistros extends JPanel {
     private String filtroEspecieActual = "Todos";
     private String filtroEstadoActual = "Todos";
     
-    // Variables globales para que el botón de volver de la ficha pueda restaurar la pantalla
     private JPanel panelBarraSuperior;
     private JScrollPane scrollGrilla;
     
-    // Constante global para evitar fallas de tipeo entre el foco y el filtrado
     private final String PLACEHOLDER_BUSQUEDA = "Buscar por nombre del paciente...";
-    // Colores de la paleta corporativa
     private final Color colorFondoGris = new Color(241, 245, 249);
     private final Color colorTealActivo = new Color(13, 148, 136);
     private final Color colorTextoOscuro = new Color(30, 41, 59);
@@ -36,11 +31,9 @@ public final class PanelRegistros extends JPanel {
         setBackground(colorFondoGris);
         setBorder(new EmptyBorder(15, 25, 15, 25));
 
-        // --- 1. BARRA SUPERIOR DE FILTROS Y BÚSQUEDA (MOCKUP STYLE) ---
         panelBarraSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 5));
         panelBarraSuperior.setOpaque(false);
 
-        // Pre-cargamos y escalamos la imagen de la lupa en alta definición
         final ImageIcon iconoLupaModerno;
         ImageIcon temporal = null;
         try {
@@ -58,23 +51,19 @@ public final class PanelRegistros extends JPanel {
         }
         iconoLupaModerno = temporal;
 
-        // Inicializamos el JTextField con el dibujo por píxeles de la lupa
         txtBuscar = new JTextField(PLACEHOLDER_BUSQUEDA) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                // Fondo blanco redondeado
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36);
                 
-                // Borde gris claro muy sutil
                 g2.setColor(new Color(226, 232, 240));
                 g2.setStroke(new BasicStroke(1f));
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 36, 36);
                 
-                // Dibujamos la lupa calculando de forma exacta el centro vertical físico
                 if (iconoLupaModerno != null) {
                     int xLupa = 14; 
                     int yLupa = (getHeight() - iconoLupaModerno.getIconHeight()) / 2; 
@@ -96,7 +85,6 @@ public final class PanelRegistros extends JPanel {
         txtBuscar.setOpaque(false);
         txtBuscar.setBorder(new EmptyBorder(0, 44, 0, 15)); 
 
-        // LÓGICA DE CONTROL DEL PLACEHOLDER (AUTOLIMPIABLE)
         txtBuscar.addFocusListener(new java.awt.event.FocusListener() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
@@ -115,7 +103,6 @@ public final class PanelRegistros extends JPanel {
             }
         });
 
-        // Listener en tiempo real para el buscador por caracteres
         txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
@@ -124,7 +111,6 @@ public final class PanelRegistros extends JPanel {
         });
         panelBarraSuperior.add(txtBuscar);
 
-        // --- CONTENEDOR GRUPO ESPECIES (Caja blanca redondeada unificada) ---
         JPanel panelGrupoEspecies = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2)) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -146,7 +132,6 @@ public final class PanelRegistros extends JPanel {
         }
         panelBarraSuperior.add(panelGrupoEspecies);
 
-        // --- CONTENEDOR GRUPO ESTADO (Caja blanca redondeada unificada) ---
         JPanel panelGrupoEstado = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2)) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -170,7 +155,6 @@ public final class PanelRegistros extends JPanel {
 
         add(panelBarraSuperior, BorderLayout.NORTH);
 
-        // --- 2. GRILLA CENTRAL SCROLLABLE DE PACIENTES ---
         panelGrillaPacientes = new JPanel(new GridLayout(0, 4, 20, 20)); 
         panelGrillaPacientes.setOpaque(false);
 
@@ -279,9 +263,7 @@ public final class PanelRegistros extends JPanel {
     private JPanel crearTarjetaPacienteHD(Animal a) {
         int altoBarra = 6;
         int radioEsquina = 24; 
-
-        Color colorGrisCabeceraInicio = new Color(148, 163, 184); 
-        Color colorGrisCabeceraFin = new Color(100, 116, 139);    
+ 
         Color colorGrisTagFondo = new Color(241, 245, 249);       
         Color colorGrisTagBorde = new Color(226, 232, 240);       
         Color colorGrisTagTexto = new Color(71, 85, 105);         
@@ -295,10 +277,10 @@ public final class PanelRegistros extends JPanel {
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), radioEsquina, radioEsquina);
                 
-                Color colorInicio = a.isActivo() ? Color.decode(a.getColorInicioHex()) : colorGrisCabeceraInicio;
-                Color colorFin = a.isActivo() ? Color.decode(a.getColorFinHex()) : colorGrisCabeceraFin;
+                Color colorInicio = Color.decode(a.getColorInicioHex());
+                Color colorFin = Color.decode(a.getColorFinHex());
 
-                GradientPaint degradadoCabecera = new GradientPaint(0, 0, colorInicio, 0, getHeight(), colorFin);
+                GradientPaint degradadoCabecera = new GradientPaint(0, 0, colorInicio, getWidth(), 0, colorFin);
                 g2.setPaint(degradadoCabecera);
                 
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radioEsquina, radioEsquina));
@@ -326,8 +308,8 @@ public final class PanelRegistros extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                Color colorInicio = a.isActivo() ? Color.decode(a.getColorInicioHex()) : colorGrisCabeceraInicio;
-                Color colorFin = a.isActivo() ? Color.decode(a.getColorFinHex()) : colorGrisCabeceraFin;
+                Color colorInicio = Color.decode(a.getColorInicioHex());
+                Color colorFin = Color.decode(a.getColorFinHex());
 
                 GradientPaint degradadoEspecie = new GradientPaint(0, 0, colorInicio, 0, getHeight(), colorFin);
                 
@@ -376,7 +358,7 @@ public final class PanelRegistros extends JPanel {
         JPanel panelTags = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         panelTags.setOpaque(false);
         
-        JLabel lblEstadoActivo = new JLabel(a.isActivo() ? "Activo" : "Inactivo", SwingConstants.CENTER) {
+        JLabel lblEstadoActivo = new JLabel(a.getStringEstado(), SwingConstants.CENTER) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -462,16 +444,19 @@ public final class PanelRegistros extends JPanel {
         btnFicha.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btnFicha.setForeground(new Color(71, 85, 105)); 
 
-        // 🔥 LOGICA CORREGIDA: El listener se agrega sobre el objeto de manera normal y externa
         btnFicha.addActionListener(e -> {
             this.removeAll();
             
             FichaPaciente vistaPerfil = new FichaPaciente(a, () -> {
                 this.removeAll();
+                
                 this.setLayout(new BorderLayout(0, 15));
-                this.add(panelBarraSuperior, BorderLayout.NORTH);
+                this.add(panelBarraSuperior, BorderLayout.NORTH); // Vuelven tus filtros impecables
                 this.add(scrollGrilla, BorderLayout.CENTER);
                 this.actualizar();
+                
+                this.revalidate();
+                this.repaint();
             });
             
             this.setLayout(new BorderLayout());
