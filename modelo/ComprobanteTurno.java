@@ -51,14 +51,7 @@ public class ComprobanteTurno {
         sb.append("  Especie: ").append(a.getEspecie()).append("\n");
         sb.append("  Edad: ").append(a.calcularEdad()).append(" años\n");
         sb.append("  Alimentación: ").append(a.getTipoAlimentacion().getDescripcion()).append("\n");
-        switch (a) {
-            case Perro perro ->
-                sb.append("  Raza: ").append(perro.getRaza()).append("\n");
-            case Gato gato ->
-                sb.append("  Raza: ").append(gato.getRaza()).append("\n");
-            default -> {
-            }
-        }
+        sb.append("  Raza: ").append(a.getRaza()).append("\n");
         sb.append("  ID: ").append(a.getIdAnimal()).append("\n");
         if (r != null) {
             sb.append("\nRESPONSABLE\n");
@@ -104,7 +97,7 @@ public class ComprobanteTurno {
             sb.append("  Sin medicamentos ni vacunas registradas.\n");
         } else {
             int i = 1;
-            if (tieneMeds) {
+            if (meds != null && !meds.isEmpty()) {
                 for (Prescripcion p : meds) {
                     sb.append("  ").append(i++).append(". ")
                             .append(p.getMedicamento().getNombreMedicamento())
@@ -119,7 +112,7 @@ public class ComprobanteTurno {
                     }
                 }
             }
-            if (tieneVacs) {
+            if (vacs != null && !vacs.isEmpty()) {
                 for (RegistroVacunacion rv : vacs) {
                     sb.append("  ").append(i++).append(". ")
                             .append(rv.getVacunaAplicada().getNombreMedicamento())

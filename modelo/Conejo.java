@@ -3,28 +3,18 @@ package modelo;
 import java.time.LocalDate;
 
 public class Conejo extends Animal {
-    private String raza;
+
     private boolean esEsterilizado;
 
     public Conejo(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso,
-        Responsable responsable, String raza) {
-        super(nombre, fechaNacimiento, sexo, peso, responsable);
-        this.raza = raza;
+            Responsable responsable, String raza) {
+        super(nombre, fechaNacimiento, sexo, peso, responsable, raza);
         this.esEsterilizado = false;
     }
 
     public Conejo(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, String raza) {
-        super(nombre, fechaNacimiento, sexo, peso);
-        this.raza = raza;
+        super(nombre, fechaNacimiento, sexo, peso, raza);
         this.esEsterilizado = false;
-    }
-
-    public String getRaza() {
-        return raza;
-    }
-
-    public void setRaza(String raza) {
-        this.raza = raza;
     }
 
     public boolean isEsEsterilizado() {
@@ -58,6 +48,7 @@ public class Conejo extends Animal {
         return "#DB2777";
     }
 
+    @Override
     public String getCategoriaFiltro() {
         return "Conejo";
     }

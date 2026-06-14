@@ -85,6 +85,7 @@ public class PortalVeterinario extends JFrame {
 
         panelContenedorSecciones.add(new vista.paneles.PanelRegistros(controlador), "PANTALLA_REGISTROS");
         panelContenedorSecciones.add(new vista.paneles.PanelAdopcion(controlador), "PANTALLA_ADOPCION");
+        panelContenedorSecciones.add(new vista.paneles.PanelMedicamentos(controlador), "PANTALLA_MEDICAMENTOS");
         panelContenedorSecciones.add(new vista.paneles.PanelNotas(controlador), "PANTALLA_NOTAS");
         panelContenedorSecciones.add(new vista.paneles.PanelMas(controlador), "PANTALLA_MAS");
 
@@ -103,6 +104,7 @@ public class PortalVeterinario extends JFrame {
         JButton btnInicio = crearBotonMenuNav("Inicio", "imagenes/emojis/casa.png", "🏠", "PANTALLA_INICIO");
         JButton btnRegistros = crearBotonMenuNav("Registros", "imagenes/emojis/patitas.png", "📋", "PANTALLA_REGISTROS");
         JButton btnAdopcion = crearBotonMenuNav("Adopción", "imagenes/emojis/patitas.png", "🐾", "PANTALLA_ADOPCION");
+        JButton btnMedicamentos = crearBotonMenuNav("Medicamentos","imagenes/emojis/pill.png", "💊", "PANTALLA_MEDICAMENTOS");
         JButton btnNotas = crearBotonMenuNav("Notas", null, "📝", "PANTALLA_NOTAS");
         JButton btnCitas = crearBotonMenuNav("Turnos", "imagenes/emojis/calendario.png", "📅", "PANTALLA_CITAS");
         JButton btnMas = crearBotonMenuNav("Más", null, "➕", "PANTALLA_MAS");
@@ -113,6 +115,7 @@ public class PortalVeterinario extends JFrame {
         panelMenuInferior.add(btnInicio);
         panelMenuInferior.add(btnRegistros);
         panelMenuInferior.add(btnAdopcion);
+        panelMenuInferior.add(btnMedicamentos);
         panelMenuInferior.add(btnNotas);
         panelMenuInferior.add(btnCitas);
         panelMenuInferior.add(btnMas);
@@ -471,17 +474,13 @@ public class PortalVeterinario extends JFrame {
         JPanel panelContenidoCentral = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         panelContenidoCentral.setOpaque(false);
 
-        // Cargar imagen del animal (Perro o Gato)
-        String rutaImagen = (t.getAnimal() instanceof Perro) ? "imagenes/emojis/perro.png" : "imagenes/emojis/gato.png";
+        // Cargar imagen del animal dynamically
+        String rutaImagen = t.getAnimal().getImagen();
         JLabel lblEmoji = new JLabel();
-        try {
-            ImageIcon iconoAnimal = new ImageIcon(rutaImagen);
+        ImageIcon iconoAnimal = new ImageIcon(rutaImagen);
+        if (iconoAnimal.getImage() != null) {
             ImageIcon iconoEscalado = escalarImagenAltaCalidad(iconoAnimal.getImage(), 22, 22);
             lblEmoji.setIcon(iconoEscalado);
-        } catch (Exception e) {
-            String emojiMascota = (t.getAnimal() instanceof Perro) ? "🐕" : "🐈";
-            lblEmoji.setText(emojiMascota);
-            lblEmoji.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
         }
         panelContenidoCentral.add(lblEmoji);
 
@@ -517,25 +516,8 @@ public class PortalVeterinario extends JFrame {
         lblBadgePildora.setFont(fuenteNormal);
         lblBadgePildora.setBorder(new EmptyBorder(4, 12, 4, 12));
 
-        switch (t.getTipo()) {
-            case CIRUGIA -> {
-                lblBadgePildora.setCustomBackground(new Color(254, 226, 226));
-                lblBadgePildora.setForeground(new Color(220, 38, 38));
-            }
-            case CONSULTA_GENERAL -> {
-                lblBadgePildora.setCustomBackground(new Color(219, 234, 254));
-                lblBadgePildora.setForeground(new Color(37, 99, 235));
-            }
-            case ANALISIS -> {
-                lblBadgePildora.setCustomBackground(new Color(243, 232, 255));
-                lblBadgePildora.setForeground(new Color(147, 51, 234));
-            }
-            default -> {
-                lblBadgePildora.setCustomBackground(new Color(220, 252, 231));
-                lblBadgePildora.setForeground(new Color(22, 163, 74));
-                lblBadgePildora.setText("Vacunación");
-            }
-        }
+        lblBadgePildora.setCustomBackground(t.getTipo().getBadgeBgColor());
+        lblBadgePildora.setForeground(t.getTipo().getBadgeFgColor());
 
         JPanel panelBadgeWrapper = new JPanel(new GridBagLayout());
         panelBadgeWrapper.setOpaque(false);
@@ -708,10 +690,12 @@ public class PortalVeterinario extends JFrame {
                     ((vista.paneles.PanelRegistros) panelContenedorSecciones.getComponent(2)).actualizar();
                 case "PANTALLA_ADOPCION" ->
                     ((vista.paneles.PanelAdopcion) panelContenedorSecciones.getComponent(3)).actualizar();
+                case "PANTALLA_MEDICAMENTOS" ->
+                    ((vista.paneles.PanelMedicamentos) panelContenedorSecciones.getComponent(4)).actualizar();
                 case "PANTALLA_NOTAS" ->
-                    ((vista.paneles.PanelNotas) panelContenedorSecciones.getComponent(4)).actualizar();
+                    ((vista.paneles.PanelNotas) panelContenedorSecciones.getComponent(5)).actualizar();
                 case "PANTALLA_MAS" ->
-                    ((vista.paneles.PanelMas) panelContenedorSecciones.getComponent(5)).actualizar();
+                    ((vista.paneles.PanelMas) panelContenedorSecciones.getComponent(6)).actualizar();
                 case "PANTALLA_CITAS" ->
                     panelCitas.actualizar();
                 default -> {

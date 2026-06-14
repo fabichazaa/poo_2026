@@ -13,8 +13,9 @@ public abstract class Animal {
     private boolean enAdopcion;
     private boolean activo;
     private float peso;
+    private String raza;
 
-    public Animal(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, Responsable responsable) {
+    public Animal(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, Responsable responsable, String raza) {
         this.idAnimal = generarIdAnimal();
         this.nombre = nombre;
         this.fechaNacimiento = fechaNacimiento;
@@ -24,10 +25,11 @@ public abstract class Animal {
         this.enAdopcion = false;
         this.peso = peso;
         this.activo = true;
+        this.raza = raza;
     }
 
-    public Animal(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso) {
-        this(nombre, fechaNacimiento, sexo, peso, null);
+    public Animal(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, String raza) {
+        this(nombre, fechaNacimiento, sexo, peso, null, raza);
     }
 
     public String getIdAnimal() {
@@ -66,6 +68,10 @@ public abstract class Animal {
         return peso;
     }
 
+    public String getRaza() {
+        return raza;
+    }
+
     public void setEnAdopcion(boolean enAdopcion) {
         this.enAdopcion = enAdopcion;
     }
@@ -98,7 +104,7 @@ public abstract class Animal {
         if (fechaNacimiento == null) {
             return -1;
         }
-        return LocalDate.now().getYear() - fechaNacimiento.getYear();
+        return java.time.LocalDate.now().getYear() - fechaNacimiento.getYear();
     }
 
     public String getStringEstado() {

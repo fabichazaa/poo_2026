@@ -3,28 +3,18 @@ package modelo;
 import java.time.LocalDate;
 
 public class Perro extends Animal {
-    private String raza;
+
     private boolean necesitaPaseo;
 
     public Perro(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso,
-        Responsable responsable, String raza) {
-        super(nombre, fechaNacimiento, sexo, peso, responsable);
-        this.raza = raza;
+            Responsable responsable, String raza) {
+        super(nombre, fechaNacimiento, sexo, peso, responsable, raza);
         this.necesitaPaseo = true;
     }
 
     public Perro(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, String raza) {
-        super(nombre, fechaNacimiento, sexo, peso);
-        this.raza = raza;
+        super(nombre, fechaNacimiento, sexo, peso, raza);
         this.necesitaPaseo = true;
-    }
-
-    public String getRaza() {
-        return raza;
-    }
-
-    public void setRaza(String raza) {
-        this.raza = raza;
     }
 
     public boolean isNecesitaPaseo() {
@@ -45,6 +35,7 @@ public class Perro extends Animal {
         return "Perro";
     }
 
+    @Override
     public String getImagen() {
         return "imagenes/emojis/perro.png";
     }
@@ -57,6 +48,7 @@ public class Perro extends Animal {
         return "#FF7300";
     }
 
+    @Override
     public String getCategoriaFiltro() {
         return "Perro";
     }
