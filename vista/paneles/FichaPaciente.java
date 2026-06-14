@@ -80,14 +80,14 @@ public class FichaPaciente extends JPanel {
         panelColumnasUnificadas.setOpaque(false);
 
         // ========================================================
-        // LEFT COLUMN: Animal & Responsable
+        // LEFT COLUMN: Patient & Owner
         // ========================================================
         JPanel panelIzquierdo = new JPanel();
         panelIzquierdo.setOpaque(false);
         panelIzquierdo.setLayout(new BoxLayout(panelIzquierdo, BoxLayout.Y_AXIS));
         panelIzquierdo.setPreferredSize(new Dimension(260, 0)); 
 
-        // Animal Card
+        // Patient Card
         JPanel cardPaciente = new JPanel(new BorderLayout(0, 8)) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -96,10 +96,10 @@ public class FichaPaciente extends JPanel {
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
                 
-                // gradient for the top border
+                // gradient for the animal card top border
                 Color colorInicio = Color.decode(animal.getColorInicioHex());
                 Color colorFin = Color.decode(animal.getColorFinHex());
-                GradientPaint deg = new GradientPaint(0, 0, colorInicio, 0, getHeight(), colorFin);
+                GradientPaint deg = new GradientPaint(0, 0, colorInicio , getWidth(), 0, colorFin);
                 g2.setPaint(deg);
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 24, 24));
                 g2.fillRect(0, 0, getWidth(), 8); 
@@ -118,6 +118,7 @@ public class FichaPaciente extends JPanel {
         cardPaciente.setMinimumSize(dimensionesPaciente);
         cardPaciente.setMaximumSize(dimensionesPaciente);
 
+        // Patient Picture Box
         JPanel panelAvatar = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -137,6 +138,7 @@ public class FichaPaciente extends JPanel {
         panelAvatar.setOpaque(false);
         panelAvatar.setLayout(new GridBagLayout());
 
+        // Patient Picture
         JLabel lblIcono = new JLabel();
         try {
             java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(new java.io.File(animal.getImagen()));
@@ -148,39 +150,38 @@ public class FichaPaciente extends JPanel {
         }
         panelAvatar.add(lblIcono);
 
+        // PROTECTOR WRAPPER: BorderLayout.NORTH forces panelAvatar width stretch to 100% 
+        // By using FlowLayout(CENTER), we protect the dimensions of panel avatar
         JPanel panelAvatarWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         panelAvatarWrapper.setOpaque(false);
         panelAvatarWrapper.add(panelAvatar);
 
-        // Cambiamos a un panel intermedio con BoxLayout vertical para la info básica, evitando colisiones
         JPanel panelInfoBasica = new JPanel();
         panelInfoBasica.setOpaque(false);
         panelInfoBasica.setLayout(new BoxLayout(panelInfoBasica, BoxLayout.Y_AXIS));
 
         JLabel lblNombre = new JLabel(animal.getNombre(), SwingConstants.CENTER);
-        lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 22)); // Restaurado tu Bold original de nombre
+        lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblNombre.setForeground(EstiloPaleta.TEXTO_OSCURO);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel lblRaza = new JLabel(animal.getEspecie() + " · " + (animal.getSexo() ? "Macho" : "Hembra"), SwingConstants.CENTER);
+        JLabel lblRaza = new JLabel(animal.getEspecie() + " · " + animal.getStringSexo(), SwingConstants.CENTER);
         lblRaza.setFont(new Font("Segoe UI", Font.BOLD, 12)); 
-        lblRaza.setForeground(new Color(217, 119, 6)); 
+        lblRaza.setForeground(Color.decode(animal.getColorFinHex())); 
         lblRaza.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         panelInfoBasica.add(lblNombre);
         panelInfoBasica.add(Box.createVerticalStrut(4));
         panelInfoBasica.add(lblRaza);
 
-        // Contenedor de la grilla de datos de 3 filas apiladas
         JPanel panelDatosGrid = new JPanel(new GridLayout(3, 1, 0, 6));
         panelDatosGrid.setOpaque(false);
         panelDatosGrid.setBorder(new EmptyBorder(10, 5, 5, 5));
 
         agregarFilaDatosFicha(panelDatosGrid, "Edad", animal.calcularEdad() + " años");
         agregarFilaDatosFicha(panelDatosGrid, "Peso", animal.getPeso() + " kg");
-        agregarFilaDatosFicha(panelDatosGrid, "Estado", animal.isActivo() ? "Activo" : "Inactivo");
+        agregarFilaDatosFicha(panelDatosGrid, "Estado", animal.getStringEstado());
 
-        // Agrupamos el header y los textos en el Norte/Centro, dejando la grilla limpia en el Sur
         JPanel panelContenedorSuperiorMascota = new JPanel(new BorderLayout(0, 6));
         panelContenedorSuperiorMascota.setOpaque(false);
         panelContenedorSuperiorMascota.add(panelAvatarWrapper, BorderLayout.NORTH);
@@ -189,7 +190,7 @@ public class FichaPaciente extends JPanel {
         cardPaciente.add(panelContenedorSuperiorMascota, BorderLayout.NORTH);
         cardPaciente.add(panelDatosGrid, BorderLayout.SOUTH);
 
-        // 2. TARJETA COMPLETA DEL RESPONSABLE
+        // Owner Card
         JPanel cardDueno = new JPanel(new BorderLayout(0, 14)) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -214,12 +215,12 @@ public class FichaPaciente extends JPanel {
         cardDueno.setOpaque(false);
         cardDueno.setBorder(new EmptyBorder(18, 15, 18, 15));
 
-        Dimension dimDueno = new Dimension(260, 180);
-        cardDueno.setPreferredSize(dimDueno);
-        cardDueno.setMinimumSize(dimDueno);
-        cardDueno.setMaximumSize(dimDueno);
+        Dimension dimensionesDueno = new Dimension(260, 180);
+        cardDueno.setPreferredSize(dimensionesDueno);
+        cardDueno.setMinimumSize(dimensionesDueno);
+        cardDueno.setMaximumSize(dimensionesDueno);
 
-        JLabel lblTagDueno = new JLabel("RESPONSABLE");
+        JLabel lblTagDueno = new JLabel("DUEÑO");
         lblTagDueno.setFont(new Font("Segoe UI", Font.BOLD, 11));
         lblTagDueno.setForeground(EstiloPaleta.TEXTO_GRIS_BASE);
         cardDueno.add(lblTagDueno, BorderLayout.NORTH);
@@ -261,7 +262,7 @@ public class FichaPaciente extends JPanel {
             panelAvatarCuadrado.add(lblImagenUsuario);
 
             JLabel lblNombreDueno = new JLabel(responsable.getNombre() + " " + responsable.getApellido());
-            lblNombreDueno.setFont(new Font("Segoe UI", Font.BOLD, 15));
+            lblNombreDueno.setFont(new Font("Segoe UI", Font.PLAIN, 15));
             lblNombreDueno.setForeground(EstiloPaleta.TEXTO_OSCURO);
             
             panelUsuario.add(panelAvatarCuadrado);
@@ -310,13 +311,10 @@ public class FichaPaciente extends JPanel {
         panelIzquierdo.add(cardPaciente);
         panelIzquierdo.add(Box.createVerticalStrut(15));
         panelIzquierdo.add(cardDueno);
-        panelIzquierdo.add(Box.createVerticalGlue()); // Absorbe el aire restante
+        panelIzquierdo.add(Box.createVerticalGlue());
 
         // ========================================================
-        // COLUMNA DERECHA: GRILLA DE TURNOS DINÁMICOS REALES
-        // ========================================================
-       // ========================================================
-        // COLUMNA DERECHA: PANEL GRANDE CON EL DEGRADADO PREMIUM FIGMA
+        // COLUMNA DERECHA: GRILLA DE TURNOS
         // ========================================================
         JPanel panelDerecho = new JPanel(new BorderLayout()) {
             @Override
@@ -324,19 +322,16 @@ public class FichaPaciente extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                // Fondo Blanco de la Tarjeta Contenedora
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
                 
-                // 🎨 REPARADO: Degradado horizontal premium exacto al mockup (Violeta a Azul Eléctrico)
-                Color violetaFigma = new Color(139, 92, 246); // #8B5CF6 (Violeta vibrante)
-                Color azulFigma = new Color(59, 130, 246);    // #3B82F6 (Azul corporativo)
+                Color violetaFigma = new Color(139, 92, 246); 
+                Color azulFigma = new Color(59, 130, 246);
                 GradientPaint degradadoSuperior = new GradientPaint(0, 0, violetaFigma, getWidth(), 0, azulFigma);
                 g2.setPaint(degradadoSuperior);
                 
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 24, 24));
-                g2.fillRect(0, 0, getWidth(), 8); // Grosor de 8px simétrico
-                
+                g2.fillRect(0, 0, getWidth(), 8);
                 g2.setClip(null);
                 g2.setColor(EstiloPaleta.BORDE_TARJETA);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
@@ -348,33 +343,32 @@ public class FichaPaciente extends JPanel {
         
         JTabbedPane tabs = new JTabbedPane();
         tabs.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        tabs.setOpaque(false); // Anula fondos cuadrados grises automáticos
+        tabs.setOpaque(false);
         
-        // 🔄 RESTAURACIÓN DE LA UI DE TABS: Desactivamos la pintura de solapas nativas
+        // Removes uglyness of default tabs
         tabs.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
             @Override protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {}
             @Override protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {}
             @Override protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
-                // Dejar vacío de forma intencional destruye los bloques grises de fondo de Swing
             }
         });
         
-        // FILTRADO DESDE EL CONTROLADOR
         List<Turno> todosLosTurnos = controlador.getVeterinaria().getListaTurnos();
-        List<Turno> turnosHistorialReal = new ArrayList<>();
-        List<Turno> turnosPendientesReal = new ArrayList<>();
+        List<Turno> turnosHistorial = new ArrayList<>();
+        List<Turno> turnosPendientes = new ArrayList<>();
 
+        // Populates appointments list
         for (Turno t : todosLosTurnos) {
             if (t.getAnimal() != null && t.getAnimal().getIdAnimal().equals(animal.getIdAnimal())) {
                 if (t.estaCompletado()) {
-                    turnosHistorialReal.add(t);
+                    turnosHistorial.add(t);
                 } else if (t.esPendiente()) {
-                    turnosPendientesReal.add(t);
+                    turnosPendientes.add(t);
                 }
             }
         }
 
-        // Pestaña 1: HISTORIAL
+        // Tab 1: HISTORIAL
         JPanel panelHistorial = new JPanel();
         panelHistorial.setBackground(Color.WHITE);
         panelHistorial.setLayout(new BoxLayout(panelHistorial, BoxLayout.Y_AXIS));
@@ -383,7 +377,7 @@ public class FichaPaciente extends JPanel {
         contenedorHistorialInmovil.setBackground(Color.WHITE);
         contenedorHistorialInmovil.add(panelHistorial, BorderLayout.NORTH); 
         
-        if (turnosHistorialReal.isEmpty()) {
+        if (turnosHistorial.isEmpty()) {
             panelHistorial.setBorder(new EmptyBorder(30, 10, 10, 10));
             JLabel lblVacio = new JLabel("No hay registros médicos completados.", SwingConstants.CENTER);
             lblVacio.setFont(new Font("Segoe UI", Font.ITALIC, 13));
@@ -392,16 +386,17 @@ public class FichaPaciente extends JPanel {
             panelHistorial.add(lblVacio);
         } else {
             panelHistorial.setBorder(new EmptyBorder(15, 5, 15, 5));
-            for (int i = 0; i < turnosHistorialReal.size(); i++) {
-                Turno t = turnosHistorialReal.get(i);
+            for (int i = 0; i < turnosHistorial.size(); i++) {
+                Turno t = turnosHistorial.get(i);
                 panelHistorial.add(crearFilaTurnoDinamica(t));
-                if (i < turnosHistorialReal.size() - 1) {
+                if (i < turnosHistorial.size() - 1) {
                     panelHistorial.add(Box.createVerticalStrut(14));
                 }
             }
         }
 
-        // Pestaña 2: VACUNAS
+        // Tab 2: VACUNAS
+        // TODO: implement vacunas display
         JPanel panelVacunas = new JPanel(new BorderLayout());
         panelVacunas.setBackground(Color.WHITE);
         panelVacunas.setBorder(new EmptyBorder(30, 10, 10, 10));
@@ -419,7 +414,7 @@ public class FichaPaciente extends JPanel {
         contenedorTurnosInmovil.setBackground(Color.WHITE);
         contenedorTurnosInmovil.add(panelTurnosFuturos, BorderLayout.NORTH); 
 
-        if (turnosPendientesReal.isEmpty()) {
+        if (turnosPendientes.isEmpty()) {
             panelTurnosFuturos.setBorder(new EmptyBorder(30, 10, 10, 10));
             JLabel lblVacio = new JLabel("No hay turnos próximos agendados.", SwingConstants.CENTER);
             lblVacio.setFont(new Font("Segoe UI", Font.ITALIC, 13));
@@ -428,10 +423,10 @@ public class FichaPaciente extends JPanel {
             panelTurnosFuturos.add(lblVacio);
         } else {
             panelTurnosFuturos.setBorder(new EmptyBorder(15, 5, 15, 5));
-            for (int i = 0; i < turnosPendientesReal.size(); i++) {
-                Turno t = turnosPendientesReal.get(i);
+            for (int i = 0; i < turnosPendientes.size(); i++) {
+                Turno t = turnosPendientes.get(i);
                 panelTurnosFuturos.add(crearFilaTurnoDinamica(t));
-                if (i < turnosPendientesReal.size() - 1) {
+                if (i < turnosPendientes.size() - 1) {
                     panelTurnosFuturos.add(Box.createVerticalStrut(14));
                 }
             }
@@ -475,9 +470,7 @@ public class FichaPaciente extends JPanel {
                     setPreferredSize(new Dimension(95, 36)); 
                     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     
-                    // 🔥 LA LÍNEA CLAVE: Evita que Swing dibuje el recuadro punteado negro al hacer click
                     setFocusable(false); 
-                    
                     setOpaque(false); 
                     
                     addMouseListener(new java.awt.event.MouseAdapter() {
@@ -500,7 +493,6 @@ public class FichaPaciente extends JPanel {
                         g2.setColor(new Color(243, 232, 255)); // Fondo píldora suave
                         g2.fillRoundRect(0, 2, getWidth(), getHeight() - 4, 12, 12);
                         
-                        // 🔥 REMOVIDO: Se eliminó la línea g2.fillRect que pintaba la barrita violeta oscuro inferior
                     } else if (mouseEncima) {
                         setForeground(new Color(109, 40, 217)); 
                         g2.setColor(new Color(241, 245, 249)); 
@@ -592,7 +584,6 @@ public class FichaPaciente extends JPanel {
 
         fila.add(panelLineaSuperior, BorderLayout.NORTH);
 
-        // --- BLOQUE INFERIOR (Caja de Texto Gris de Observaciones simulada) ---
         String obs = t.getObservaciones();
         if (obs != null && !obs.isBlank()) {
             JPanel panelTextBoxObs = new JPanel(new BorderLayout()) {
@@ -608,18 +599,15 @@ public class FichaPaciente extends JPanel {
             panelTextBoxObs.setOpaque(false);
             panelTextBoxObs.setBorder(new EmptyBorder(8, 12, 8, 12)); 
 
-            // 🔥 MODIFICADO: Removemos el emoji en texto y creamos el Label limpio con espaciado
             JLabel lblNotas = new JLabel(obs);
             lblNotas.setFont(new Font("Segoe UI", Font.PLAIN, 12));
             lblNotas.setForeground(new Color(100, 116, 139)); 
             
-            // 🔥 NUEVO: Cargamos la imagen HD del emoji e inyectamos espacio de colchón
             ImageIcon iconoComentario = cargarIconoHD("imagenes/emojis/comentario.png", 16, 16);
             if (iconoComentario != null) {
                 lblNotas.setIcon(iconoComentario);
-                lblNotas.setIconTextGap(8); // Agrega un espacio elegante entre la imagen y el texto
+                lblNotas.setIconTextGap(8);
             } else {
-                // Respaldo clásico por si el archivo físico no se encuentra en la carpeta
                 lblNotas.setText("💬  " + obs);
             }
             
@@ -686,7 +674,6 @@ public class FichaPaciente extends JPanel {
         }
     }
 
-    // 🔥 MÉTODO AUXILIAR RECUPERADO: Escala las imágenes pixel-perfect sin romper nada
     private ImageIcon cargarIconoHD(String ruta, int ancho, int alto) {
         try {
             java.awt.image.BufferedImage imgBuffer = javax.imageio.ImageIO.read(new java.io.File(ruta));
@@ -697,7 +684,7 @@ public class FichaPaciente extends JPanel {
             g2.dispose();
             return new ImageIcon(resizedImg);
         } catch (Exception e) {
-            return null; // Si no encuentra la imagen, devuelve null de forma segura
+            return null;
         }
     }
 }

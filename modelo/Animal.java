@@ -89,6 +89,7 @@ public abstract class Animal {
     public void setPeso(float peso) { 
         this.peso = peso;
     }
+
     private String generarIdAnimal() {
         return UUID.randomUUID().toString();
     }
@@ -102,6 +103,10 @@ public abstract class Animal {
 
     public String getStringEstado() {
         return this.activo ? "Activo" : "Inactivo";
+    }
+
+    public String getStringSexo() {
+        return this.sexo ? "Macho" : "Hembra";
     }
 
     public final String getColorInicioHex() {
