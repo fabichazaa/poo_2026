@@ -12,7 +12,7 @@ public class PanelNotas extends JPanel {
     private JTextArea campoNuevaNota;
     private JPanel panelLista;
 
-    private static final Color COLOR_TOPE = new Color(217, 119, 6);
+    private static final Color COLOR_TOPE = recursos.Color.PENDING;
 
     public PanelNotas(ControladorVeterinaria controlador) {
         this.controlador = controlador;

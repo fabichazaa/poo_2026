@@ -96,7 +96,7 @@ public class DialogoAtenderTurno extends JDialog {
 
         JLabel lblHeaderSub = new JLabel("Complete el registro médico para cerrar la atención.");
         lblHeaderSub.setFont(CargadorFuentes.cargar(12f));
-        lblHeaderSub.setForeground(new Color(226, 240, 238));
+        lblHeaderSub.setForeground(recursos.Color.PRIMARY_LIGHT);
 
         headerTextPanel.add(lblHeaderTitle);
         headerTextPanel.add(Box.createVerticalStrut(2));
@@ -336,7 +336,7 @@ public class DialogoAtenderTurno extends JDialog {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(248, 250, 252));
+                g2.setColor(recursos.Color.CANVAS_GENERAL);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
                 g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
@@ -761,7 +761,7 @@ public class DialogoAtenderTurno extends JDialog {
         btn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                btn.setBackground(new Color(248, 250, 252));
+                btn.setBackground(recursos.Color.CANVAS_GENERAL);
                 btn.setBorder(BorderFactory.createCompoundBorder(
                         new LineBorder(recursos.Color.ACCENT_BLUE, 1, true),
                         new EmptyBorder(10, 14, 10, 14)
@@ -783,7 +783,7 @@ public class DialogoAtenderTurno extends JDialog {
     private JButton crearPill(String tagText) {
         JButton btn = new JButton(tagText);
         btn.setFont(CargadorFuentes.cargar(11f));
-        btn.setBackground(new Color(248, 250, 252));
+        btn.setBackground(recursos.Color.CANVAS_GENERAL);
         btn.setForeground(recursos.Color.MUTED);
         btn.setFocusPainted(false);
         btn.setBorder(BorderFactory.createCompoundBorder(
@@ -800,7 +800,7 @@ public class DialogoAtenderTurno extends JDialog {
 
             @Override
             public void mouseExited(MouseEvent e) {
-                btn.setBackground(new Color(248, 250, 252));
+                btn.setBackground(recursos.Color.CANVAS_GENERAL);
                 btn.setForeground(recursos.Color.MUTED);
             }
         });
@@ -896,7 +896,7 @@ public class DialogoAtenderTurno extends JDialog {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(248, 250, 252));
+                g2.setColor(recursos.Color.CANVAS_GENERAL);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
                 g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);

@@ -76,7 +76,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         String raza = animal.getRaza();
         JLabel lblSub = new JLabel("Para: " + animal.getNombre() + " (" + raza + " · " + animal.getEspecie() + ")");
         lblSub.setFont(CargadorFuentes.cargar(12f));
-        lblSub.setForeground(new Color(226, 240, 238));
+        lblSub.setForeground(recursos.Color.PRIMARY_LIGHT);
 
         textHeader.add(lblTitulo);
         textHeader.add(Box.createVerticalStrut(2));
@@ -250,7 +250,7 @@ public class DialogoRecetarMedicamento extends JDialog {
 
                     JLabel lblSub = new JLabel(m.getCategoria().isEmpty() ? "Medicamento" : m.getCategoria());
                     lblSub.setFont(CargadorFuentes.cargar(10f));
-                    lblSub.setForeground(isItemSelected ? new Color(226, 240, 238) : recursos.Color.MUTED);
+                    lblSub.setForeground(isItemSelected ? recursos.Color.PRIMARY_LIGHT : recursos.Color.MUTED);
 
                     textPanel.add(lblNombre);
                     textPanel.add(lblSub);

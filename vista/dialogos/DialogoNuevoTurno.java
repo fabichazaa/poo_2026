@@ -120,7 +120,7 @@ public class DialogoNuevoTurno extends JDialog {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-                g2.setColor(new Color(13, 148, 136)); // Teal-600
+                g2.setColor(recursos.Color.PRIMARY); // Teal-600
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                 g2.dispose();
             }
@@ -381,7 +381,7 @@ public class DialogoNuevoTurno extends JDialog {
 
         PrioridadButton pillNormal = new PrioridadButton("Normal", new Color(100, 116, 139));
         PrioridadButton pillMedia = new PrioridadButton("Media", new Color(234, 179, 8));
-        PrioridadButton pillAlta = new PrioridadButton("Alta", new Color(239, 68, 68));
+        PrioridadButton pillAlta = new PrioridadButton("Alta", recursos.Color.BADGE_ALERT);
 
         botonesPrioridad.add(pillNormal);
         botonesPrioridad.add(pillMedia);
@@ -408,7 +408,7 @@ public class DialogoNuevoTurno extends JDialog {
         panelColDer.setLayout(new BoxLayout(panelColDer, BoxLayout.Y_AXIS));
 
         // 1. Card Fecha y Hora
-        CardPanel cardFechaHora = new CardPanel(new Color(59, 130, 246)); // Blue
+        CardPanel cardFechaHora = new CardPanel(recursos.Color.ACCENT_BLUE); // Blue
         cardFechaHora.setLayout(new GridBagLayout());
 
         GridBagConstraints gbcFH = new GridBagConstraints();
@@ -433,7 +433,7 @@ public class DialogoNuevoTurno extends JDialog {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(248, 250, 252));
+                g2.setColor(recursos.Color.CANVAS_GENERAL);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
                 g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
@@ -586,7 +586,7 @@ public class DialogoNuevoTurno extends JDialog {
                 int len = campoNotas.getText().length();
                 lblCounter.setText(len + " / 300");
                 if (len > 300) {
-                    lblCounter.setForeground(new Color(220, 38, 38));
+                    lblCounter.setForeground(recursos.Color.ERROR);
                 } else {
                     lblCounter.setForeground(recursos.Color.CAT_INACTIVO);
                 }
@@ -660,7 +660,7 @@ public class DialogoNuevoTurno extends JDialog {
             protected void paintComponent(final Graphics g) {
                 final Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(hovered ? new Color(11, 108, 99) : new Color(13, 148, 136)); // Teal-700 / Teal-600
+                g2.setColor(hovered ? recursos.Color.PRIMARY_DEEP : recursos.Color.PRIMARY); // Teal-700 / Teal-600
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                 g2.dispose();
                 super.paintComponent(g);
@@ -696,7 +696,7 @@ public class DialogoNuevoTurno extends JDialog {
         panelFooter.setBorder(new EmptyBorder(0, 24, 8, 24));
         lblError = new JLabel(" ");
         lblError.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblError.setForeground(new Color(220, 38, 38));
+        lblError.setForeground(recursos.Color.ERROR);
         panelFooter.add(lblError, BorderLayout.WEST);
         add(panelFooter, BorderLayout.SOUTH);
 
@@ -907,10 +907,10 @@ public class DialogoNuevoTurno extends JDialog {
         private final String texto;
         private final TipoTurno tipo;
         private boolean seleccionado = false;
-        private final Color colorNormalBg = new Color(248, 250, 252);
+        private final Color colorNormalBg = recursos.Color.CANVAS_GENERAL;
         private final Color colorNormalBorder = recursos.Color.BORDER;
         private final Color colorSelectedBg = new Color(240, 253, 250);
-        private final Color colorSelectedBorder = new Color(13, 148, 136);
+        private final Color colorSelectedBorder = recursos.Color.PRIMARY;
 
         public TipoTurnoButton(String texto, TipoTurno tipo) {
             this.texto = texto;
@@ -1052,7 +1052,7 @@ public class DialogoNuevoTurno extends JDialog {
             if (seleccionado) {
                 bg = recursos.Color.BG;
             } else {
-                bg = hovered ? new Color(248, 250, 252) : Color.WHITE;
+                bg = hovered ? recursos.Color.CANVAS_GENERAL : Color.WHITE;
             }
             g2.setColor(bg);
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), getHeight(), getHeight());
@@ -1166,7 +1166,7 @@ public class DialogoNuevoTurno extends JDialog {
                 border = new Color(2, 132, 199);
                 textCol = Color.WHITE;
             } else {
-                bg = hovered ? recursos.Color.BG : new Color(248, 250, 252);
+                bg = hovered ? recursos.Color.BG : recursos.Color.CANVAS_GENERAL;
                 border = hovered ? recursos.Color.CAT_INACTIVO : recursos.Color.BORDER;
                 textCol = getForeground();
             }

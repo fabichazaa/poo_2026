@@ -20,7 +20,7 @@ public class DialogoComprobante extends JDialog {
         getContentPane().setBackground(recursos.Color.BG);
 
         JPanel panelHeader = new JPanel(new BorderLayout());
-        panelHeader.setBackground(new Color(13, 148, 136));
+        panelHeader.setBackground(recursos.Color.PRIMARY);
         panelHeader.setBorder(new EmptyBorder(16, 24, 16, 24));
 
         JLabel lblTitulo = new JLabel("Comprobante de Atención N° " + comprobante.getTurno().getIdTurno());

@@ -84,12 +84,12 @@ public class PanelMas extends JPanel {
         lblEnAdopcion = new JLabel();
         lblNotas = new JLabel();
 
-        card.add(crearStat("Veterinaria", lblNombre, new Color(13, 148, 136)));
+        card.add(crearStat("Veterinaria", lblNombre, recursos.Color.PRIMARY));
         card.add(crearStat("Veterinarios", lblVets, new Color(99, 102, 241)));
         card.add(crearStat("Clientes", lblClientes, new Color(124, 58, 237)));
-        card.add(crearStat("Turnos", lblTurnos, new Color(217, 119, 6)));
+        card.add(crearStat("Turnos", lblTurnos, recursos.Color.PENDING));
         card.add(crearStat("En adopción", lblEnAdopcion, new Color(236, 72, 153)));
-        card.add(crearStat("Notas activas", lblNotas, new Color(22, 163, 74)));
+        card.add(crearStat("Notas activas", lblNotas, recursos.Color.SUCCESS));
 
         return card;
     }
@@ -97,7 +97,7 @@ public class PanelMas extends JPanel {
     private JPanel crearStat(String titulo, JLabel lblValor, Color color) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(new Color(248, 250, 252));
+        panel.setBackground(recursos.Color.CANVAS_GENERAL);
         panel.setBorder(BorderFactory.createCompoundBorder(
             new LineBorder(color, 1, true),
             new EmptyBorder(12, 14, 12, 14)
@@ -143,7 +143,7 @@ public class PanelMas extends JPanel {
         panelBotones.setOpaque(false);
         JButton btnVer = new JButton("Ver comprobante");
         btnVer.setFont(CargadorFuentes.cargar(12f));
-        btnVer.setBackground(new Color(13, 148, 136));
+        btnVer.setBackground(recursos.Color.PRIMARY);
         btnVer.setForeground(Color.WHITE);
         btnVer.setFocusPainted(false);
         btnVer.setOpaque(true);
@@ -152,9 +152,9 @@ public class PanelMas extends JPanel {
         JButton btnGuardar = new JButton("Guardar en archivo…");
         btnGuardar.setFont(CargadorFuentes.cargar(12f));
         btnGuardar.setBackground(Color.WHITE);
-        btnGuardar.setForeground(new Color(13, 148, 136));
+        btnGuardar.setForeground(recursos.Color.PRIMARY);
         btnGuardar.setFocusPainted(false);
-        btnGuardar.setBorder(new LineBorder(new Color(13, 148, 136), 1, true));
+        btnGuardar.setBorder(new LineBorder(recursos.Color.PRIMARY, 1, true));
         btnGuardar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnGuardar.addActionListener(e -> guardarComprobante());
         panelBotones.add(btnVer);

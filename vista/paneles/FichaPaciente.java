@@ -325,7 +325,7 @@ public class FichaPaciente extends JPanel {
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
                 
                 Color violetaFigma = new Color(139, 92, 246); 
-                Color azulFigma = new Color(59, 130, 246);
+                Color azulFigma = recursos.Color.ACCENT_BLUE;
                 GradientPaint degradadoSuperior = new GradientPaint(0, 0, violetaFigma, getWidth(), 0, azulFigma);
                 g2.setPaint(degradadoSuperior);
                 
@@ -590,7 +590,7 @@ public class FichaPaciente extends JPanel {
                 protected void paintComponent(Graphics g) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g2.setColor(new Color(248, 250, 252)); 
+                    g2.setColor(recursos.Color.CANVAS_GENERAL); 
                     g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                     g2.dispose();
                 }
@@ -629,7 +629,7 @@ public class FichaPaciente extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(248, 250, 252)); 
+                g2.setColor(recursos.Color.CANVAS_GENERAL); 
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                 g2.dispose();
             }

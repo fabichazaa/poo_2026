@@ -101,7 +101,7 @@ public class DialogoAgregarMedicamento extends JDialog {
 
         lblErrorCodigo = new JLabel(" ");
         lblErrorCodigo.setFont(CargadorFuentes.cargar(10f));
-        lblErrorCodigo.setForeground(new Color(220, 38, 38));
+        lblErrorCodigo.setForeground(recursos.Color.ERROR);
         lblErrorCodigo.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(lblErrorCodigo);
 
@@ -125,7 +125,7 @@ public class DialogoAgregarMedicamento extends JDialog {
 
         lblErrorNombre = new JLabel(" ");
         lblErrorNombre.setFont(CargadorFuentes.cargar(10f));
-        lblErrorNombre.setForeground(new Color(220, 38, 38));
+        lblErrorNombre.setForeground(recursos.Color.ERROR);
         lblErrorNombre.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(lblErrorNombre);
 
@@ -168,7 +168,7 @@ public class DialogoAgregarMedicamento extends JDialog {
 
         lblErrorFechas = new JLabel(" ");
         lblErrorFechas.setFont(CargadorFuentes.cargar(10f));
-        lblErrorFechas.setForeground(new Color(220, 38, 38));
+        lblErrorFechas.setForeground(recursos.Color.ERROR);
         lblErrorFechas.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(lblErrorFechas);
 
@@ -176,7 +176,7 @@ public class DialogoAgregarMedicamento extends JDialog {
 
         JButton btnGuardar = new JButton("Agregar a catálogo");
         btnGuardar.setFont(CargadorFuentes.cargar(13f));
-        btnGuardar.setBackground(new Color(59, 130, 246));
+        btnGuardar.setBackground(recursos.Color.ACCENT_BLUE);
         btnGuardar.setForeground(Color.WHITE);
         btnGuardar.setFocusPainted(false);
         btnGuardar.setOpaque(true);

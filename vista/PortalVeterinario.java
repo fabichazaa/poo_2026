@@ -152,7 +152,7 @@ public class PortalVeterinario extends JFrame {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                 // Degradado Turquesa claro a Esmeralda oscuro
-                GradientPaint degradado = new GradientPaint(0, 0, new Color(45, 212, 191), getWidth(), 0, new Color(13, 148, 136));
+                GradientPaint degradado = new GradientPaint(0, 0, new Color(45, 212, 191), getWidth(), 0, recursos.Color.PRIMARY);
                 g2.setPaint(degradado);
 
                 // Recorte redondeado para que calce con las esquinas del borde de la card
@@ -183,7 +183,7 @@ public class PortalVeterinario extends JFrame {
 
                 // CONFIGURAR DEGRADADO: Desde un turquesa brillante (arriba izq) a un esmeralda (abajo der)
                 Color colorInicio = new Color(45, 212, 191); // Teal brillante #2DD4BF
-                Color colorFin = new Color(13, 148, 136);    // Esmeralda #0D9488
+                Color colorFin = recursos.Color.PRIMARY;    // Esmeralda #0D9488
                 GradientPaint degradadoDiagonal = new GradientPaint(0, 0, colorInicio, getWidth(), getHeight(), colorFin);
                 g2.setPaint(degradadoDiagonal);
 
@@ -248,12 +248,12 @@ public class PortalVeterinario extends JFrame {
 
         JLabel lblRolUser = new JLabel("Veterinario Activo", SwingConstants.CENTER);
         lblRolUser.setFont(fuenteNormal);
-        lblRolUser.setForeground(new Color(13, 148, 136));
+        lblRolUser.setForeground(recursos.Color.PRIMARY);
         lblRolUser.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Tarjeta gris inferior interna para la Matrícula
         JPanel cardMatricula = new JPanel(new GridLayout(2, 1, 0, 2));
-        cardMatricula.setBackground(new Color(248, 250, 252));
+        cardMatricula.setBackground(recursos.Color.CANVAS_GENERAL);
         cardMatricula.setBorder(BorderFactory.createCompoundBorder(
                 new LineBorder(recursos.Color.BG, 1, true), new EmptyBorder(10, 15, 10, 15)
         ));
@@ -404,7 +404,7 @@ public class PortalVeterinario extends JFrame {
                 String.valueOf(totalAtendidos),
                 "Atendidos",
                 new Color(240, 253, 250),
-                new Color(13, 148, 136),
+                recursos.Color.PRIMARY,
                 "imagenes/emojis/exito.png" // <-- Ruta del ícono de éxito
         ));
 
@@ -413,7 +413,7 @@ public class PortalVeterinario extends JFrame {
                 String.valueOf(totalPendientes),
                 "Pendientes",
                 new Color(254, 243, 199),
-                new Color(217, 119, 6),
+                recursos.Color.PENDING,
                 "imagenes/emojis/reloj_arena.png" // <-- Ruta del reloj de arena
         ));
 
@@ -428,7 +428,7 @@ public class PortalVeterinario extends JFrame {
 
     private JPanel crearTarjetaTurnoVisual(Turno t) {
         JPanel itemTurno = new JPanel(new BorderLayout(15, 0));
-        itemTurno.setBackground(new Color(248, 250, 252));
+        itemTurno.setBackground(recursos.Color.CANVAS_GENERAL);
         itemTurno.setMaximumSize(new Dimension(385, 62));
         itemTurno.setPreferredSize(new Dimension(385, 62));
         itemTurno.setBorder(BorderFactory.createCompoundBorder(
@@ -447,7 +447,7 @@ public class PortalVeterinario extends JFrame {
                 g2.fillRoundRect(1, 2, getWidth() - 2, getHeight() - 3, 8, 8);
 
                 // Fondo blanco limpio
-                g2.setColor(new Color(255, 255, 255));
+                g2.setColor(recursos.Color.SURFACE);
                 g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
 
                 // Borde gris claro delgado
@@ -530,7 +530,7 @@ public class PortalVeterinario extends JFrame {
     private JPanel crearFilaAccionEstilizada(String titulo, Color colorFondoIcono, String emojiIcono) {
         // Reducimos la altura a 52 para que se adapte de forma estilizada a una sola línea
         JPanel panelFila = new JPanel(new BorderLayout(15, 0));
-        panelFila.setBackground(new Color(248, 250, 252));
+        panelFila.setBackground(recursos.Color.CANVAS_GENERAL);
         panelFila.setMaximumSize(new Dimension(320, 52));
         panelFila.setPreferredSize(new Dimension(320, 52));
         panelFila.setBorder(BorderFactory.createCompoundBorder(
@@ -892,7 +892,7 @@ public class PortalVeterinario extends JFrame {
 
         // Colores de la captura de pantalla
         private final Color colorFondoVerdeSuave = new Color(240, 253, 250); // Menta clarito #F0FDFA
-        private final Color colorTextoVerdeOscuro = new Color(13, 148, 136); // Teal / Esmeralda #0D9488
+        private final Color colorTextoVerdeOscuro = recursos.Color.PRIMARY; // Teal / Esmeralda #0D9488
         private final Color colorTextoGrisBase = new Color(100, 116, 139);   // Gris Slate #64748B
 
         public BotonMenuNav(String titulo, String icono, String unicodeIcon, String claveCapa) {

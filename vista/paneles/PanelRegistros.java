@@ -19,9 +19,6 @@ public final class PanelRegistros extends JPanel {
     private JScrollPane scrollGrilla;
     
     private final String PLACEHOLDER_BUSQUEDA = "Buscar por nombre del paciente...";
-    private final Color colorTealActivo = new Color(13, 148, 136);
-    private final Color colorTextoOscuro = recursos.Color.INK;
-    private final Color colorTextoGrisBase = new Color(100, 116, 139);
 
     public PanelRegistros(ControladorVeterinaria controlador) {
         this.controlador = controlador;
@@ -89,7 +86,7 @@ public final class PanelRegistros extends JPanel {
             public void focusGained(java.awt.event.FocusEvent e) {
                 if (txtBuscar.getText().equals(PLACEHOLDER_BUSQUEDA)) {
                     txtBuscar.setText("");
-                    txtBuscar.setForeground(colorTextoOscuro); 
+                    txtBuscar.setForeground(recursos.Color.INK); 
                 }
             }
 
@@ -224,11 +221,11 @@ public final class PanelRegistros extends JPanel {
                 boolean seleccionado = esDeEspecie ? filtroEspecieActual.equals(texto) : filtroEstadoActual.equals(texto);
                 
                 if (seleccionado) {
-                    g2.setColor(colorTealActivo);
+                    g2.setColor(recursos.Color.PRIMARY);
                     g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
                     setForeground(Color.WHITE);
                 } else {
-                    setForeground(colorTextoGrisBase);
+                    setForeground(recursos.Color.MUTED);
                 }
                 
                 g2.dispose();
@@ -351,7 +348,7 @@ public final class PanelRegistros extends JPanel {
 
         JLabel lblNombre = new JLabel((a != null && a.getNombre() != null) ? a.getNombre() : "Sin nombre", SwingConstants.CENTER);
         lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        lblNombre.setForeground(colorTextoOscuro);
+        lblNombre.setForeground(recursos.Color.INK);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel panelTags = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
@@ -380,7 +377,7 @@ public final class PanelRegistros extends JPanel {
         };
         lblEstadoActivo.setFont(new Font("Segoe UI", Font.BOLD, 10));
         
-        Color colorTextoTag = a.isActivo() ? new Color(22, 163, 74) : colorGrisTagTexto;
+        Color colorTextoTag = a.isActivo() ? recursos.Color.SUCCESS : colorGrisTagTexto;
         lblEstadoActivo.setForeground(colorTextoTag);
         
         lblEstadoActivo.setBorder(new EmptyBorder(3, 12, 3, 12));

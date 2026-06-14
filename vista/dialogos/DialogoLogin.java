@@ -81,7 +81,7 @@ public class DialogoLogin extends JDialog {
 
         lblError = new JLabel(" ");
         lblError.setFont(CargadorFuentes.cargar(11f));
-        lblError.setForeground(new Color(220, 38, 38));
+        lblError.setForeground(recursos.Color.ERROR);
         lblError.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelCentral.add(lblError);
 
