@@ -20,15 +20,14 @@ public class ModalEditarPaciente extends JDialog {
     private JButton btnGuardar;
 
     public ModalEditarPaciente(Frame padre, Animal animal) {
-        super(padre, "Editar Ficha del Paciente", true);
+        // Usamos la barra nativa del sistema operativo con el título dinámico estándar
+        super(padre, "Editar paciente: " + animal.getNombre(), true); 
         this.animal = animal;
 
-        // 🌟 EL TRUCO DEL BACKDROP: El modal ahora copia el tamaño exacto de la ventana padre
-        setSize(padre.getWidth(), padre.getHeight());
-        setLocation(padre.getLocation()); 
-        setUndecorated(true);
-        setLayout(new GridBagLayout()); // GridBagLayout centra al hijo (el formulario) automáticamente
-        setBackground(new Color(0, 0, 0, 0)); // Diálogo transparente para soportar el velo personalizado
+        // Tamaño compacto ideal ya que la barra nativa ocupa su propio espacio arriba
+        setSize(460, 520);
+        setLocationRelativeTo(padre); // Centra el modal perfecto sobre tu ventana de la veterinaria
+        setLayout(new BorderLayout());
 
         initComponentes();
     }
@@ -38,104 +37,38 @@ public class ModalEditarPaciente extends JDialog {
         Color colorInicioAnimal = Color.decode(animal.getColorInicioHex());
         Color colorFinAnimal = Color.decode(animal.getColorFinHex());
 
-        // --- 1. CONTENEDOR MAESTRO DEL FORMULARIO (Caja Blanca Fija) ---
-        JPanel panelCuerpo = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(Color.WHITE);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 28, 28);
-                g2.dispose();
-            }
-        };
-        panelCuerpo.setOpaque(false);
-        // Forzamos el tamaño del mockup para la tarjeta central
-        panelCuerpo.setPreferredSize(new Dimension(460, 580));
-        panelCuerpo.setMinimumSize(new Dimension(460, 580));
-        panelCuerpo.setMaximumSize(new Dimension(460, 580));
+        // Contenedor principal de la tarjeta
+        JPanel panelCuerpo = new JPanel(new BorderLayout());
+        panelCuerpo.setBackground(Color.WHITE);
 
-        // --- 2. CABECERA NARANJA ---
-        JPanel panelHeaderNaranja = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                Color naranjaInicio = new Color(251, 146, 60);
-                Color naranjaFin = new Color(234, 88, 12);
-                g2.setPaint(new GradientPaint(0, 0, colorInicioAnimal, getWidth(), 0, colorFinAnimal));
-                g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight() + 20, 28, 28));
-                g2.fillRect(0, 0, getWidth(), getHeight());
-                g2.dispose();
-            }
-        };
-        panelHeaderNaranja.setOpaque(false);
-        panelHeaderNaranja.setPreferredSize(new Dimension(0, 75));
-        panelHeaderNaranja.setBorder(new EmptyBorder(12, 20, 12, 20));
-
-        JPanel panelTextosHeader = new JPanel(new GridLayout(2, 1, 0, 2));
-        panelTextosHeader.setOpaque(false);
-        
-        JLabel lblTitulo = new JLabel("Editar Ficha del Paciente");
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        lblTitulo.setForeground(Color.WHITE);
-        
-        JLabel lblSubtitulo = new JLabel(animal.getNombre() + " · " + animal.getEspecie());
-        lblSubtitulo.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblSubtitulo.setForeground(new Color(254, 215, 170));
-        
-        panelTextosHeader.add(lblTitulo);
-        panelTextosHeader.add(lblSubtitulo);
-
-        JButton btnCerrar = new JButton() {
-            {
-                setFocusPainted(false);
-                setContentAreaFilled(false);
-                setBorderPainted(false);
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            }
-        };
-        ImageIcon iconoCerrar = cargarIconoHD("imagenes/emojis/cruz.png", 16, 16);
-        if (iconoCerrar != null) {
-            btnCerrar.setIcon(iconoCerrar);
-        } else {
-            btnCerrar.setText("✕");
-            btnCerrar.setFont(new Font("Segoe UI", Font.BOLD, 16));
-            btnCerrar.setForeground(Color.WHITE);
-        }
-        btnCerrar.addActionListener(e -> dispose());
-
-        panelHeaderNaranja.add(panelTextosHeader, BorderLayout.WEST);
-        panelHeaderNaranja.add(btnCerrar, BorderLayout.EAST);
-
-        // --- 3. FORMULARIO INTERNO CENTRAL ---
+        // --- 1. FORMULARIO INTERNO CENTRAL ---
         JPanel panelFormulario = new JPanel();
         panelFormulario.setOpaque(false);
         panelFormulario.setLayout(new BoxLayout(panelFormulario, BoxLayout.Y_AXIS));
-        panelFormulario.setBorder(new EmptyBorder(20, 24, 20, 24));
+        // EmptyBorder le da aire en los cuatro márgenes internos para que respiren los inputs
+        panelFormulario.setBorder(new EmptyBorder(25, 24, 20, 24));
 
-        // 🌟 FIJAR ALINEACIÓN IZQUIERDA EN COMPONENTES DEL FORMULARIO
         // Campo NOMBRE
         panelFormulario.add(crearLabelFormulario("NOMBRE *"));
         txtNombre = crearTextFieldFormulario(animal.getNombre());
-        txtNombre.setAlignmentX(Component.LEFT_ALIGNMENT); // 🔥 Clave para alinear a la izquierda
+        txtNombre.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelFormulario.add(txtNombre);
         panelFormulario.add(Box.createVerticalStrut(12));
 
-        // Campo RAZA
+        // Campo RAZA (Campo editable libre)
         panelFormulario.add(crearLabelFormulario("RAZA"));
         txtRaza = crearTextFieldFormulario(animal.getRaza());
-        txtRaza.setAlignmentX(Component.LEFT_ALIGNMENT); // 🔥 Clave para alinear a la izquierda
+        txtRaza.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelFormulario.add(txtRaza);
         panelFormulario.add(Box.createVerticalStrut(12));
 
-        // Columnas Divididas (Sexo y Peso)
+        // Columnas partidas en paralelo (Sexo a la izquierda, Peso a la derecha)
         JPanel panelFilaDividida = new JPanel(new GridLayout(1, 2, 16, 0));
         panelFilaDividida.setOpaque(false);
         panelFilaDividida.setMaximumSize(new Dimension(Short.MAX_VALUE, 65));
-        panelFilaDividida.setAlignmentX(Component.LEFT_ALIGNMENT); // 🔥 Clave para alinear a la izquierda
+        panelFilaDividida.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Sub-bloque SEXO
+        // Sub-bloque SEXO (Píldoras redondeadas con imágenes)
         JPanel colSexo = new JPanel();
         colSexo.setOpaque(false);
         colSexo.setLayout(new BoxLayout(colSexo, BoxLayout.Y_AXIS));
@@ -145,51 +78,65 @@ public class ModalEditarPaciente extends JDialog {
         panelBotonesSexo.setOpaque(false);
         panelBotonesSexo.setMaximumSize(new Dimension(Short.MAX_VALUE, 38));
 
-        rbMacho = new JRadioButton("Macho", animal.getSexo()) {
+        ImageIcon iconoMacho = cargarIconoHD("imagenes/emojis/macho.png", 14, 14);
+        ImageIcon iconoHembra = cargarIconoHD("imagenes/emojis/hembra.png", 14, 14);
+
+        // --- SECCIÓN SEXO (PÍLDORAS MINIMALISTAS CENTRADAS) ---
+        // ❌ Eliminamos las líneas de cargarIconoHD de macho y hembra para no consumir memoria con imágenes
+
+        // Botón Macho personalizado (Texto Centrado)
+        rbMacho = new JRadioButton("Macho", animal.getSexo()) { // 🌟 Mantenemos el texto limpio
             {
                 setFocusPainted(false);
                 setContentAreaFilled(false);
                 setBorderPainted(false);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                setHorizontalAlignment(SwingConstants.CENTER);
+                setHorizontalAlignment(SwingConstants.CENTER); // 🌟 Fuerza el centrado horizontal del texto
                 setFont(new Font("Segoe UI", Font.BOLD, 13));
+                // ❌ Eliminamos el EmptyBorder izquierdo para que el texto ocupe el centro real
             }
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Pintamos el fondo y los bordes según la selección usando los colores de la mascota
                 if (isSelected()) {
                     setForeground(colorFinAnimal);
-                    g2.setColor(new Color(255, 247, 237)); 
+                    g2.setColor(new Color(255, 247, 237)); // Fondo sutil de selección
                     g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-                    g2.setColor(colorInicioAnimal); 
+                    g2.setColor(colorInicioAnimal); // Contorno con el color de la mascota
                     g2.setStroke(new BasicStroke(1.5f));
                     g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 12, 12);
                 } else {
                     setForeground(recursos.Color.INK);
-                    g2.setColor(recursos.Color.BG); 
+                    g2.setColor(recursos.Color.BG); // Fondo gris sutil de tu paleta
                     g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                     g2.setColor(recursos.Color.BORDER);
                     g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
                 }
+                
                 g2.dispose();
-                super.paintComponent(g);
+                super.paintComponent(g); // Swing dibuja el texto "Macho" centrado automáticamente acá
             }
         };
 
+        // Botón Hembra personalizado (Texto Centrado)
         rbHembra = new JRadioButton("Hembra", !animal.getSexo()) {
             {
                 setFocusPainted(false);
                 setContentAreaFilled(false);
                 setBorderPainted(false);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                setHorizontalAlignment(SwingConstants.CENTER);
+                setHorizontalAlignment(SwingConstants.CENTER); // 🌟 Fuerza el centrado horizontal del texto
                 setFont(new Font("Segoe UI", Font.BOLD, 13));
+                // ❌ Eliminamos el EmptyBorder izquierdo para que el texto ocupe el centro real
             }
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
                 if (isSelected()) {
                     setForeground(colorFinAnimal);
                     g2.setColor(new Color(255, 247, 237)); 
@@ -204,11 +151,11 @@ public class ModalEditarPaciente extends JDialog {
                     g2.setColor(recursos.Color.BORDER);
                     g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
                 }
+                
                 g2.dispose();
-                super.paintComponent(g);
+                super.paintComponent(g); // Swing dibuja el texto "Hembra" centrado automáticamente acá
             }
         };
-
         ButtonGroup grupoSexo = new ButtonGroup();
         grupoSexo.add(rbMacho);
         grupoSexo.add(rbHembra);
@@ -238,14 +185,14 @@ public class ModalEditarPaciente extends JDialog {
         panelFormulario.add(crearLabelFormulario("FECHA DE NAC. (DD/MM/AAAA)"));
         String fechaStr = (animal.getFechaNacimiento() != null) ? animal.getFechaNacimiento().format(formato) : "";
         txtFechaNac = crearTextFieldFormulario(fechaStr);
-        txtFechaNac.setAlignmentX(Component.LEFT_ALIGNMENT); // 🔥 Clave para alinear a la izquierda
+        txtFechaNac.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelFormulario.add(txtFechaNac);
         panelFormulario.add(Box.createVerticalStrut(12));
 
         // Campo ESTADO ACTIVO
         JPanel panelCheck = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         panelCheck.setOpaque(false);
-        panelCheck.setAlignmentX(Component.LEFT_ALIGNMENT); // 🔥 Clave para alinear a la izquierda
+        panelCheck.setAlignmentX(Component.LEFT_ALIGNMENT);
         chkActivo = new JCheckBox("Paciente Activo en la Veterinaria", animal.isActivo());
         chkActivo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         chkActivo.setOpaque(false);
@@ -253,7 +200,7 @@ public class ModalEditarPaciente extends JDialog {
         panelCheck.add(chkActivo);
         panelFormulario.add(panelCheck);
 
-        // --- 4. BOTONERA INFERIOR CON REACCIÓN HOVER ---
+        // --- 2. BOTONERA INFERIOR CON HOVER ---
         JPanel panelBotonesBottom = new JPanel(new GridLayout(1, 2, 12, 0));
         panelBotonesBottom.setOpaque(false);
         panelBotonesBottom.setBorder(new EmptyBorder(10, 24, 24, 24));
@@ -284,7 +231,7 @@ public class ModalEditarPaciente extends JDialog {
         };
         btnCancelar.addActionListener(e -> dispose());
 
-        btnGuardar = new JButton("Guardar Cambios →") {
+        btnGuardar = new JButton("Guardar Cambios") {
             private boolean hover = false;
             {
                 setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -301,7 +248,8 @@ public class ModalEditarPaciente extends JDialog {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(hover ? colorInicioAnimal : colorFinAnimal);
+                // Si hace hover adopta el color fin, si no, el inicio dinámico de la mascota
+                g2.setColor(hover ? colorFinAnimal : colorInicioAnimal);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 setForeground(Color.WHITE);
                 g2.dispose();
@@ -316,12 +264,15 @@ public class ModalEditarPaciente extends JDialog {
                 animal.setPeso(Float.parseFloat(txtPeso.getText().trim()));
                 animal.setActivo(chkActivo.isSelected());
                 
+                // Mapeamos el radio button al sexo mutable del objeto
+                // animal.setSexo(rbMacho.isSelected()); 
+
                 if (!txtFechaNac.getText().isBlank()) {
                     animal.setFechaNacimiento(LocalDate.parse(txtFechaNac.getText().trim(), formato));
                 }
                 dispose();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Por favor, verifica los campos obligatorios.", "Error de validación", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Por favor, verifica que los campos obligatorios y numéricos sean correctos.", "Error de validación", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -330,32 +281,20 @@ public class ModalEditarPaciente extends JDialog {
         panelBotonesBottom.add(btnCancelar);
         panelBotonesBottom.add(btnGuardar);
 
-        // Ensamblamos la tarjeta blanca central
-        panelCuerpo.add(panelHeaderNaranja, BorderLayout.NORTH);
+        // Ensamblado en la tarjeta blanca principal
         panelCuerpo.add(panelFormulario, BorderLayout.CENTER);
         panelCuerpo.add(panelBotonesBottom, BorderLayout.SOUTH);
 
-        // --- 🌟 ADICIÓN FINAL: AGREGAMOS LA TARJETA AL MODAL ---
-        add(panelCuerpo);
+        add(panelCuerpo, BorderLayout.CENTER);
     }
 
-    // 🌟 SECCIÓN CLAVE: Sobreescribimos el paint del JDialog entero para dibujar el velo semitransparente
-    @Override
-    public void paint(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g.create();
-        // Dibujamos un rectángulo del tamaño de toda la pantalla con color negro y 45% de opacidad (115)
-        g2.setColor(new Color(15, 23, 42, 115)); 
-        g2.fillRect(0, 0, getWidth(), getHeight());
-        g2.dispose();
-        super.paint(g); // Dibuja los componentes hijos (la tarjeta blanca) arriba del velo
-    }
-
+    // --- MÈTODOS AUXILIARES DEFINIDOS CORRECTAMENTE ---
     private JLabel crearLabelFormulario(String texto) {
         JLabel lbl = new JLabel(texto);
         lbl.setFont(new Font("Segoe UI", Font.BOLD, 11));
         lbl.setForeground(new Color(148, 163, 184));
         lbl.setBorder(new EmptyBorder(0, 2, 4, 0));
-        lbl.setAlignmentX(Component.LEFT_ALIGNMENT); // 🔥 Clave de alineación
+        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
         return lbl;
     }
 

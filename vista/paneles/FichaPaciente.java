@@ -116,7 +116,7 @@ public class FichaPaciente extends JPanel {
         cardPaciente.setOpaque(false);
         cardPaciente.setBorder(new EmptyBorder(20, 15, 15, 15));
 
-        Dimension dimensionesPaciente = new Dimension(260, 340);
+        Dimension dimensionesPaciente = new Dimension(260, 360);
         cardPaciente.setPreferredSize(dimensionesPaciente);
         cardPaciente.setMinimumSize(dimensionesPaciente);
         cardPaciente.setMaximumSize(dimensionesPaciente);
