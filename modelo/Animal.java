@@ -100,6 +100,10 @@ public abstract class Animal {
         return LocalDate.now().getYear() - fechaNacimiento.getYear();
     }
 
+    public String getStringEstado() {
+        return this.activo ? "Activo" : "Inactivo";
+    }
+
     abstract public String getImagen();
 
     abstract public String getColorInicioHex();

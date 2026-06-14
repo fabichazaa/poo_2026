@@ -376,7 +376,7 @@ public final class PanelRegistros extends JPanel {
         JPanel panelTags = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         panelTags.setOpaque(false);
         
-        JLabel lblEstadoActivo = new JLabel(a.isActivo() ? "Activo" : "Inactivo", SwingConstants.CENTER) {
+        JLabel lblEstadoActivo = new JLabel(a.getStringEstado(), SwingConstants.CENTER) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();

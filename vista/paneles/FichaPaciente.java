@@ -95,16 +95,20 @@ public class FichaPaciente extends JPanel {
     }
 
     private void initCuerpo() {
-        JPanel panelCuerpo = new JPanel(new BorderLayout(20, 0));
-        panelCuerpo.setOpaque(false);
+        // Contenedor intermedio liso donde conviven ambas columnas pegadas en paralelo
+        JPanel panelColumnasUnificadas = new JPanel(new BorderLayout(20, 0));
+        panelColumnasUnificadas.setOpaque(false);
 
-        // COLUMNA IZQUIERDA: CONTENEDOR CON SCROLL
-        JPanel panelContenidoIzquierdo = new JPanel();
-        panelContenidoIzquierdo.setOpaque(false);
-        panelContenidoIzquierdo.setLayout(new BoxLayout(panelContenidoIzquierdo, BoxLayout.Y_AXIS));
+        // ========================================================
+        // COLUMNA IZQUIERDA: CONTENEDOR FIJO DE TARJETAS
+        // ========================================================
+        JPanel panelIzquierdo = new JPanel();
+        panelIzquierdo.setOpaque(false);
+        panelIzquierdo.setLayout(new BoxLayout(panelIzquierdo, BoxLayout.Y_AXIS));
+        panelIzquierdo.setPreferredSize(new Dimension(260, 0)); 
 
         // 1. TARJETA HD DEL PACIENTE
-        JPanel cardPaciente = new JPanel(new BorderLayout(0, 12)) {
+        JPanel cardPaciente = new JPanel(new BorderLayout(0, 8)) { // Bajamos el gap vertical a 8
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -126,7 +130,13 @@ public class FichaPaciente extends JPanel {
             }
         };
         cardPaciente.setOpaque(false);
-        cardPaciente.setBorder(new EmptyBorder(25, 15, 20, 15));
+        cardPaciente.setBorder(new EmptyBorder(20, 15, 15, 15)); // Un padding balanceado
+
+        // Aumentamos holgadamente el tamaño para que entre la lista de 3 filas sin romper nada
+        Dimension dimPaciente = new Dimension(260, 310);
+        cardPaciente.setPreferredSize(dimPaciente);
+        cardPaciente.setMinimumSize(dimPaciente);
+        cardPaciente.setMaximumSize(dimPaciente);
 
         JPanel panelAvatar = new JPanel() {
             @Override
@@ -162,17 +172,18 @@ public class FichaPaciente extends JPanel {
         panelAvatarWrapper.setOpaque(false);
         panelAvatarWrapper.add(panelAvatar);
 
+        // Cambiamos a un panel intermedio con BoxLayout vertical para la info básica, evitando colisiones
         JPanel panelInfoBasica = new JPanel();
         panelInfoBasica.setOpaque(false);
         panelInfoBasica.setLayout(new BoxLayout(panelInfoBasica, BoxLayout.Y_AXIS));
 
         JLabel lblNombre = new JLabel(animal.getNombre(), SwingConstants.CENTER);
-        lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 22)); // Restaurado tu Bold original de nombre
         lblNombre.setForeground(colorTextoOscuro);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblRaza = new JLabel(animal.getEspecie() + " · " + (animal.getSexo() ? "Macho" : "Hembra"), SwingConstants.CENTER);
-        lblRaza.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lblRaza.setFont(new Font("Segoe UI", Font.BOLD, 12)); 
         lblRaza.setForeground(new Color(217, 119, 6)); 
         lblRaza.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -180,15 +191,22 @@ public class FichaPaciente extends JPanel {
         panelInfoBasica.add(Box.createVerticalStrut(4));
         panelInfoBasica.add(lblRaza);
 
-        JPanel panelDatosGrid = new JPanel(new GridLayout(2, 1, 0, 6));
+        // Contenedor de la grilla de datos de 3 filas apiladas
+        JPanel panelDatosGrid = new JPanel(new GridLayout(3, 1, 0, 6));
         panelDatosGrid.setOpaque(false);
         panelDatosGrid.setBorder(new EmptyBorder(10, 5, 5, 5));
 
         agregarFilaDatosFicha(panelDatosGrid, "Edad", animal.calcularEdad() + " años");
         agregarFilaDatosFicha(panelDatosGrid, "Peso", animal.getPeso() + " kg");
+        agregarFilaDatosFicha(panelDatosGrid, "Estado", animal.isActivo() ? "Activo" : "Inactivo");
 
-        cardPaciente.add(panelAvatarWrapper, BorderLayout.NORTH);
-        cardPaciente.add(panelInfoBasica, BorderLayout.CENTER);
+        // Agrupamos el header y los textos en el Norte/Centro, dejando la grilla limpia en el Sur
+        JPanel panelContenedorSuperiorMascota = new JPanel(new BorderLayout(0, 6));
+        panelContenedorSuperiorMascota.setOpaque(false);
+        panelContenedorSuperiorMascota.add(panelAvatarWrapper, BorderLayout.NORTH);
+        panelContenedorSuperiorMascota.add(panelInfoBasica, BorderLayout.CENTER);
+
+        cardPaciente.add(panelContenedorSuperiorMascota, BorderLayout.NORTH);
         cardPaciente.add(panelDatosGrid, BorderLayout.SOUTH);
 
         // 2. TARJETA COMPLETA DEL RESPONSABLE
@@ -200,10 +218,9 @@ public class FichaPaciente extends JPanel {
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
                 
-                Color azulInicioDegrade = new Color(14, 165, 233); 
-                Color azulFinDegrade = new Color(37, 99, 235);    
-                GradientPaint degradadoCabeceraDueno = new GradientPaint(0, 0, azulInicioDegrade, getWidth(), 0, azulFinDegrade);
-                g2.setPaint(degradadoCabeceraDueno);
+                Color blueInicio = new Color(14, 165, 233); 
+                Color blueFin = new Color(37, 99, 235);    
+                g2.setPaint(new GradientPaint(0, 0, blueInicio, getWidth(), 0, blueFin));
                 
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 24, 24));
                 g2.fillRect(0, 0, getWidth(), 8); 
@@ -216,6 +233,11 @@ public class FichaPaciente extends JPanel {
         };
         cardDueno.setOpaque(false);
         cardDueno.setBorder(new EmptyBorder(18, 15, 18, 15));
+
+        Dimension dimDueno = new Dimension(260, 180);
+        cardDueno.setPreferredSize(dimDueno);
+        cardDueno.setMinimumSize(dimDueno);
+        cardDueno.setMaximumSize(dimDueno);
 
         JLabel lblTagDueno = new JLabel("RESPONSABLE");
         lblTagDueno.setFont(new Font("Segoe UI", Font.BOLD, 11));
@@ -305,21 +327,16 @@ public class FichaPaciente extends JPanel {
             cardDueno.add(panelVacio, BorderLayout.CENTER);
         }
 
-        panelContenidoIzquierdo.add(cardPaciente);
-        panelContenidoIzquierdo.add(Box.createVerticalStrut(15));
-        panelContenidoIzquierdo.add(cardDueno);
-
-        JScrollPane scrollIzquierdo = new JScrollPane(panelContenidoIzquierdo);
-        scrollIzquierdo.setBorder(null);
-        scrollIzquierdo.setOpaque(false);
-        scrollIzquierdo.getViewport().setOpaque(false);
-        scrollIzquierdo.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollIzquierdo.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
-
-        scrollIzquierdo.setPreferredSize(new Dimension(260, 0));
+        panelIzquierdo.add(cardPaciente);
+        panelIzquierdo.add(Box.createVerticalStrut(15));
+        panelIzquierdo.add(cardDueno);
+        panelIzquierdo.add(Box.createVerticalGlue()); // Absorbe el aire restante
 
         // ========================================================
-        // COLUMNA DERECHA: DEGRADADO IGUALADO A 8PX DE ALTO
+        // COLUMNA DERECHA: GRILLA DE TURNOS DINÁMICOS REALES
+        // ========================================================
+       // ========================================================
+        // COLUMNA DERECHA: PANEL GRANDE CON EL DEGRADADO PREMIUM FIGMA
         // ========================================================
         JPanel panelDerecho = new JPanel(new BorderLayout()) {
             @Override
@@ -327,17 +344,18 @@ public class FichaPaciente extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
+                // Fondo Blanco de la Tarjeta Contenedora
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
                 
-                Color violetaMockup = new Color(139, 92, 246); 
-                Color azulMockup = new Color(59, 130, 246);    
-                GradientPaint degradadoSuperior = new GradientPaint(0, 0, violetaMockup, getWidth(), 0, azulMockup);
+                // 🎨 REPARADO: Degradado horizontal premium exacto al mockup (Violeta a Azul Eléctrico)
+                Color violetaFigma = new Color(139, 92, 246); // #8B5CF6 (Violeta vibrante)
+                Color azulFigma = new Color(59, 130, 246);    // #3B82F6 (Azul corporativo)
+                GradientPaint degradadoSuperior = new GradientPaint(0, 0, violetaFigma, getWidth(), 0, azulFigma);
                 g2.setPaint(degradadoSuperior);
                 
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 24, 24));
-                // 🔥 CORRECCIÓN 1: Cambiado de 6px a 8px de alto para emparejar con la tarjeta del paciente
-                g2.fillRect(0, 0, getWidth(), 8); 
+                g2.fillRect(0, 0, getWidth(), 8); // Grosor de 8px simétrico
                 
                 g2.setClip(null);
                 g2.setColor(colorBordeTarjeta);
@@ -346,18 +364,19 @@ public class FichaPaciente extends JPanel {
             }
         };
         panelDerecho.setOpaque(false);
-        // Ajustamos levemente el padding superior para acomodar la barra de 8px
         panelDerecho.setBorder(new EmptyBorder(18, 15, 12, 15)); 
         
         JTabbedPane tabs = new JTabbedPane();
         tabs.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        tabs.setOpaque(false);
+        tabs.setOpaque(false); // Anula fondos cuadrados grises automáticos
         
+        // 🔄 RESTAURACIÓN DE LA UI DE TABS: Desactivamos la pintura de solapas nativas
         tabs.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
-            @Override
-            protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {}
-            @Override
-            protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {}
+            @Override protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {}
+            @Override protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {}
+            @Override protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
+                // Dejar vacío de forma intencional destruye los bloques grises de fondo de Swing
+            }
         });
         
         // FILTRADO DESDE EL CONTROLADOR
@@ -438,17 +457,29 @@ public class FichaPaciente extends JPanel {
             }
         }
 
-        tabs.addTab("Historial", crearScrollLimpio(contenedorHistorialInmovil));
+        tabs.addTab("Historial", contenedorHistorialInmovil);
         tabs.addTab("Vacunas", panelVacunas);
-        tabs.addTab("Turnos", crearScrollLimpio(contenedorTurnosInmovil));
+        tabs.addTab("Turnos", contenedorTurnosInmovil);
         
         configurarEstiloPestanas(tabs);
-        
         panelDerecho.add(tabs, BorderLayout.CENTER);
-        panelCuerpo.add(scrollIzquierdo, BorderLayout.WEST); 
-        panelCuerpo.add(panelDerecho, BorderLayout.CENTER);  
 
-        add(panelCuerpo, BorderLayout.CENTER);
+        panelColumnasUnificadas.add(panelIzquierdo, BorderLayout.WEST); 
+        panelColumnasUnificadas.add(panelDerecho, BorderLayout.CENTER);  
+
+        JScrollPane scrollGlobalFicha = new JScrollPane(panelColumnasUnificadas);
+        scrollGlobalFicha.setBorder(null);
+        scrollGlobalFicha.setOpaque(false);
+        scrollGlobalFicha.getViewport().setOpaque(false);
+        scrollGlobalFicha.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        JScrollBar barraVerticalGlobal = scrollGlobalFicha.getVerticalScrollBar();
+        barraVerticalGlobal.setUI(new ModernScrollBarUI()); 
+        barraVerticalGlobal.setPreferredSize(new Dimension(8, 0));
+        barraVerticalGlobal.setOpaque(false);
+        barraVerticalGlobal.setUnitIncrement(16); 
+
+        add(scrollGlobalFicha, BorderLayout.CENTER);
     }
 
     private void configurarEstiloPestanas(JTabbedPane tabs) {
@@ -463,7 +494,11 @@ public class FichaPaciente extends JPanel {
                     setFont(new Font("Segoe UI", Font.BOLD, 13));
                     setPreferredSize(new Dimension(95, 36)); 
                     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    setOpaque(false);
+                    
+                    // 🔥 LA LÍNEA CLAVE: Evita que Swing dibuje el recuadro punteado negro al hacer click
+                    setFocusable(false); 
+                    
+                    setOpaque(false); 
                     
                     addMouseListener(new java.awt.event.MouseAdapter() {
                         public void mouseEntered(java.awt.event.MouseEvent e) { mouseEncima = true; repaint(); }
@@ -482,15 +517,14 @@ public class FichaPaciente extends JPanel {
                     
                     if (estaSeleccionada) {
                         setForeground(colorVioletaFigma);
-                        g2.setColor(new Color(243, 232, 255)); 
-                        g2.fillRoundRect(0, 2, getWidth(), getHeight() - 6, 12, 12);
+                        g2.setColor(new Color(243, 232, 255)); // Fondo píldora suave
+                        g2.fillRoundRect(0, 2, getWidth(), getHeight() - 4, 12, 12);
                         
-                        g2.setColor(colorVioletaFigma);
-                        g2.fillRect(6, getHeight() - 3, getWidth() - 12, 3);
+                        // 🔥 REMOVIDO: Se eliminó la línea g2.fillRect que pintaba la barrita violeta oscuro inferior
                     } else if (mouseEncima) {
                         setForeground(new Color(109, 40, 217)); 
                         g2.setColor(new Color(241, 245, 249)); 
-                        g2.fillRoundRect(0, 2, getWidth(), getHeight() - 6, 12, 12);
+                        g2.fillRoundRect(0, 2, getWidth(), getHeight() - 4, 12, 12);
                     } else {
                         setForeground(new Color(148, 163, 184)); 
                     }
@@ -503,8 +537,7 @@ public class FichaPaciente extends JPanel {
         }
         tabs.addChangeListener(e -> tabs.repaint());
     }
-
-    // 🔥 CORRECCIÓN 2: REDISEÑO DE FILAS DE CONSULTA PARA EMULAR EL MOCKUP EXACTO
+    
     private JPanel crearFilaTurnoDinamica(Turno t) {
         JPanel fila = new JPanel(new BorderLayout(0, 10)) {
             @Override
@@ -512,11 +545,9 @@ public class FichaPaciente extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                // Fondo Blanco Puro (Eliminado el gris completo anterior)
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 
-                // Borde gris claro ultrafino perimetral
                 g2.setColor(colorBordeTarjeta);
                 g2.setStroke(new BasicStroke(1f));
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
@@ -528,11 +559,9 @@ public class FichaPaciente extends JPanel {
 
         TipoTurno tipo = t.getTipo();
 
-        // --- BLOQUE SUPERIOR (Icono + Info Veterinaria + Píldora de Fecha) ---
         JPanel panelLineaSuperior = new JPanel(new BorderLayout());
         panelLineaSuperior.setOpaque(false);
 
-        // Sub-panel izquierdo: Icono de salud y textos apilados
         JPanel panelIzquierdoInfo = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         panelIzquierdoInfo.setOpaque(false);
 
@@ -563,13 +592,12 @@ public class FichaPaciente extends JPanel {
         panelIzquierdoInfo.add(lblEmojiTurno);
         panelIzquierdoInfo.add(panelTextosLabels);
 
-        // Sub-panel derecho: Píldora de Fecha en HD (Fondo gris claro redondeado)
         JLabel lblFecha = new JLabel(t.getFecha(), SwingConstants.CENTER) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(241, 245, 249)); // Fondo gris suave de la píldora
+                g2.setColor(new Color(241, 245, 249)); 
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                 g2.dispose();
                 super.paintComponent(g);
@@ -577,7 +605,7 @@ public class FichaPaciente extends JPanel {
         };
         lblFecha.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         lblFecha.setForeground(colorTextoGrisBase);
-        lblFecha.setBorder(new EmptyBorder(4, 10, 4, 10)); // Margen interno de la píldora
+        lblFecha.setBorder(new EmptyBorder(4, 10, 4, 10)); 
 
         panelLineaSuperior.add(panelIzquierdoInfo, BorderLayout.WEST);
         panelLineaSuperior.add(lblFecha, BorderLayout.EAST);
@@ -587,27 +615,36 @@ public class FichaPaciente extends JPanel {
         // --- BLOQUE INFERIOR (Caja de Texto Gris de Observaciones simulada) ---
         String obs = t.getObservaciones();
         if (obs != null && !obs.isBlank()) {
-            // Panel contenedor que actúa como caja de texto redondeada gris suave
             JPanel panelTextBoxObs = new JPanel(new BorderLayout()) {
                 @Override
                 protected void paintComponent(Graphics g) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g2.setColor(new Color(248, 250, 252)); // Fondo gris del text-box
+                    g2.setColor(new Color(248, 250, 252)); 
                     g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                     g2.dispose();
                 }
             };
             panelTextBoxObs.setOpaque(false);
-            panelTextBoxObs.setBorder(new EmptyBorder(8, 12, 8, 12)); // Cojín interno del texto
+            panelTextBoxObs.setBorder(new EmptyBorder(8, 12, 8, 12)); 
 
-            JLabel lblNotas = new JLabel("💬  " + obs);
+            // 🔥 MODIFICADO: Removemos el emoji en texto y creamos el Label limpio con espaciado
+            JLabel lblNotas = new JLabel(obs);
             lblNotas.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-            lblNotas.setForeground(new Color(100, 116, 139)); // Slate 500
+            lblNotas.setForeground(new Color(100, 116, 139)); 
+            
+            // 🔥 NUEVO: Cargamos la imagen HD del emoji e inyectamos espacio de colchón
+            ImageIcon iconoComentario = cargarIconoHD("imagenes/emojis/comentario.png", 16, 16);
+            if (iconoComentario != null) {
+                lblNotas.setIcon(iconoComentario);
+                lblNotas.setIconTextGap(8); // Agrega un espacio elegante entre la imagen y el texto
+            } else {
+                // Respaldo clásico por si el archivo físico no se encuentra en la carpeta
+                lblNotas.setText("💬  " + obs);
+            }
             
             panelTextBoxObs.add(lblNotas, BorderLayout.CENTER);
             
-            // Añadimos un inset artificial superior para separarlo de la cabecera
             JPanel contenedorMargenSouth = new JPanel(new BorderLayout());
             contenedorMargenSouth.setOpaque(false);
             contenedorMargenSouth.setBorder(new EmptyBorder(4, 0, 0, 0));
@@ -617,29 +654,6 @@ public class FichaPaciente extends JPanel {
         }
 
         return fila;
-    }
-
-    private JScrollPane crearScrollLimpio(JPanel contenedor) {
-        JScrollPane scroll = new JScrollPane(contenedor);
-        scroll.setBorder(null);
-        scroll.setOpaque(false);
-        scroll.getViewport().setOpaque(false);
-        scroll.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0)); 
-        return scroll;
-    }
-
-    private ImageIcon cargarIconoHD(String ruta, int ancho, int alto) {
-        try {
-            java.awt.image.BufferedImage imgBuffer = javax.imageio.ImageIO.read(new java.io.File(ruta));
-            java.awt.image.BufferedImage resizedImg = new java.awt.image.BufferedImage(ancho, alto, java.awt.image.BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2 = resizedImg.createGraphics();
-            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            g2.drawImage(imgBuffer, 0, 0, ancho, alto, null);
-            g2.dispose();
-            return new ImageIcon(resizedImg);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     private void agregarFilaDatosFicha(JPanel panel, String clave, String valor) {
@@ -667,5 +681,43 @@ public class FichaPaciente extends JPanel {
         fila.add(lblClave, BorderLayout.WEST);
         fila.add(lblValor, BorderLayout.EAST);
         panel.add(fila);
+    }
+
+    // =========================================================================
+    // SCROLLBAR INTERNA PERSONALIZADA (ModernScrollBarUI)
+    // =========================================================================
+    private static class ModernScrollBarUI extends javax.swing.plaf.basic.BasicScrollBarUI {
+        @Override protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
+        @Override protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
+            if (thumbBounds.isEmpty() || !scrollbar.isEnabled()) return;
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            Color colorFinal = isDragging ? new Color(100, 116, 139) : (isThumbRollover() ? new Color(148, 163, 184) : new Color(203, 213, 225));
+            g2.setColor(colorFinal);
+            g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2, thumbBounds.width - 4, thumbBounds.height - 4, 8, 8);
+            g2.dispose();
+        }
+        @Override protected JButton createDecreaseButton(int orientation) { return crearBotonInvisible(); }
+        @Override protected JButton createIncreaseButton(int orientation) { return crearBotonInvisible(); }
+        private JButton crearBotonInvisible() {
+            JButton btn = new JButton();
+            btn.setPreferredSize(new Dimension(0, 0));
+            return btn;
+        }
+    }
+
+    // 🔥 MÉTODO AUXILIAR RECUPERADO: Escala las imágenes pixel-perfect sin romper nada
+    private ImageIcon cargarIconoHD(String ruta, int ancho, int alto) {
+        try {
+            java.awt.image.BufferedImage imgBuffer = javax.imageio.ImageIO.read(new java.io.File(ruta));
+            java.awt.image.BufferedImage resizedImg = new java.awt.image.BufferedImage(ancho, alto, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = resizedImg.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.drawImage(imgBuffer, 0, 0, ancho, alto, null);
+            g2.dispose();
+            return new ImageIcon(resizedImg);
+        } catch (Exception e) {
+            return null; // Si no encuentra la imagen, devuelve null de forma segura
+        }
     }
 }
