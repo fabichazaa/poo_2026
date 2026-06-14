@@ -17,6 +17,10 @@ public class FichaPaciente extends JPanel {
     private final Runnable accionVolver;
     private final ControladorVeterinaria controlador;
 
+    private JLabel lblNombre;
+    private JLabel lblRaza;
+    private JPanel panelDatosGrid;
+
     public FichaPaciente(Animal animal, Runnable accionVolver) {
         this.animal = animal;
         this.accionVolver = accionVolver;
@@ -112,7 +116,7 @@ public class FichaPaciente extends JPanel {
         cardPaciente.setOpaque(false);
         cardPaciente.setBorder(new EmptyBorder(20, 15, 15, 15));
 
-        Dimension dimensionesPaciente = new Dimension(260, 310);
+        Dimension dimensionesPaciente = new Dimension(260, 340);
         cardPaciente.setPreferredSize(dimensionesPaciente);
         cardPaciente.setMinimumSize(dimensionesPaciente);
         cardPaciente.setMaximumSize(dimensionesPaciente);
@@ -159,12 +163,12 @@ public class FichaPaciente extends JPanel {
         panelInfoBasica.setOpaque(false);
         panelInfoBasica.setLayout(new BoxLayout(panelInfoBasica, BoxLayout.Y_AXIS));
 
-        JLabel lblNombre = new JLabel(animal.getNombre(), SwingConstants.CENTER);
+        lblNombre = new JLabel(animal.getNombre(), SwingConstants.CENTER);
         lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblNombre.setForeground(recursos.Color.INK);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel lblRaza = new JLabel(animal.getEspecie() + " · " + animal.getStringSexo(), SwingConstants.CENTER);
+        lblRaza = new JLabel(animal.getEspecie() + " · " + animal.getStringSexo(), SwingConstants.CENTER);
         lblRaza.setFont(new Font("Segoe UI", Font.BOLD, 12)); 
         lblRaza.setForeground(Color.decode(animal.getColorFinHex())); 
         lblRaza.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -173,13 +177,11 @@ public class FichaPaciente extends JPanel {
         panelInfoBasica.add(Box.createVerticalStrut(4));
         panelInfoBasica.add(lblRaza);
 
-        JPanel panelDatosGrid = new JPanel(new GridLayout(3, 1, 0, 6));
+        panelDatosGrid = new JPanel(new GridLayout(4, 1, 0, 6));
         panelDatosGrid.setOpaque(false);
         panelDatosGrid.setBorder(new EmptyBorder(10, 5, 5, 5));
 
-        agregarFilaDatosFicha(panelDatosGrid, "Edad", animal.calcularEdad() + " años");
-        agregarFilaDatosFicha(panelDatosGrid, "Peso", animal.getPeso() + " kg");
-        agregarFilaDatosFicha(panelDatosGrid, "Estado", animal.getStringEstado());
+        actualizarGrillaValoresFicha();
 
         JPanel panelContenedorSuperiorMascota = new JPanel(new BorderLayout(0, 6));
         panelContenedorSuperiorMascota.setOpaque(false);
@@ -227,50 +229,23 @@ public class FichaPaciente extends JPanel {
         Responsable responsable = animal.getResponsable();
 
         if (responsable != null) {
-            JPanel panelUsuario = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
-            panelUsuario.setOpaque(false);
-
-            JPanel panelAvatarCuadrado = new JPanel() {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    Graphics2D g2 = (Graphics2D) g.create();
-                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    Color azulInicio = new Color(14, 165, 233); 
-                    Color azulFin = new Color(37, 99, 235);    
-                    g2.setPaint(new GradientPaint(0, 0, azulInicio, 0, getHeight(), azulFin));
-                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12); 
-                    g2.dispose();
-                    super.paintComponent(g);
-                }
-            };
-            panelAvatarCuadrado.setPreferredSize(new Dimension(44, 44));
-            panelAvatarCuadrado.setMinimumSize(new Dimension(44, 44));
-            panelAvatarCuadrado.setMaximumSize(new Dimension(44, 44));
-            panelAvatarCuadrado.setOpaque(false);
-            panelAvatarCuadrado.setLayout(new GridBagLayout());
-
-            JLabel lblImagenUsuario = new JLabel();
-            ImageIcon iconoUser = cargarIconoHD("imagenes/emojis/usuario.png", 24, 24);
-            if (iconoUser != null) {
-                lblImagenUsuario.setIcon(iconoUser);
-            } else {
-                lblImagenUsuario.setText("👤");
-                lblImagenUsuario.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-                lblImagenUsuario.setForeground(Color.WHITE);
-            }
-            panelAvatarCuadrado.add(lblImagenUsuario);
-
-            JLabel lblNombreDueno = new JLabel(responsable.getNombre() + " " + responsable.getApellido());
-            lblNombreDueno.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-            lblNombreDueno.setForeground(recursos.Color.INK);
-            
-            panelUsuario.add(panelAvatarCuadrado);
-            panelUsuario.add(lblNombreDueno);
-
-            JPanel panelContacto = new JPanel(new GridLayout(2, 1, 0, 8));
+            // 1. La grilla con las 3 filas se queda igual, pero ahora DEFINIMOS un gap vertical de 8px
+            JPanel panelContacto = new JPanel(new GridLayout(3, 1, 0, 8));
             panelContacto.setOpaque(false);
-            panelContacto.setBorder(new EmptyBorder(10, 2, 0, 2));
+            // Le damos el ancho total de la tarjeta (230px aprox) para que no se achique de costado
+            panelContacto.setPreferredSize(new Dimension(230, 75)); 
 
+            // Fila 1: Nombre
+            JPanel filaNombre = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+            filaNombre.setOpaque(false);
+            JLabel lblIconoUser = new JLabel(cargarIconoHD("imagenes/emojis/usuario.png", 16, 16));
+            JLabel lblTextoNombre = new JLabel(responsable.getNombre() + " " + responsable.getApellido());
+            lblTextoNombre.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            lblTextoNombre.setForeground(recursos.Color.INK);
+            filaNombre.add(lblIconoUser);
+            filaNombre.add(lblTextoNombre);
+
+            // Fila 2: Celular
             JPanel filaCelular = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
             filaCelular.setOpaque(false);
             JLabel lblIconoCel = new JLabel(cargarIconoHD("imagenes/emojis/celular.png", 16, 16));
@@ -280,6 +255,7 @@ public class FichaPaciente extends JPanel {
             filaCelular.add(lblIconoCel);
             filaCelular.add(lblTextoCel);
 
+            // Fila 3: Ubicación
             JPanel filaUbicacion = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
             filaUbicacion.setOpaque(false);
             JLabel lblIconoUbi = new JLabel(cargarIconoHD("imagenes/emojis/ubicacion.png", 16, 16));
@@ -289,11 +265,20 @@ public class FichaPaciente extends JPanel {
             filaUbicacion.add(lblIconoUbi);
             filaUbicacion.add(lblTextoUbi);
 
+            panelContacto.add(filaNombre);
             panelContacto.add(filaCelular);
             panelContacto.add(filaUbicacion);
 
-            cardDueno.add(panelUsuario, BorderLayout.CENTER);
-            cardDueno.add(panelContacto, BorderLayout.SOUTH);
+            // 🌟 EL TRUCO: Creamos un Wrapper intermedio con FlowLayout.LEFT para frenar el estiramiento vertical
+            // El EmptyBorder de arriba (12) le da el aire justo abajo del título "DUEÑO"
+            JPanel wrapperCompacto = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            wrapperCompacto.setOpaque(false);
+            wrapperCompacto.setBorder(new EmptyBorder(12, 0, 0, 0)); 
+            wrapperCompacto.add(panelContacto); // Guardamos la grilla adentro del escudo
+
+            // Ahora agregamos el wrapper en el CENTER de la tarjeta
+            cardDueno.add(wrapperCompacto, BorderLayout.CENTER);
+            
         } else {
             JPanel panelVacio = new JPanel(new GridBagLayout());
             panelVacio.setOpaque(false);
@@ -340,6 +325,18 @@ public class FichaPaciente extends JPanel {
         panelDerecho.setOpaque(false);
         panelDerecho.setBorder(new EmptyBorder(18, 15, 12, 15)); 
         
+        JPanel panelCabeceraDerecha = new JPanel(new BorderLayout());
+        panelCabeceraDerecha.setOpaque(false);
+        panelCabeceraDerecha.setBorder(new EmptyBorder(5, 5, 5, 5));
+        
+        JButton btnEditar = crearBtnEditarFicha();
+        panelCabeceraDerecha.add(btnEditar, BorderLayout.EAST); // Lo empuja a la derecha del todo
+        
+        // Modificamos cómo se agrega el JTabbedPane 'tabs':
+        // En vez de añadir las tabs directo al panelDerecho, las dejamos en el CENTER, 
+        // y la cabecera con el lápiz la ponemos en el NORTH del panelDerecho.
+        panelDerecho.add(panelCabeceraDerecha, BorderLayout.NORTH);
+
         JTabbedPane tabs = new JTabbedPane();
         tabs.setFont(new Font("Segoe UI", Font.BOLD, 13));
         tabs.setOpaque(false);
@@ -395,14 +392,37 @@ public class FichaPaciente extends JPanel {
         }
 
         // Tab 2: VACUNAS
-        // TODO: implement vacunas display
-        JPanel panelVacunas = new JPanel(new BorderLayout());
+        JPanel panelVacunas = new JPanel();
         panelVacunas.setBackground(Color.WHITE);
-        panelVacunas.setBorder(new EmptyBorder(30, 10, 10, 10));
-        JLabel lblVacunasVacio = new JLabel("No hay registro de vacunas aplicadas.", SwingConstants.CENTER);
-        lblVacunasVacio.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-        lblVacunasVacio.setForeground(recursos.Color.CAT_INACTIVO);
-        panelVacunas.add(lblVacunasVacio, BorderLayout.NORTH);
+        panelVacunas.setLayout(new BoxLayout(panelVacunas, BoxLayout.Y_AXIS));
+
+        JPanel contenedorVacunasInmovil = new JPanel(new BorderLayout());
+        contenedorVacunasInmovil.setBackground(Color.WHITE);
+        contenedorVacunasInmovil.add(panelVacunas, BorderLayout.NORTH);
+
+        // Traemos la lista de vacunas directamente desde el historial clínico del animal
+        List<modelo.RegistroVacunacion> vacunasAplicadas = animal.getHistorial().getRegistroVacunas();
+
+        if (vacunasAplicadas.isEmpty()) {
+            panelVacunas.setBorder(new EmptyBorder(30, 10, 10, 10));
+            JLabel lblVacunasVacio = new JLabel("No hay registro de vacunas aplicadas.", SwingConstants.CENTER);
+            lblVacunasVacio.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+            lblVacunasVacio.setForeground(recursos.Color.CAT_INACTIVO);
+            lblVacunasVacio.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panelVacunas.add(lblVacunasVacio);
+        } else {
+            panelVacunas.setBorder(new EmptyBorder(15, 5, 15, 5));
+            for (int i = 0; i < vacunasAplicadas.size(); i++) {
+                modelo.RegistroVacunacion reg = vacunasAplicadas.get(i);
+                // Usamos un método auxiliar para fabricar cada fila de vacuna
+                panelVacunas.add(crearFilaVacunaDinamica(reg));
+                
+                // Agregamos un colchón de aire vertical (row-gap) entre filas vecinas
+                if (i < vacunasAplicadas.size() - 1) {
+                    panelVacunas.add(Box.createVerticalStrut(14));
+                }
+            }
+        }
 
         // Pestaña 3: TURNOS
         JPanel panelTurnosFuturos = new JPanel();
@@ -432,7 +452,7 @@ public class FichaPaciente extends JPanel {
         }
 
         tabs.addTab("Historial", contenedorHistorialInmovil);
-        tabs.addTab("Vacunas", panelVacunas);
+        tabs.addTab("Vacunas", contenedorVacunasInmovil);
         tabs.addTab("Turnos", contenedorTurnosInmovil);
         
         configurarEstiloPestanas(tabs);
@@ -623,6 +643,127 @@ public class FichaPaciente extends JPanel {
         return fila;
     }
 
+    private JPanel crearFilaVacunaDinamica(modelo.RegistroVacunacion reg) {
+        // Contenedor principal de la fila (Tarjeta blanca redondeada)
+        JPanel fila = new JPanel(new BorderLayout(0, 10)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(Color.WHITE);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                g2.setColor(recursos.Color.BORDER);
+                g2.setStroke(new BasicStroke(1f));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
+                g2.dispose();
+            }
+        };
+        fila.setOpaque(false);
+        fila.setBorder(new EmptyBorder(12, 16, 12, 16));
+
+        // Alineación horizontal: Icono + Textos a la izquierda, Fecha a la derecha
+        JPanel panelLineaSuperior = new JPanel(new BorderLayout());
+        panelLineaSuperior.setOpaque(false);
+
+        JPanel panelIzquierdoInfo = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
+        panelIzquierdoInfo.setOpaque(false);
+
+        // Icono de la Jeringa / Vacuna
+        JLabel lblEmojiVacuna = new JLabel();
+        ImageIcon iconoHD = cargarIconoHD("imagenes/emojis/jeringa.png", 20, 20); // Intentamos cargar tu PNG premium
+        if (iconoHD != null) {
+            lblEmojiVacuna.setIcon(iconoHD);
+        } else {
+            lblEmojiVacuna.setText("💉"); // Respaldo nativo emoji
+            lblEmojiVacuna.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
+        }
+
+        // Bloque de textos (Nombre de la vacuna arriba, detalles abajo)
+        JPanel panelTextosLabels = new JPanel(new GridLayout(2, 1, 0, 1));
+        panelTextosLabels.setOpaque(false);
+        
+        JLabel lblTitulo = new JLabel(reg.getVacunaAplicada().getNombreMedicamento());
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblTitulo.setForeground(recursos.Color.INK);
+        
+        String detalles = reg.getTipoDosis() + "  •  Vence: " + reg.getFechaVencimiento().toString();
+        JLabel lblDetalles = new JLabel(detalles);
+        lblDetalles.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        
+        if (reg.estaVencida()) {
+            lblDetalles.setForeground(new Color(220, 38, 38)); // Rojo carmín vibrante
+        } else {
+            lblDetalles.setForeground(recursos.Color.CAT_INACTIVO);
+        }
+        
+        panelTextosLabels.add(lblTitulo);
+        panelTextosLabels.add(lblDetalles);
+
+        panelIzquierdoInfo.add(lblEmojiVacuna);
+        panelIzquierdoInfo.add(panelTextosLabels);
+
+        JLabel lblFecha = new JLabel(reg.getFechaAplicacion().toString(), SwingConstants.CENTER) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                // Si está vencida, hacemos la píldora de fondo roja suave; si no, gris suave web standard
+                g2.setColor(reg.estaVencida() ? new Color(254, 226, 226) : new Color(241, 245, 249)); 
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        lblFecha.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        lblFecha.setForeground(reg.estaVencida() ? new Color(220, 38, 38) : recursos.Color.CAT_INACTIVO);
+        lblFecha.setBorder(new EmptyBorder(4, 10, 4, 10)); 
+
+        panelLineaSuperior.add(panelIzquierdoInfo, BorderLayout.WEST);
+        panelLineaSuperior.add(lblFecha, BorderLayout.EAST);
+
+        fila.add(panelLineaSuperior, BorderLayout.NORTH);
+
+        // --- Bloque Inferior Opcional: Caja de Texto de Observaciones de la Vacuna ---
+        String obs = reg.getObservaciones();
+        if (obs != null && !obs.isBlank()) {
+            JPanel panelTextBoxObs = new JPanel(new BorderLayout()) {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(new Color(248, 250, 252)); 
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                    g2.dispose();
+                }
+            };
+            panelTextBoxObs.setOpaque(false);
+            panelTextBoxObs.setBorder(new EmptyBorder(8, 12, 8, 12)); 
+
+            JLabel lblNotas = new JLabel(obs);
+            lblNotas.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            lblNotas.setForeground(new Color(100, 116, 139)); 
+            
+            ImageIcon iconoComentario = cargarIconoHD("imagenes/emojis/comentario.png", 16, 16);
+            if (iconoComentario != null) {
+                lblNotas.setIcon(iconoComentario);
+                lblNotas.setIconTextGap(8);
+            } else {
+                lblNotas.setText("💬  " + obs);
+            }
+            
+            panelTextBoxObs.add(lblNotas, BorderLayout.CENTER);
+            
+            JPanel contenedorMargenSouth = new JPanel(new BorderLayout());
+            contenedorMargenSouth.setOpaque(false);
+            contenedorMargenSouth.setBorder(new EmptyBorder(4, 0, 0, 0));
+            contenedorMargenSouth.add(panelTextBoxObs, BorderLayout.CENTER);
+
+            fila.add(contenedorMargenSouth, BorderLayout.CENTER);
+        }
+
+        return fila;
+    }
+
     private void agregarFilaDatosFicha(JPanel panel, String clave, String valor) {
         JPanel fila = new JPanel(new BorderLayout()) {
             @Override
@@ -685,5 +826,77 @@ public class FichaPaciente extends JPanel {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private JButton crearBtnEditarFicha() {
+        JButton btn = new JButton() {
+            private boolean hover = false;
+            {
+                setFocusPainted(false);
+                setContentAreaFilled(false);
+                setBorderPainted(false);
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                addMouseListener(new java.awt.event.MouseAdapter() {
+                    public void mouseEntered(java.awt.event.MouseEvent e) { hover = true; repaint(); }
+                    public void mouseExited(java.awt.event.MouseEvent e) { hover = false; repaint(); }
+                });
+            }
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                // Si hay hover se pone un gris clarito, si no, blanco puro
+                g2.setColor(hover ? new Color(241, 245, 249) : Color.WHITE);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                g2.setColor(recursos.Color.BORDER);
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        btn.setPreferredSize(new Dimension(36, 36));
+        
+        // Cargamos tu icono de lapicito premium
+        ImageIcon icono = cargarIconoHD("imagenes/emojis/lapiz.png", 18, 18);
+        if (icono != null) {
+            btn.setIcon(icono);
+        } else {
+            btn.setText("✏️");
+            btn.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
+        }
+        
+        // Al hacer click, abrimos el modal de edición pasándole el animal actual
+        btn.addActionListener(e -> {
+            JFrame ventanaPadre = (JFrame) SwingUtilities.getWindowAncestor(this);
+            ModalEditarPaciente modal = new ModalEditarPaciente(ventanaPadre, animal);
+            modal.setVisible(true);
+            lblNombre.setText(animal.getNombre());
+            lblRaza.setText(animal.getEspecie() + " · " + animal.getStringSexo());
+            lblRaza.setForeground(Color.decode(animal.getColorFinHex())); 
+            
+            // B. 🔥 ¡LA PIEZA FALTANTE!: Forzamos a la grilla inferior a traer los números nuevos
+            actualizarGrillaValoresFicha();
+            
+            // C. Repintamos el componente global de la ficha
+            this.revalidate();
+            this.repaint();
+        });
+        
+        return btn;
+    }
+
+    private void actualizarGrillaValoresFicha() {
+        // 1. Vaciamos por completo el contenedor de las filas grises
+        panelDatosGrid.removeAll(); 
+        
+        // 2. Volvemos a inyectar las filas consultando los datos actuales del objeto en memoria
+        agregarFilaDatosFicha(panelDatosGrid, "Edad", animal.calcularEdad() + " años");
+        agregarFilaDatosFicha(panelDatosGrid, "Peso", animal.getPeso() + " kg");
+        agregarFilaDatosFicha(panelDatosGrid, "Estado", animal.getStringEstado());
+        agregarFilaDatosFicha(panelDatosGrid, "Raza", animal.getRaza());
+
+        // 3. Le avisamos a Java Layout que la estructura interna cambió y debe recalcularse
+        panelDatosGrid.revalidate();
+        panelDatosGrid.repaint();
     }
 }

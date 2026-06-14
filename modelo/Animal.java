@@ -96,6 +96,10 @@ public abstract class Animal {
         this.peso = peso;
     }
 
+    public void setRaza(String raza) {
+        this.raza = raza;
+    }
+
     private String generarIdAnimal() {
         return UUID.randomUUID().toString();
     }
