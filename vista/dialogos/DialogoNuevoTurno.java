@@ -67,13 +67,31 @@ public class DialogoNuevoTurno extends JDialog {
 
         // Botón volver circular
         JButton btnVolver = new JButton() {
+            private boolean hovered = false;
+
+            {
+                addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
+                    public void mouseEntered(java.awt.event.MouseEvent e) {
+                        hovered = true;
+                        repaint();
+                    }
+
+                    @Override
+                    public void mouseExited(java.awt.event.MouseEvent e) {
+                        hovered = false;
+                        repaint();
+                    }
+                });
+            }
+
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(Color.WHITE);
+                g2.setColor(hovered ? new Color(241, 245, 249) : Color.WHITE);
                 g2.fillOval(0, 0, getWidth(), getHeight());
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(hovered ? new Color(148, 163, 184) : new Color(226, 232, 240));
                 g2.drawOval(0, 0, getWidth() - 1, getHeight() - 1);
 
                 g2.setColor(new Color(30, 41, 59));
@@ -238,8 +256,7 @@ public class DialogoNuevoTurno extends JDialog {
                 for (Animal a : todosLosAnimalesBase) {
                     boolean coincide = query.isEmpty()
                             || a.getNombre().toLowerCase().contains(query)
-                            || (a instanceof Perro && ((Perro) a).getRaza().toLowerCase().contains(query))
-                            || (a instanceof Gato && ((Gato) a).getRaza().toLowerCase().contains(query))
+                            || a.getRaza().toLowerCase().contains(query)
                             || a.getResponsable().getNombre().toLowerCase().contains(query)
                             || a.getResponsable().getApellido().toLowerCase().contains(query);
                     if (coincide) {
@@ -284,20 +301,16 @@ public class DialogoNuevoTurno extends JDialog {
                 textLabel.setText(text);
                 textLabel.setForeground(recursos.Color.INK); // Slate-800
 
-                String imgPath = (value instanceof Perro) ? "imagenes/emojis/perro.png" : "imagenes/emojis/gato.png";
+                String imgPath = value.getImagen();
                 ImageIcon petIcon = ImageLoader.loadScaled(imgPath, 16, 16);
-                if (petIcon.getImage() != null && petIcon.getIconWidth() > 0) {
-                    iconLabel.setIcon(petIcon);
-                } else {
-                    iconLabel.setText(value instanceof Perro ? "🐕" : "🐈");
-                    iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
-                }
+                iconLabel.setIcon(petIcon);
             }
 
             cellPanel.add(iconLabel, BorderLayout.WEST);
             cellPanel.add(textLabel, BorderLayout.CENTER);
 
-            if (isSelected) {
+            boolean isItemSelected = isSelected && index != -1;
+            if (isItemSelected) {
                 cellPanel.setBackground(recursos.Color.PRIMARY); // Teal-600
                 textLabel.setForeground(recursos.Color.SURFACE);
                 iconLabel.setForeground(recursos.Color.SURFACE);
@@ -333,7 +346,7 @@ public class DialogoNuevoTurno extends JDialog {
         TipoTurnoButton btnConsulta = new TipoTurnoButton("Consulta", "imagenes/emojis/estetoscopio.png", "🩺", TipoTurno.CONSULTA_GENERAL);
         TipoTurnoButton btnAnalisis = new TipoTurnoButton("Análisis", "imagenes/emojis/laboratorio.png", "🔬", TipoTurno.ANALISIS);
         TipoTurnoButton btnCirugia = new TipoTurnoButton("Cirugía", "imagenes/emojis/salud.png", "⚕️", TipoTurno.CIRUGIA);
-        TipoTurnoButton btnSeguimiento = new TipoTurnoButton("Seguimiento", "imagenes/emojis/carpeta.png", "📋", TipoTurno.CONSULTA_GENERAL);
+        TipoTurnoButton btnSeguimiento = new TipoTurnoButton("Seguimiento", "imagenes/emojis/carpeta.png", "📋", TipoTurno.SEGUIMIENTO);
         TipoTurnoButton btnVacunacion = new TipoTurnoButton("Vacunación", "imagenes/emojis/pastilla.png", "💊", TipoTurno.VACUNACION);
         TipoTurnoButton btnEstetica = new TipoTurnoButton("Estética", "imagenes/emojis/manito.png", "✂️", TipoTurno.BANIO);
 
@@ -438,6 +451,22 @@ public class DialogoNuevoTurno extends JDialog {
         campoFecha.setOpaque(false);
         campoFecha.setFont(CargadorFuentes.cargar(12f));
         campoFecha.setForeground(new Color(30, 41, 59));
+        campoFecha.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                actualizarSlotsDisponibles();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                actualizarSlotsDisponibles();
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                actualizarSlotsDisponibles();
+            }
+        });
         panelFechaWrapper.add(campoFecha, BorderLayout.CENTER);
 
         JLabel lblCalIcon = new JLabel("📅");
@@ -570,62 +599,6 @@ public class DialogoNuevoTurno extends JDialog {
 
         panelColDer.add(Box.createVerticalStrut(12));
 
-        // // 3. Card Recordatorio Automático
-        // JPanel panelRecWrapper = new JPanel(new BorderLayout()) {
-        //     @Override
-        //     protected void paintComponent(Graphics g) {
-        //         Graphics2D g2 = (Graphics2D) g.create();
-        //         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        //         g2.setColor(Color.WHITE);
-        //         g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
-        //         g2.setColor(new Color(226, 232, 240));
-        //         g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
-        //         g2.dispose();
-        //     }
-        // };
-        // panelRecWrapper.setOpaque(false);
-        // panelRecWrapper.setBorder(new EmptyBorder(12, 16, 12, 16));
-        // panelRecWrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
-        // JPanel panelRecIzq = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
-        // panelRecIzq.setOpaque(false);
-        // // Bell icon panel
-        // JPanel panelBell = new JPanel(new GridBagLayout()) {
-        //     @Override
-        //     protected void paintComponent(Graphics g) {
-        //         Graphics2D g2 = (Graphics2D) g.create();
-        //         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        //         g2.setColor(new Color(254, 243, 199)); // Amber-100
-        //         g2.fillOval(0, 0, getWidth(), getHeight());
-        //         g2.dispose();
-        //     }
-        // };
-        // panelBell.setPreferredSize(new Dimension(36, 36));
-        // panelBell.setOpaque(false);
-        // JLabel lblBell = new JLabel("🔔");
-        // lblBell.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
-        // panelBell.add(lblBell);
-        // panelRecIzq.add(panelBell);
-        // JPanel panelRecText = new JPanel();
-        // panelRecText.setOpaque(false);
-        // panelRecText.setLayout(new BoxLayout(panelRecText, BoxLayout.Y_AXIS));
-        // JLabel lblRecTit = new JLabel("Recordatorio automático");
-        // lblRecTit.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
-        // lblRecTit.setForeground(new Color(30, 41, 59));
-        // JLabel lblRecSub = new JLabel("Notificar al dueño 24 hs antes del turno");
-        // lblRecSub.setFont(CargadorFuentes.cargar(10f));
-        // lblRecSub.setForeground(new Color(148, 163, 184));
-        // panelRecText.add(lblRecTit);
-        // panelRecText.add(lblRecSub);
-        // panelRecIzq.add(panelRecText);
-        // panelRecWrapper.add(panelRecIzq, BorderLayout.WEST);
-        // switchRecordatorio = new SwitchButton();
-        // JPanel panelSwitchWrapper = new JPanel(new GridBagLayout());
-        // panelSwitchWrapper.setOpaque(false);
-        // panelSwitchWrapper.add(switchRecordatorio);
-        // panelRecWrapper.add(panelSwitchWrapper, BorderLayout.EAST);
-        // panelColDer.add(panelRecWrapper);
-        // panelColDer.add(Box.createVerticalStrut(12));
-        // 4. Card Resumen del Turno
         final JPanel panelResumen = new JPanel(new BorderLayout(15, 0)) {
             @Override
             protected void paintComponent(final Graphics g) {
@@ -665,11 +638,29 @@ public class DialogoNuevoTurno extends JDialog {
 
         // CTA button
         final JButton btnRegistrar = new JButton("Registrar turno") {
+            private boolean hovered = false;
+
+            {
+                addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
+                    public void mouseEntered(java.awt.event.MouseEvent e) {
+                        hovered = true;
+                        repaint();
+                    }
+
+                    @Override
+                    public void mouseExited(java.awt.event.MouseEvent e) {
+                        hovered = false;
+                        repaint();
+                    }
+                });
+            }
+
             @Override
             protected void paintComponent(final Graphics g) {
                 final Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(13, 148, 136)); // Teal-600
+                g2.setColor(hovered ? new Color(11, 108, 99) : new Color(13, 148, 136)); // Teal-700 / Teal-600
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                 g2.dispose();
                 super.paintComponent(g);
@@ -756,6 +747,8 @@ public class DialogoNuevoTurno extends JDialog {
                 break;
             }
         }
+
+        actualizarSlotsDisponibles();
     }
 
     private Color orangeGlow() {
@@ -841,6 +834,31 @@ public class DialogoNuevoTurno extends JDialog {
             return;
         }
 
+        // Validar colisiones
+        boolean colision = false;
+        for (Turno t : controlador.getVeterinaria().getListaTurnos()) {
+            if (t.getVeterinario().equals(vet)
+                    && t.getFecha().equals(fechaTxt)
+                    && t.getHora().equals(horaTxt)
+                    && !t.getEstado().equals(Turno.ESTADO_CANCELADO)) {
+                colision = true;
+                break;
+            }
+        }
+
+        if (colision) {
+            int opcion = JOptionPane.showConfirmDialog(this,
+                    "El Dr/a. " + vet.getApellido() + " ya tiene un turno agendado para el " + fechaTxt + " a las " + slotSeleccionado.getTimeText() + ".\n"
+                    + "¿Desea cambiar el horario del nuevo turno?",
+                    "Conflicto de Horario",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+            if (opcion == JOptionPane.YES_OPTION) {
+                // Volver a la pantalla para cambiar el horario
+                return;
+            }
+        }
+
         turnoCreado = controlador.registrarTurno(fechaTxt, horaTxt, vet, animal, tipoSeleccionado, observaciones);
         if (turnoCreado != null) {
             if (!observaciones.isEmpty()) {
@@ -850,6 +868,36 @@ public class DialogoNuevoTurno extends JDialog {
             dispose();
         } else {
             lblError.setText("Error al registrar el turno.");
+        }
+    }
+
+    private void actualizarSlotsDisponibles() {
+        String fechaTxt = campoFecha.getText().trim();
+        Veterinario vet = controlador.getVeterinarioLogueado();
+        if (vet == null) {
+            return;
+        }
+
+        // Find all non-cancelled booked times for this doctor and date
+        java.util.Set<String> horasOcupadas = new java.util.HashSet<>();
+        for (Turno t : controlador.getVeterinaria().getListaTurnos()) {
+            if (t.getVeterinario().equals(vet)
+                    && t.getFecha().equals(fechaTxt)
+                    && !t.getEstado().equals(Turno.ESTADO_CANCELADO)) {
+                horasOcupadas.add(t.getHora());
+            }
+        }
+
+        for (TimeSlotButton btn : botonesHora) {
+            boolean ocupado = horasOcupadas.contains(btn.getModelTime());
+            btn.setEnabled(!ocupado);
+            if (ocupado && btn == slotSeleccionado) {
+                // Si estaba seleccionado y ahora está ocupado, deseleccionar
+                btn.setSeleccionado(false);
+                slotSeleccionado = null;
+                lblResumenHoraVal.setText("—");
+                lblResumenHoraVal.setForeground(new Color(148, 163, 184));
+            }
         }
     }
 
@@ -961,6 +1009,7 @@ public class DialogoNuevoTurno extends JDialog {
         private final String texto;
         private final Color dotColor;
         private boolean seleccionado = false;
+        private boolean hovered = false;
 
         public PrioridadButton(String texto, Color dotColor) {
             this.texto = texto;
@@ -975,16 +1024,14 @@ public class DialogoNuevoTurno extends JDialog {
             addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override
                 public void mouseEntered(java.awt.event.MouseEvent e) {
-                    if (!seleccionado) {
-                        repaint();
-                    }
+                    hovered = true;
+                    repaint();
                 }
 
                 @Override
                 public void mouseExited(java.awt.event.MouseEvent e) {
-                    if (!seleccionado) {
-                        repaint();
-                    }
+                    hovered = false;
+                    repaint();
                 }
             });
         }
@@ -1003,11 +1050,21 @@ public class DialogoNuevoTurno extends JDialog {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            Color bg = seleccionado ? new Color(241, 245, 249) : Color.WHITE;
+            Color bg;
+            if (seleccionado) {
+                bg = new Color(241, 245, 249);
+            } else {
+                bg = hovered ? new Color(248, 250, 252) : Color.WHITE;
+            }
             g2.setColor(bg);
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), getHeight(), getHeight());
 
-            Color border = seleccionado ? new Color(30, 41, 59) : new Color(226, 232, 240);
+            Color border;
+            if (seleccionado) {
+                border = new Color(30, 41, 59);
+            } else {
+                border = hovered ? new Color(148, 163, 184) : new Color(226, 232, 240);
+            }
             g2.setColor(border);
             g2.setStroke(new BasicStroke(seleccionado ? 1.5f : 1f));
             g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, getHeight(), getHeight());
@@ -1028,12 +1085,12 @@ public class DialogoNuevoTurno extends JDialog {
         }
     }
 
-    // Helper TimeSlotButton class
     private static class TimeSlotButton extends JButton {
 
         private final String timeText;
         private final String modelTime;
         private boolean seleccionado = false;
+        private boolean hovered = false;
 
         public TimeSlotButton(String timeText, String modelTime) {
             this.timeText = timeText;
@@ -1047,6 +1104,36 @@ public class DialogoNuevoTurno extends JDialog {
 
             setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
             setForeground(new Color(71, 85, 105));
+
+            addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent e) {
+                    if (isEnabled()) {
+                        hovered = true;
+                        repaint();
+                    }
+                }
+
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent e) {
+                    if (isEnabled()) {
+                        hovered = false;
+                        repaint();
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {
+            super.setEnabled(enabled);
+            if (!enabled) {
+                hovered = false;
+                setCursor(Cursor.getDefaultCursor());
+            } else {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            }
+            repaint();
         }
 
         public void setSeleccionado(boolean s) {
@@ -1068,11 +1155,27 @@ public class DialogoNuevoTurno extends JDialog {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            Color bg = seleccionado ? new Color(2, 132, 199) : new Color(248, 250, 252);
+            Color bg;
+            Color border;
+            Color textCol;
+
+            if (!isEnabled()) {
+                bg = new Color(241, 245, 249);
+                border = new Color(226, 232, 240);
+                textCol = new Color(148, 163, 184);
+            } else if (seleccionado) {
+                bg = new Color(2, 132, 199);
+                border = new Color(2, 132, 199);
+                textCol = Color.WHITE;
+            } else {
+                bg = hovered ? new Color(241, 245, 249) : new Color(248, 250, 252);
+                border = hovered ? new Color(148, 163, 184) : new Color(226, 232, 240);
+                textCol = getForeground();
+            }
+
             g2.setColor(bg);
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
 
-            Color border = seleccionado ? new Color(2, 132, 199) : new Color(226, 232, 240);
             g2.setColor(border);
             g2.setStroke(new BasicStroke(1));
             g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
@@ -1080,7 +1183,7 @@ public class DialogoNuevoTurno extends JDialog {
             FontMetrics fm = g2.getFontMetrics(getFont());
             int textX = (getWidth() - fm.stringWidth(timeText)) / 2;
             int textY = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
-            g2.setColor(getForeground());
+            g2.setColor(textCol);
             g2.drawString(timeText, textX, textY);
 
             g2.dispose();

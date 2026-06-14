@@ -50,15 +50,15 @@ public class DialogoRegistrarVacunacion extends JDialog {
     private void inicializarSemillaVacunas() {
         // Semilla de vacunas estándar para mostrar en el catálogo con descripciones atractivas
         Vacuna v1 = new Vacuna("VAC-001", "Antirrábica", 365);
-        v1.setSubtitulo("Nobivac Rabies");
+        v1.setCategoria("Nobivac Rabies");
         Vacuna v2 = new Vacuna("VAC-002", "Triple Felina", 365);
-        v2.setSubtitulo("Nobivac Tricat Trio");
+        v2.setCategoria("Nobivac Tricat Trio");
         Vacuna v3 = new Vacuna("VAC-003", "Parvovirus Canino", 365);
-        v3.setSubtitulo("Nobivac Parvo");
+        v3.setCategoria("Nobivac Parvo");
         Vacuna v4 = new Vacuna("VAC-004", "Quíntuple Canina", 365);
-        v4.setSubtitulo("Defensor 5");
+        v4.setCategoria("Defensor 5");
         Vacuna v5 = new Vacuna("VAC-005", "Leucemia Felina", 365);
-        v5.setSubtitulo("Nobivac FeLV");
+        v5.setCategoria("Nobivac FeLV");
 
         listaVacunasSemilla.add(v1);
         listaVacunasSemilla.add(v2);
@@ -90,15 +90,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         lblTitulo.setFont(CargadorFuentes.cargar(16f).deriveFont(Font.BOLD));
         lblTitulo.setForeground(Color.WHITE);
 
-        String raza = "Mixto";
-        switch (animal) {
-            case Perro perro ->
-                raza = perro.getRaza();
-            case Gato gato ->
-                raza = gato.getRaza();
-            default -> {
-            }
-        }
+        String raza = animal.getRaza();
         JLabel lblSub = new JLabel("Para: " + animal.getNombre() + " (" + raza + " · " + animal.getEspecie() + ")");
         lblSub.setFont(CargadorFuentes.cargar(12f));
         lblSub.setForeground(new Color(243, 232, 255));
@@ -233,7 +225,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
                     lblNombre.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
                     lblNombre.setForeground(isItemSelected ? Color.WHITE : recursos.Color.INK);
 
-                    JLabel lblSub = new JLabel(v.getSubtitulo().isEmpty() ? "Vacuna" : v.getSubtitulo());
+                    JLabel lblSub = new JLabel(v.getCategoria().isEmpty() ? "Vacuna" : v.getCategoria());
                     lblSub.setFont(CargadorFuentes.cargar(10f));
                     lblSub.setForeground(isItemSelected ? new Color(243, 232, 255) : recursos.Color.MUTED);
 
@@ -572,7 +564,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
                 for (Vacuna v : listaVacunasSemilla) {
                     if (v.getNombreMedicamento().toLowerCase().contains(query)
                             || v.getCodigoSenasa().toLowerCase().contains(query)
-                            || v.getSubtitulo().toLowerCase().contains(query)) {
+                            || v.getCategoria().toLowerCase().contains(query)) {
                         filtrado.add(v);
                     }
                 }
@@ -643,7 +635,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
 
         // Crear vacuna final con la vigencia ingresada
         Vacuna v = new Vacuna(sel.getCodigoSenasa(), sel.getNombreMedicamento(), vigencia);
-        v.setSubtitulo(sel.getSubtitulo());
+        v.setCategoria(sel.getCategoria());
 
         // Crear registro completo de vacunación
         RegistroVacunacion registro = new RegistroVacunacion(

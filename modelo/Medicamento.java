@@ -3,16 +3,16 @@ package modelo;
 public class Medicamento {
     private String codigoSenasa;
     private String nombreMedicamento;
-    private String subtitulo;
+    private String categoria;
 
     public Medicamento(String codigoSenasa, String nombreMedicamento) {
         this(codigoSenasa, nombreMedicamento, "");
     }
 
-    public Medicamento(String codigoSenasa, String nombreMedicamento, String subtitulo) {
+    public Medicamento(String codigoSenasa, String nombreMedicamento, String categoria) {
         this.codigoSenasa = codigoSenasa;
         this.nombreMedicamento = nombreMedicamento;
-        this.subtitulo = subtitulo;
+        this.categoria = categoria;
     }
 
     public String getCodigoSenasa() {
@@ -23,11 +23,11 @@ public class Medicamento {
         return nombreMedicamento;
     }
 
-    public String getSubtitulo() {
-        return subtitulo;
+    public String getCategoria() {
+        return categoria;
     }
 
-    public void setSubtitulo(String subtitulo) {
-        this.subtitulo = subtitulo;
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 }

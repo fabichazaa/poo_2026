@@ -114,24 +114,34 @@ abstract class Animal <<abstract>> {
     - responsable : Responsable
     - historiaClinica : HistoriaClinica {final}
     - enAdopcion : boolean
+    - activo : boolean
+    - peso : float
     --
-    + Animal(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, responsable: Responsable)
-    + Animal(nombre: String, fechaNacimiento: LocalDate, sexo: boolean)
+    + Animal(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable)
+    + Animal(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float)
     + getIdAnimal() : String
     + getNombre() : String
     + setNombre(nombre: String) : void
     + getFechaNacimiento() : LocalDate
     + setFechaNacimiento(fechaNacimiento: LocalDate) : void
-    + isSexo() : boolean
+    + getSexo() : boolean
+    + isActivo() : boolean
+    + setActivo(activo: boolean) : void
     + getResponsable() : Responsable
     + setResponsable(responsable: Responsable) : void
     + getHistorial() : HistoriaClinica
     + isEnAdopcion() : boolean
     + setEnAdopcion(enAdopcion: boolean) : void
+    + getPeso() : float
+    + setPeso(peso: float) : void
     + calcularEdad() : int
-    + getImagen() : String
+    + {abstract} getImagen() : String
+    + {abstract} getColorInicioHex() : String
+    + {abstract} getColorFinHex() : String
+    + {abstract} getCategoriaFiltro() : String
     + {abstract} getTipoAlimentacion() : TipoAlimentacion
     + {abstract} getEspecie() : String
+    + {abstract} getRaza() : String
     + toString() : String
 }
 
@@ -139,8 +149,8 @@ class Perro {
     - raza : String
     - necesitaPaseo : boolean
     --
-    + Perro(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, responsable: Responsable, raza: String)
-    + Perro(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, raza: String)
+    + Perro(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable, raza: String)
+    + Perro(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, raza: String)
     + getRaza() : String
     + setRaza(raza: String) : void
     + isNecesitaPaseo() : boolean
@@ -148,14 +158,17 @@ class Perro {
     + getTipoAlimentacion() : TipoAlimentacion
     + getEspecie() : String
     + getImagen() : String
+    + getColorInicioHex() : String
+    + getColorFinHex() : String
+    + getCategoriaFiltro() : String
 }
 
 class Gato {
     - raza : String
     - esEsterilizado : boolean
     --
-    + Gato(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, responsable: Responsable, raza: String)
-    + Gato(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, raza: String)
+    + Gato(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable, raza: String)
+    + Gato(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, raza: String)
     + getRaza() : String
     + setRaza(raza: String) : void
     + isEsEsterilizado() : boolean
@@ -163,6 +176,63 @@ class Gato {
     + getTipoAlimentacion() : TipoAlimentacion
     + getEspecie() : String
     + getImagen() : String
+    + getColorInicioHex() : String
+    + getColorFinHex() : String
+    + getCategoriaFiltro() : String
+}
+
+class Conejo {
+    - raza : String
+    - esEsterilizado : boolean
+    --
+    + Conejo(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable, raza: String)
+    + Conejo(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, raza: String)
+    + getRaza() : String
+    + setRaza(raza: String) : void
+    + isEsEsterilizado() : boolean
+    + setEsEsterilizado(esEsterilizado: boolean) : void
+    + getTipoAlimentacion() : TipoAlimentacion
+    + getEspecie() : String
+    + getImagen() : String
+    + getColorInicioHex() : String
+    + getColorFinHex() : String
+    + getCategoriaFiltro() : String
+}
+
+class Loro {
+    - raza : String
+    - necesitaPaseo : boolean
+    --
+    + Loro(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable, raza: String)
+    + Loro(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, raza: String)
+    + getRaza() : String
+    + setRaza(raza: String) : void
+    + isNecesitaPaseo() : boolean
+    + setNecesitaPaseo(necesitaPaseo: boolean) : void
+    + getTipoAlimentacion() : TipoAlimentacion
+    + getEspecie() : String
+    + getImagen() : String
+    + getColorInicioHex() : String
+    + getColorFinHex() : String
+    + getCategoriaFiltro() : String
+}
+
+class Tortuga {
+    - raza : String
+    - necesitaPaseo : boolean
+    --
+    + Tortuga(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable, raza: String)
+    + Tortuga(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, raza: String)
+    + getRaza() : String
+    + setRaza(raza: String) : void
+    + isNecesitaPaseo() : boolean
+    + setNecesitaPaseo(necesitaPaseo: boolean) : void
+    + getTipoAlimentacion() : TipoAlimentacion
+    + getEspecie() : String
+    + getImagen() : String
+    + getColorInicioHex() : String
+    + getColorFinHex() : String
+    + getCategoriaFiltro() : String
 }
 
 ' ============================================================
@@ -183,14 +253,14 @@ class HistoriaClinica {
 class Medicamento {
     - codigoSenasa : String
     - nombreMedicamento : String
-    - subtitulo : String
+    - categoria : String
     --
     + Medicamento(codigoSenasa: String, nombreMedicamento: String)
-    + Medicamento(codigoSenasa: String, nombreMedicamento: String, subtitulo: String)
+    + Medicamento(codigoSenasa: String, nombreMedicamento: String, categoria: String)
     + getCodigoSenasa() : String
     + getNombreMedicamento() : String
-    + getSubtitulo() : String
-    + setSubtitulo(subtitulo: String) : void
+    + getCategoria() : String
+    + setCategoria(categoria: String) : void
 }
 
 class Prescripcion {
@@ -267,7 +337,6 @@ class Turno {
     + cancelarTurno() : void
     + esPendiente() : boolean
     + estaCompletado() : boolean
-    + getters/setters() : void
 }
 
 ' ============================================================
@@ -301,7 +370,6 @@ class Veterinaria {
     + obtenerTodosLosAnimales() : ArrayList<Animal>
     + obtenerAnimalesEnAdopcion() : ArrayList<Animal>
     + contarTurnosDelDia(fecha: String) : int
-    + getters() : void
 }
 
 ' ============================================================
@@ -331,6 +399,9 @@ Persona <|-- Responsable
 Persona <|-- Veterinario
 Animal <|-- Perro
 Animal <|-- Gato
+Animal <|-- Conejo
+Animal <|-- Loro
+Animal <|-- Tortuga
 Medicamento <|-- Vacuna
 
 ' ============================================================
@@ -344,8 +415,8 @@ Turno "0..*" --> "1" Veterinario : atendido por >
 Turno "0..*" --> "1" Animal : para >
 Turno "0..*" --> "1" TipoTurno : de tipo >
 Animal ..> TipoAlimentacion : clasifica según >
-Veterinaria "1" *-- "0..*" Veterinario : emplea >
-Veterinaria "1" *-- "0..*" Responsable : registra >
+Veterinaria "1" o-- "0..*" Veterinario : emplea >
+Veterinaria "1" o-- "0..*" Responsable : registra >
 Veterinaria "1" *-- "0..*" Turno : agenda >
 Veterinaria "1" o-- "0..*" Medicamento : cataloga >
 HistoriaClinica "1" *-- "0..*" Prescripcion : contiene >
@@ -353,7 +424,7 @@ Prescripcion "0..*" --> "1" Medicamento : receta >
 HistoriaClinica "1" *-- "0..*" RegistroVacunacion : muestra >
 RegistroVacunacion "0..*" --> "1" Vacuna : contiene >
 
-ComprobanteTurno ..> Turno : presenta >
+ComprobanteTurno "1" --> "1" Turno : presenta >
 ComprobanteTurno ..> Animal
 ComprobanteTurno ..> Veterinario
 ComprobanteTurno ..> Responsable

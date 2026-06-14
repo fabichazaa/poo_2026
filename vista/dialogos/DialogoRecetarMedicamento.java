@@ -73,15 +73,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         lblTitulo.setFont(CargadorFuentes.cargar(16f).deriveFont(Font.BOLD));
         lblTitulo.setForeground(Color.WHITE);
 
-        String raza = "Mixto";
-        switch (animal) {
-            case Perro perro ->
-                raza = perro.getRaza();
-            case Gato gato ->
-                raza = gato.getRaza();
-            default -> {
-            }
-        }
+        String raza = animal.getRaza();
         JLabel lblSub = new JLabel("Para: " + animal.getNombre() + " (" + raza + " · " + animal.getEspecie() + ")");
         lblSub.setFont(CargadorFuentes.cargar(12f));
         lblSub.setForeground(new Color(226, 240, 238));
@@ -256,7 +248,7 @@ public class DialogoRecetarMedicamento extends JDialog {
                     lblNombre.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
                     lblNombre.setForeground(isItemSelected ? Color.WHITE : recursos.Color.INK);
 
-                    JLabel lblSub = new JLabel(m.getSubtitulo().isEmpty() ? "Medicamento" : m.getSubtitulo());
+                    JLabel lblSub = new JLabel(m.getCategoria().isEmpty() ? "Medicamento" : m.getCategoria());
                     lblSub.setFont(CargadorFuentes.cargar(10f));
                     lblSub.setForeground(isItemSelected ? new Color(226, 240, 238) : recursos.Color.MUTED);
 
@@ -559,7 +551,7 @@ public class DialogoRecetarMedicamento extends JDialog {
                 for (Medicamento m : catalogo) {
                     if (m.getNombreMedicamento().toLowerCase().contains(query)
                             || m.getCodigoSenasa().toLowerCase().contains(query)
-                            || m.getSubtitulo().toLowerCase().contains(query)) {
+                            || m.getCategoria().toLowerCase().contains(query)) {
                         filtrado.add(m);
                     }
                 }

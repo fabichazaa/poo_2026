@@ -22,7 +22,6 @@ public class DialogoAtenderTurno extends JDialog {
     private final Turno turno;
     private final Animal animal;
 
-    private Point initialClick;
     private int timerSeconds = 38 * 60 + 14; // Inicia en 38:14 como en la imagen
     private Timer swingTimer;
 
@@ -155,15 +154,15 @@ public class DialogoAtenderTurno extends JDialog {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                
+
                 g2.setColor(recursos.Color.BG);
                 g2.fillRect(0, 0, getWidth(), getHeight());
-                
+
                 int headerHeight = headerPanel.getHeight() > 0 ? headerPanel.getHeight() : 70;
                 g2.setColor(recursos.Color.PRIMARY);
                 g2.fillRect(0, 0, getWidth(), headerHeight + 1);
                 g2.dispose();
-                
+
                 Graphics2D gBorder = (Graphics2D) g.create();
                 gBorder.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 gBorder.setColor(new Color(226, 232, 240));
@@ -195,7 +194,7 @@ public class DialogoAtenderTurno extends JDialog {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(animal instanceof Perro ? recursos.Color.AVATAR_DOG : recursos.Color.AVATAR_CAT);
+                g2.setColor(java.awt.Color.decode(animal.getColorInicioHex()));
                 g2.fillOval(0, 0, getWidth(), getHeight());
                 g2.dispose();
             }
@@ -205,15 +204,9 @@ public class DialogoAtenderTurno extends JDialog {
         panelAvatar.setMaximumSize(new Dimension(56, 56));
         panelAvatar.setOpaque(false);
 
-        String path = (animal instanceof Perro) ? "imagenes/emojis/perro.png" : "imagenes/emojis/gato.png";
+        String path = animal.getImagen();
         ImageIcon avatarIcon = ImageLoader.loadScaled(path, 56, 56);
-        JLabel lblAvatarEmoji = new JLabel();
-        if (avatarIcon.getImage() != null && avatarIcon.getIconWidth() > 0) {
-            lblAvatarEmoji.setIcon(avatarIcon);
-        } else {
-            lblAvatarEmoji.setText(animal instanceof Perro ? "🐕" : "🐈");
-            lblAvatarEmoji.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
-        }
+        JLabel lblAvatarEmoji = new JLabel(avatarIcon);
         lblAvatarEmoji.setHorizontalAlignment(SwingConstants.CENTER);
         panelAvatar.add(lblAvatarEmoji);
 
@@ -232,16 +225,8 @@ public class DialogoAtenderTurno extends JDialog {
 
         panelNombreTag.add(lblNombrePac);
 
-        String raza = "Mixto";
-        switch (animal) {
-            case Perro perro ->
-                raza = perro.getRaza();
-            case Gato gato ->
-                raza = gato.getRaza();
-            default -> {
-            }
-        }
-        JLabel lblRazaEdad = new JLabel(raza + " · " + animal.calcularEdad() + " años · 28 kg");
+        String raza = animal.getRaza();
+        JLabel lblRazaEdad = new JLabel(raza + " · " + animal.calcularEdad() + " años · " + animal.getPeso() + " kg");
         lblRazaEdad.setFont(CargadorFuentes.cargar(12f));
         lblRazaEdad.setForeground(recursos.Color.MUTED);
         lblRazaEdad.setBorder(new EmptyBorder(4, 0, 0, 0));
@@ -680,6 +665,25 @@ public class DialogoAtenderTurno extends JDialog {
                 new EmptyBorder(10, 16, 10, 16)
         ));
         btnGuardarBorrador.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnGuardarBorrador.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnGuardarBorrador.setBackground(new Color(241, 245, 249));
+                btnGuardarBorrador.setBorder(BorderFactory.createCompoundBorder(
+                        new LineBorder(new Color(148, 163, 184), 1, true),
+                        new EmptyBorder(10, 16, 10, 16)
+                ));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnGuardarBorrador.setBackground(Color.WHITE);
+                btnGuardarBorrador.setBorder(BorderFactory.createCompoundBorder(
+                        new LineBorder(new Color(226, 232, 240), 1, true),
+                        new EmptyBorder(10, 16, 10, 16)
+                ));
+            }
+        });
         btnGuardarBorrador.addActionListener(e -> guardarBorrador(true));
 
         JButton btnCompletar = new JButton("Completar Turno") {
@@ -974,17 +978,6 @@ public class DialogoAtenderTurno extends JDialog {
         if (tipo == null) {
             return recursos.Color.PRIMARY;
         }
-        return switch (tipo) {
-            case CIRUGIA ->
-                recursos.Color.CAT_CIRUGIA;
-            case CONSULTA_GENERAL ->
-                recursos.Color.CAT_CONSULTA;
-            case ANALISIS ->
-                recursos.Color.CAT_ANALISIS;
-            case VACUNACION ->
-                recursos.Color.CAT_VACUNA;
-            default ->
-                recursos.Color.CAT_CONTROL;
-        };
+        return (Color) tipo.getAccentColor();
     }
 }

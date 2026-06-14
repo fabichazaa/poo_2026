@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 public final class ImageLoader {
 
     private static final Map<String, ImageIcon> cache = new ConcurrentHashMap<>();
+    private static final Map<String, ImageIcon> scaledCache = new ConcurrentHashMap<>();
 
     private ImageLoader() {
         // Constructor privado para evitar instanciación
@@ -63,7 +64,7 @@ public final class ImageLoader {
      */
     public static ImageIcon loadScaled(String path, int width, int height) {
         String key = path + "_" + width + "x" + height;
-        return cache.computeIfAbsent(key, k -> {
+        return scaledCache.computeIfAbsent(key, k -> {
             ImageIcon original = load(path);
             if (original.getImage() == null || original.getIconWidth() <= 0) {
                 return original;
