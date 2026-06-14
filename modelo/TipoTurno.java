@@ -6,7 +6,7 @@ public enum TipoTurno {
     CIRUGIA("Cirugía", 60, "imagenes/emojis/salud.png", "⚕️"),
     BANIO("Baño", 30, "imagenes/emojis/jabon.png", "🧼"),
     ANALISIS("Análisis", 20, "imagenes/emojis/laboratorio.png", "🔬"),
-    SEGUIMIENTO("Seguimiento", 20, "imagenes/emojis/anotar.png", "📝");
+    SEGUIMIENTO("Seguimiento", 15, "imagenes/emojis/anotar.png", "📝");
 
     private final String descripcion;
     private final int duracionMinutos;
@@ -35,5 +35,52 @@ public enum TipoTurno {
 
     public String getEmojiRespaldo() {
         return emojiRespaldo;
+    }
+
+    public java.awt.Color getAccentColor() {
+        return switch (this) {
+            case CIRUGIA ->
+                recursos.Color.CAT_CIRUGIA;
+            case CONSULTA_GENERAL ->
+                recursos.Color.CAT_CONSULTA;
+            case ANALISIS ->
+                recursos.Color.CAT_ANALISIS;
+            case VACUNACION ->
+                recursos.Color.CAT_VACUNA;
+            case SEGUIMIENTO ->
+                recursos.Color.CAT_CONTROL;
+            default ->
+                recursos.Color.CAT_CONTROL;
+        };
+    }
+
+    public java.awt.Color getBadgeBgColor() {
+        return switch (this) {
+            case CIRUGIA ->
+                recursos.Color.RED_LIGHT;
+            case CONSULTA_GENERAL ->
+                recursos.Color.BLUE_LIGHT;
+            case ANALISIS ->
+                recursos.Color.PURPLE_LIGHT;
+            case SEGUIMIENTO ->
+                recursos.Color.ORANGE_LIGHT;
+            default ->
+                recursos.Color.SUCCESS_LIGHT;
+        };
+    }
+
+    public java.awt.Color getBadgeFgColor() {
+        return switch (this) {
+            case CIRUGIA ->
+                recursos.Color.ERROR;
+            case CONSULTA_GENERAL ->
+                recursos.Color.BLUE_DARK;
+            case ANALISIS ->
+                recursos.Color.PURPLE_DARK;
+            case SEGUIMIENTO ->
+                recursos.Color.ORANGE_DARK;
+            default ->
+                recursos.Color.SUCCESS;
+        };
     }
 }
