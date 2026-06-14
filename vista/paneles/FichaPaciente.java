@@ -9,7 +9,6 @@ import javax.swing.border.EmptyBorder;
 import modelo.Animal;
 import modelo.Responsable;
 import modelo.Turno;
-import vista.EstiloPaleta;
 import modelo.TipoTurno;
 
 public class FichaPaciente extends JPanel {
@@ -24,7 +23,7 @@ public class FichaPaciente extends JPanel {
         this.controlador = ControladorVeterinaria.getInstancia();
 
         setLayout(new BorderLayout(0, 15)); // flex-direction: column; column-gap: 0px; row-gap: 15px
-        setBackground(EstiloPaleta.FONDO_GRIS);
+        setBackground(recursos.Color.BG);
         setBorder(new EmptyBorder(15, 25, 15, 25)); // margin
 
         initHeader();
@@ -52,9 +51,9 @@ public class FichaPaciente extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // smoothe edges (supposedly)
-                g2.setColor(hover ? new Color(226, 232, 240) : Color.WHITE);
+                g2.setColor(hover ? recursos.Color.BORDER : Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16); // dimensions and border-radius
-                g2.setColor(EstiloPaleta.BORDE_TARJETA);
+                g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16); // border
                 g2.dispose(); // ???
                 super.paintComponent(g);
@@ -62,7 +61,7 @@ public class FichaPaciente extends JPanel {
         };
 
         btnVolver.setFont(new Font("Segoe UI", Font.BOLD, 26));
-        btnVolver.setForeground(EstiloPaleta.TEXTO_OSCURO);
+        btnVolver.setForeground(recursos.Color.INK);
         btnVolver.setPreferredSize(new Dimension(42, 42));
         btnVolver.setBorder(new EmptyBorder(0, 0, 4, 0));
         btnVolver.addActionListener(e -> accionVolver.run()); // goes back
@@ -105,7 +104,7 @@ public class FichaPaciente extends JPanel {
                 g2.fillRect(0, 0, getWidth(), 8); 
                 
                 g2.setClip(null);
-                g2.setColor(EstiloPaleta.BORDE_TARJETA);
+                g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
                 g2.dispose();
             }
@@ -162,7 +161,7 @@ public class FichaPaciente extends JPanel {
 
         JLabel lblNombre = new JLabel(animal.getNombre(), SwingConstants.CENTER);
         lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lblNombre.setForeground(EstiloPaleta.TEXTO_OSCURO);
+        lblNombre.setForeground(recursos.Color.INK);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblRaza = new JLabel(animal.getEspecie() + " · " + animal.getStringSexo(), SwingConstants.CENTER);
@@ -207,7 +206,7 @@ public class FichaPaciente extends JPanel {
                 g2.fillRect(0, 0, getWidth(), 8); 
                 
                 g2.setClip(null);
-                g2.setColor(EstiloPaleta.BORDE_TARJETA);
+                g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
                 g2.dispose();
             }
@@ -222,7 +221,7 @@ public class FichaPaciente extends JPanel {
 
         JLabel lblTagDueno = new JLabel("DUEÑO");
         lblTagDueno.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        lblTagDueno.setForeground(EstiloPaleta.TEXTO_GRIS_BASE);
+        lblTagDueno.setForeground(recursos.Color.CAT_INACTIVO);
         cardDueno.add(lblTagDueno, BorderLayout.NORTH);
 
         Responsable responsable = animal.getResponsable();
@@ -263,7 +262,7 @@ public class FichaPaciente extends JPanel {
 
             JLabel lblNombreDueno = new JLabel(responsable.getNombre() + " " + responsable.getApellido());
             lblNombreDueno.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-            lblNombreDueno.setForeground(EstiloPaleta.TEXTO_OSCURO);
+            lblNombreDueno.setForeground(recursos.Color.INK);
             
             panelUsuario.add(panelAvatarCuadrado);
             panelUsuario.add(lblNombreDueno);
@@ -277,7 +276,7 @@ public class FichaPaciente extends JPanel {
             JLabel lblIconoCel = new JLabel(cargarIconoHD("imagenes/emojis/celular.png", 16, 16));
             JLabel lblTextoCel = new JLabel(responsable.getCelular());
             lblTextoCel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-            lblTextoCel.setForeground(EstiloPaleta.TEXTO_OSCURO);
+            lblTextoCel.setForeground(recursos.Color.INK);
             filaCelular.add(lblIconoCel);
             filaCelular.add(lblTextoCel);
 
@@ -286,7 +285,7 @@ public class FichaPaciente extends JPanel {
             JLabel lblIconoUbi = new JLabel(cargarIconoHD("imagenes/emojis/ubicacion.png", 16, 16));
             JLabel lblTextoUbi = new JLabel(responsable.getDireccionCompleta());
             lblTextoUbi.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-            lblTextoUbi.setForeground(EstiloPaleta.TEXTO_OSCURO);
+            lblTextoUbi.setForeground(recursos.Color.INK);
             filaUbicacion.add(lblIconoUbi);
             filaUbicacion.add(lblTextoUbi);
 
@@ -301,7 +300,7 @@ public class FichaPaciente extends JPanel {
             
             JLabel lblMensajeVacio = new JLabel("<html><center>Este animalito no cuenta<br>con un responsable</center></html>");
             lblMensajeVacio.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-            lblMensajeVacio.setForeground(new Color(148, 163, 184)); 
+            lblMensajeVacio.setForeground(recursos.Color.CAT_INACTIVO); 
             lblMensajeVacio.setHorizontalAlignment(SwingConstants.CENTER);
             
             panelVacio.add(lblMensajeVacio);
@@ -333,7 +332,7 @@ public class FichaPaciente extends JPanel {
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 24, 24));
                 g2.fillRect(0, 0, getWidth(), 8);
                 g2.setClip(null);
-                g2.setColor(EstiloPaleta.BORDE_TARJETA);
+                g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
                 g2.dispose();
             }
@@ -381,7 +380,7 @@ public class FichaPaciente extends JPanel {
             panelHistorial.setBorder(new EmptyBorder(30, 10, 10, 10));
             JLabel lblVacio = new JLabel("No hay registros médicos completados.", SwingConstants.CENTER);
             lblVacio.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-            lblVacio.setForeground(EstiloPaleta.TEXTO_GRIS_BASE);
+            lblVacio.setForeground(recursos.Color.CAT_INACTIVO);
             lblVacio.setAlignmentX(Component.CENTER_ALIGNMENT);
             panelHistorial.add(lblVacio);
         } else {
@@ -402,7 +401,7 @@ public class FichaPaciente extends JPanel {
         panelVacunas.setBorder(new EmptyBorder(30, 10, 10, 10));
         JLabel lblVacunasVacio = new JLabel("No hay registro de vacunas aplicadas.", SwingConstants.CENTER);
         lblVacunasVacio.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-        lblVacunasVacio.setForeground(EstiloPaleta.TEXTO_GRIS_BASE);
+        lblVacunasVacio.setForeground(recursos.Color.CAT_INACTIVO);
         panelVacunas.add(lblVacunasVacio, BorderLayout.NORTH);
 
         // Pestaña 3: TURNOS
@@ -418,7 +417,7 @@ public class FichaPaciente extends JPanel {
             panelTurnosFuturos.setBorder(new EmptyBorder(30, 10, 10, 10));
             JLabel lblVacio = new JLabel("No hay turnos próximos agendados.", SwingConstants.CENTER);
             lblVacio.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-            lblVacio.setForeground(EstiloPaleta.TEXTO_GRIS_BASE);
+            lblVacio.setForeground(recursos.Color.CAT_INACTIVO);
             lblVacio.setAlignmentX(Component.CENTER_ALIGNMENT);
             panelTurnosFuturos.add(lblVacio);
         } else {
@@ -495,10 +494,10 @@ public class FichaPaciente extends JPanel {
                         
                     } else if (mouseEncima) {
                         setForeground(new Color(109, 40, 217)); 
-                        g2.setColor(new Color(241, 245, 249)); 
+                        g2.setColor(recursos.Color.BG); 
                         g2.fillRoundRect(0, 2, getWidth(), getHeight() - 4, 12, 12);
                     } else {
-                        setForeground(new Color(148, 163, 184)); 
+                        setForeground(recursos.Color.CAT_INACTIVO); 
                     }
                     
                     g2.dispose();
@@ -520,7 +519,7 @@ public class FichaPaciente extends JPanel {
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 
-                g2.setColor(EstiloPaleta.BORDE_TARJETA);
+                g2.setColor(recursos.Color.BORDER);
                 g2.setStroke(new BasicStroke(1f));
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
                 g2.dispose();
@@ -551,12 +550,12 @@ public class FichaPaciente extends JPanel {
         
         JLabel lblTitulo = new JLabel(tipo.getDescripcion());
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblTitulo.setForeground(EstiloPaleta.TEXTO_OSCURO);
+        lblTitulo.setForeground(recursos.Color.INK);
         
         String nombreVet = (t.getVeterinario() != null) ? "Dr. " + t.getVeterinario().getApellido() : "Sin asignar";
         JLabel lblMedico = new JLabel(nombreVet + "  •  " + t.getHora() + " hs");
         lblMedico.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblMedico.setForeground(EstiloPaleta.TEXTO_GRIS_BASE);
+        lblMedico.setForeground(recursos.Color.CAT_INACTIVO);
         
         panelTextosLabels.add(lblTitulo);
         panelTextosLabels.add(lblMedico);
@@ -569,14 +568,14 @@ public class FichaPaciente extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(241, 245, 249)); 
+                g2.setColor(recursos.Color.BG); 
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                 g2.dispose();
                 super.paintComponent(g);
             }
         };
         lblFecha.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        lblFecha.setForeground(EstiloPaleta.TEXTO_GRIS_BASE);
+        lblFecha.setForeground(recursos.Color.CAT_INACTIVO);
         lblFecha.setBorder(new EmptyBorder(4, 10, 4, 10)); 
 
         panelLineaSuperior.add(panelIzquierdoInfo, BorderLayout.WEST);
@@ -640,11 +639,11 @@ public class FichaPaciente extends JPanel {
 
         JLabel lblClave = new JLabel(clave);
         lblClave.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        lblClave.setForeground(EstiloPaleta.TEXTO_GRIS_BASE);
+        lblClave.setForeground(recursos.Color.CAT_INACTIVO);
         
         JLabel lblValor = new JLabel(valor, SwingConstants.RIGHT);
         lblValor.setFont(new Font("Segoe UI", Font.BOLD, 13)); 
-        lblValor.setForeground(EstiloPaleta.TEXTO_OSCURO); 
+        lblValor.setForeground(recursos.Color.INK); 
 
         fila.add(lblClave, BorderLayout.WEST);
         fila.add(lblValor, BorderLayout.EAST);
@@ -660,7 +659,7 @@ public class FichaPaciente extends JPanel {
             if (thumbBounds.isEmpty() || !scrollbar.isEnabled()) return;
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            Color colorFinal = isDragging ? new Color(100, 116, 139) : (isThumbRollover() ? new Color(148, 163, 184) : new Color(203, 213, 225));
+            Color colorFinal = isDragging ? new Color(100, 116, 139) : (isThumbRollover() ? recursos.Color.CAT_INACTIVO : new Color(203, 213, 225));
             g2.setColor(colorFinal);
             g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2, thumbBounds.width - 4, thumbBounds.height - 4, 8, 8);
             g2.dispose();

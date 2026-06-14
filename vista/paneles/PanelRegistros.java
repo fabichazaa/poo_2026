@@ -19,16 +19,15 @@ public final class PanelRegistros extends JPanel {
     private JScrollPane scrollGrilla;
     
     private final String PLACEHOLDER_BUSQUEDA = "Buscar por nombre del paciente...";
-    private final Color colorFondoGris = new Color(241, 245, 249);
     private final Color colorTealActivo = new Color(13, 148, 136);
-    private final Color colorTextoOscuro = new Color(30, 41, 59);
+    private final Color colorTextoOscuro = recursos.Color.INK;
     private final Color colorTextoGrisBase = new Color(100, 116, 139);
 
     public PanelRegistros(ControladorVeterinaria controlador) {
         this.controlador = controlador;
         
         setLayout(new BorderLayout(0, 15));
-        setBackground(colorFondoGris);
+        setBackground(recursos.Color.BG);
         setBorder(new EmptyBorder(15, 25, 15, 25));
 
         panelBarraSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 5));
@@ -60,7 +59,7 @@ public final class PanelRegistros extends JPanel {
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36);
                 
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(recursos.Color.BORDER);
                 g2.setStroke(new BasicStroke(1f));
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 36, 36);
                 
@@ -69,7 +68,7 @@ public final class PanelRegistros extends JPanel {
                     int yLupa = (getHeight() - iconoLupaModerno.getIconHeight()) / 2; 
                     g2.drawImage(iconoLupaModerno.getImage(), xLupa, yLupa, null);
                 } else {
-                    g2.setColor(new Color(148, 163, 184));
+                    g2.setColor(recursos.Color.CAT_INACTIVO);
                     g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
                     g2.drawString("🔍", 14, (getHeight() / 2) + 5);
                 }
@@ -80,7 +79,7 @@ public final class PanelRegistros extends JPanel {
         };
 
         txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtBuscar.setForeground(new Color(148, 163, 184)); 
+        txtBuscar.setForeground(recursos.Color.CAT_INACTIVO); 
         txtBuscar.setPreferredSize(new Dimension(380, 42));
         txtBuscar.setOpaque(false);
         txtBuscar.setBorder(new EmptyBorder(0, 44, 0, 15)); 
@@ -98,7 +97,7 @@ public final class PanelRegistros extends JPanel {
             public void focusLost(java.awt.event.FocusEvent e) {
                 if (txtBuscar.getText().trim().isEmpty()) {
                     txtBuscar.setText(PLACEHOLDER_BUSQUEDA);
-                    txtBuscar.setForeground(new Color(148, 163, 184)); 
+                    txtBuscar.setForeground(recursos.Color.CAT_INACTIVO); 
                 }
             }
         });
@@ -118,7 +117,7 @@ public final class PanelRegistros extends JPanel {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36);
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 36, 36);
                 g2.dispose();
             }
@@ -139,7 +138,7 @@ public final class PanelRegistros extends JPanel {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36);
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 36, 36);
                 g2.dispose();
             }
@@ -166,8 +165,8 @@ public final class PanelRegistros extends JPanel {
         scrollGrilla.setBorder(null);
         scrollGrilla.setOpaque(true);
         scrollGrilla.getViewport().setOpaque(true);
-        scrollGrilla.setBackground(colorFondoGris);
-        scrollGrilla.getViewport().setBackground(colorFondoGris);
+        scrollGrilla.setBackground(recursos.Color.BG);
+        scrollGrilla.getViewport().setBackground(recursos.Color.BG);
         scrollGrilla.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
         
         JScrollBar barraVertical = scrollGrilla.getVerticalScrollBar();
@@ -264,8 +263,8 @@ public final class PanelRegistros extends JPanel {
         int altoBarra = 6;
         int radioEsquina = 24; 
  
-        Color colorGrisTagFondo = new Color(241, 245, 249);       
-        Color colorGrisTagBorde = new Color(226, 232, 240);       
+        Color colorGrisTagFondo = recursos.Color.BG;       
+        Color colorGrisTagBorde = recursos.Color.BORDER;       
         Color colorGrisTagTexto = new Color(71, 85, 105);         
 
         JPanel card = new JPanel(new BorderLayout(0, 10)) {
@@ -287,7 +286,7 @@ public final class PanelRegistros extends JPanel {
                 g2.fillRect(0, 0, getWidth(), altoBarra);
                 
                 g2.setClip(null); 
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(recursos.Color.BORDER);
                 g2.setStroke(new BasicStroke(1f));
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radioEsquina, radioEsquina);
                 
@@ -431,9 +430,9 @@ public final class PanelRegistros extends JPanel {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
                 if (mouseEncima) {
-                    g2.setColor(new Color(226, 232, 240)); 
+                    g2.setColor(recursos.Color.BORDER); 
                 } else {
-                    g2.setColor(new Color(241, 245, 249)); 
+                    g2.setColor(recursos.Color.BG); 
                 }
                 
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16); 
@@ -481,7 +480,7 @@ public final class PanelRegistros extends JPanel {
     private void agregarFilaFicha(JPanel panel, String clave, String valor) {
         JLabel lblClave = new JLabel(clave);
         lblClave.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblClave.setForeground(new Color(148, 163, 184)); 
+        lblClave.setForeground(recursos.Color.CAT_INACTIVO); 
         
         JLabel lblValor = new JLabel(valor, SwingConstants.RIGHT);
         lblValor.setFont(new Font("Segoe UI", Font.PLAIN, 12)); 
@@ -507,7 +506,7 @@ public final class PanelRegistros extends JPanel {
             if (isDragging) {
                 colorFinal = new Color(100, 116, 139); 
             } else if (isThumbRollover()) {
-                colorFinal = new Color(148, 163, 184); 
+                colorFinal = recursos.Color.CAT_INACTIVO; 
             } else {
                 colorFinal = new Color(203, 213, 225); 
             }

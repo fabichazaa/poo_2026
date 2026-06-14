@@ -54,7 +54,7 @@ public class DialogoNuevoTurno extends JDialog {
         setResizable(false);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
-        getContentPane().setBackground(new Color(241, 245, 249)); // #F1F5F9
+        getContentPane().setBackground(recursos.Color.BG); // #F1F5F9
 
         // ----------------- HEADER PANEL -----------------
         JPanel panelHeader = new JPanel(new BorderLayout());
@@ -89,12 +89,12 @@ public class DialogoNuevoTurno extends JDialog {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(hovered ? new Color(241, 245, 249) : Color.WHITE);
+                g2.setColor(hovered ? recursos.Color.BG : Color.WHITE);
                 g2.fillOval(0, 0, getWidth(), getHeight());
-                g2.setColor(hovered ? new Color(148, 163, 184) : new Color(226, 232, 240));
+                g2.setColor(hovered ? recursos.Color.CAT_INACTIVO : recursos.Color.BORDER);
                 g2.drawOval(0, 0, getWidth() - 1, getHeight() - 1);
 
-                g2.setColor(new Color(30, 41, 59));
+                g2.setColor(recursos.Color.INK);
                 g2.setFont(new Font("Segoe UI", Font.BOLD, 14));
                 FontMetrics fm = g2.getFontMetrics();
                 String txt = "<";
@@ -145,7 +145,7 @@ public class DialogoNuevoTurno extends JDialog {
 
         JLabel lblTitulo = new JLabel("Nuevo Turno");
         lblTitulo.setFont(CargadorFuentes.cargar(18f).deriveFont(Font.BOLD));
-        lblTitulo.setForeground(new Color(30, 41, 59));
+        lblTitulo.setForeground(recursos.Color.INK);
 
         Veterinario vetLogueado = controlador.getVeterinarioLogueado();
         String vetStr = (vetLogueado != null)
@@ -164,7 +164,7 @@ public class DialogoNuevoTurno extends JDialog {
         // Header Derecho (* campos obligatorios)
         JLabel lblObligatorio = new JLabel("* campos obligatorios");
         lblObligatorio.setFont(CargadorFuentes.cargar(11f));
-        lblObligatorio.setForeground(new Color(148, 163, 184));
+        lblObligatorio.setForeground(recursos.Color.CAT_INACTIVO);
         lblObligatorio.setBorder(new EmptyBorder(10, 0, 0, 0));
         panelHeader.add(lblObligatorio, BorderLayout.EAST);
 
@@ -435,7 +435,7 @@ public class DialogoNuevoTurno extends JDialog {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(new Color(248, 250, 252));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
                 g2.dispose();
             }
@@ -450,7 +450,7 @@ public class DialogoNuevoTurno extends JDialog {
         campoFecha.setBorder(null);
         campoFecha.setOpaque(false);
         campoFecha.setFont(CargadorFuentes.cargar(12f));
-        campoFecha.setForeground(new Color(30, 41, 59));
+        campoFecha.setForeground(recursos.Color.INK);
         campoFecha.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
@@ -540,7 +540,7 @@ public class DialogoNuevoTurno extends JDialog {
         panelColDer.add(Box.createVerticalStrut(12));
 
         // 2. Card Notas / Motivo
-        CardPanel cardNotas = new CardPanel(new Color(148, 163, 184)); // Slate-400
+        CardPanel cardNotas = new CardPanel(recursos.Color.CAT_INACTIVO); // Slate-400
         cardNotas.setLayout(new BorderLayout(0, 8));
 
         JLabel lblNotasTit = new JLabel("NOTAS / MOTIVO DE CONSULTA");
@@ -550,20 +550,20 @@ public class DialogoNuevoTurno extends JDialog {
 
         campoNotas = new JTextArea(3, 20);
         campoNotas.setFont(CargadorFuentes.cargar(12f));
-        campoNotas.setForeground(new Color(30, 41, 59));
+        campoNotas.setForeground(recursos.Color.INK);
         campoNotas.setLineWrap(true);
         campoNotas.setWrapStyleWord(true);
 
         // Custom padding & border for JTextArea
         campoNotas.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
 
         // Character counter
         JLabel lblCounter = new JLabel("0 / 300");
         lblCounter.setFont(CargadorFuentes.cargar(10f));
-        lblCounter.setForeground(new Color(148, 163, 184));
+        lblCounter.setForeground(recursos.Color.CAT_INACTIVO);
         lblCounter.setHorizontalAlignment(SwingConstants.RIGHT);
 
         campoNotas.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -588,7 +588,7 @@ public class DialogoNuevoTurno extends JDialog {
                 if (len > 300) {
                     lblCounter.setForeground(new Color(220, 38, 38));
                 } else {
-                    lblCounter.setForeground(new Color(148, 163, 184));
+                    lblCounter.setForeground(recursos.Color.CAT_INACTIVO);
                 }
             }
         });
@@ -607,7 +607,7 @@ public class DialogoNuevoTurno extends JDialog {
                 g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
                 g2.dispose();
             }
@@ -622,7 +622,7 @@ public class DialogoNuevoTurno extends JDialog {
 
         final JLabel lblResumenTit = new JLabel("RESUMEN DEL TURNO");
         lblResumenTit.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblResumenTit.setForeground(new Color(148, 163, 184));
+        lblResumenTit.setForeground(recursos.Color.CAT_INACTIVO);
         panelResumenData.add(lblResumenTit);
         panelResumenData.add(Box.createVerticalStrut(6));
 
@@ -630,7 +630,7 @@ public class DialogoNuevoTurno extends JDialog {
         panelResumenData.add(crearFilaResumen("Paciente", lblResumenPacienteVal = new JLabel("Sin seleccionar")));
         panelResumenData.add(crearFilaResumen("Tipo", lblResumenTipoVal = new JLabel("Sin seleccionar")));
         lblResumenFechaVal = new JLabel(campoFecha.getText());
-        lblResumenFechaVal.setForeground(new Color(30, 41, 59));
+        lblResumenFechaVal.setForeground(recursos.Color.INK);
         panelResumenData.add(crearFilaResumen("Fecha", lblResumenFechaVal));
         panelResumenData.add(crearFilaResumen("Hora", lblResumenHoraVal = new JLabel("Sin seleccionar")));
 
@@ -705,10 +705,10 @@ public class DialogoNuevoTurno extends JDialog {
             Animal selected = (Animal) comboAnimales.getSelectedItem();
             if (selected == null) {
                 lblResumenPacienteVal.setText("Sin seleccionar");
-                lblResumenPacienteVal.setForeground(new Color(148, 163, 184));
+                lblResumenPacienteVal.setForeground(recursos.Color.CAT_INACTIVO);
             } else {
                 lblResumenPacienteVal.setText(selected.getNombre());
-                lblResumenPacienteVal.setForeground(new Color(30, 41, 59));
+                lblResumenPacienteVal.setForeground(recursos.Color.INK);
             }
         });
 
@@ -732,10 +732,10 @@ public class DialogoNuevoTurno extends JDialog {
                 String txt = campoFecha.getText().trim();
                 if (txt.isEmpty()) {
                     lblResumenFechaVal.setText("Sin seleccionar");
-                    lblResumenFechaVal.setForeground(new Color(148, 163, 184));
+                    lblResumenFechaVal.setForeground(recursos.Color.CAT_INACTIVO);
                 } else {
                     lblResumenFechaVal.setText(txt);
-                    lblResumenFechaVal.setForeground(new Color(30, 41, 59));
+                    lblResumenFechaVal.setForeground(recursos.Color.INK);
                 }
             }
         });
@@ -762,11 +762,11 @@ public class DialogoNuevoTurno extends JDialog {
 
         JLabel lblName = new JLabel(label);
         lblName.setFont(CargadorFuentes.cargar(11f));
-        lblName.setForeground(new Color(148, 163, 184));
+        lblName.setForeground(recursos.Color.CAT_INACTIVO);
         row.add(lblName, BorderLayout.WEST);
 
         lblValue.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblValue.setForeground(new Color(148, 163, 184)); // default is gray
+        lblValue.setForeground(recursos.Color.CAT_INACTIVO); // default is gray
         row.add(lblValue, BorderLayout.EAST);
 
         return row;
@@ -778,7 +778,7 @@ public class DialogoNuevoTurno extends JDialog {
         }
         tipoSeleccionado = selected.getTipo();
         lblResumenTipoVal.setText(selected.getTexto());
-        lblResumenTipoVal.setForeground(new Color(30, 41, 59));
+        lblResumenTipoVal.setForeground(recursos.Color.INK);
     }
 
     private void seleccionarPrioridad(PrioridadButton selected) {
@@ -794,7 +794,7 @@ public class DialogoNuevoTurno extends JDialog {
         }
         slotSeleccionado = selected;
         lblResumenHoraVal.setText(selected.getTimeText());
-        lblResumenHoraVal.setForeground(new Color(30, 41, 59));
+        lblResumenHoraVal.setForeground(recursos.Color.INK);
     }
 
     private void intentarGuardar() {
@@ -896,7 +896,7 @@ public class DialogoNuevoTurno extends JDialog {
                 btn.setSeleccionado(false);
                 slotSeleccionado = null;
                 lblResumenHoraVal.setText("—");
-                lblResumenHoraVal.setForeground(new Color(148, 163, 184));
+                lblResumenHoraVal.setForeground(recursos.Color.CAT_INACTIVO);
             }
         }
     }
@@ -908,7 +908,7 @@ public class DialogoNuevoTurno extends JDialog {
         private final TipoTurno tipo;
         private boolean seleccionado = false;
         private final Color colorNormalBg = new Color(248, 250, 252);
-        private final Color colorNormalBorder = new Color(226, 232, 240);
+        private final Color colorNormalBorder = recursos.Color.BORDER;
         private final Color colorSelectedBg = new Color(240, 253, 250);
         private final Color colorSelectedBorder = new Color(13, 148, 136);
 
@@ -949,7 +949,7 @@ public class DialogoNuevoTurno extends JDialog {
                 @Override
                 public void mouseEntered(java.awt.event.MouseEvent e) {
                     if (!seleccionado) {
-                        setBackground(new Color(241, 245, 249));
+                        setBackground(recursos.Color.BG);
                         repaint();
                     }
                 }
@@ -1050,7 +1050,7 @@ public class DialogoNuevoTurno extends JDialog {
 
             Color bg;
             if (seleccionado) {
-                bg = new Color(241, 245, 249);
+                bg = recursos.Color.BG;
             } else {
                 bg = hovered ? new Color(248, 250, 252) : Color.WHITE;
             }
@@ -1059,9 +1059,9 @@ public class DialogoNuevoTurno extends JDialog {
 
             Color border;
             if (seleccionado) {
-                border = new Color(30, 41, 59);
+                border = recursos.Color.INK;
             } else {
-                border = hovered ? new Color(148, 163, 184) : new Color(226, 232, 240);
+                border = hovered ? recursos.Color.CAT_INACTIVO : recursos.Color.BORDER;
             }
             g2.setColor(border);
             g2.setStroke(new BasicStroke(seleccionado ? 1.5f : 1f));
@@ -1158,16 +1158,16 @@ public class DialogoNuevoTurno extends JDialog {
             Color textCol;
 
             if (!isEnabled()) {
-                bg = new Color(241, 245, 249);
-                border = new Color(226, 232, 240);
-                textCol = new Color(148, 163, 184);
+                bg = recursos.Color.BG;
+                border = recursos.Color.BORDER;
+                textCol = recursos.Color.CAT_INACTIVO;
             } else if (seleccionado) {
                 bg = new Color(2, 132, 199);
                 border = new Color(2, 132, 199);
                 textCol = Color.WHITE;
             } else {
-                bg = hovered ? new Color(241, 245, 249) : new Color(248, 250, 252);
-                border = hovered ? new Color(148, 163, 184) : new Color(226, 232, 240);
+                bg = hovered ? recursos.Color.BG : new Color(248, 250, 252);
+                border = hovered ? recursos.Color.CAT_INACTIVO : recursos.Color.BORDER;
                 textCol = getForeground();
             }
 

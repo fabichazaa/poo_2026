@@ -35,7 +35,7 @@ public class DialogoLogin extends JDialog {
         } catch (Exception e) {
             System.out.println("No se pudo cargar el icono de la aplicación: " + e.getMessage());
         }
-        getContentPane().setBackground(new Color(241, 245, 249));
+        getContentPane().setBackground(recursos.Color.BG);
 
         JPanel panelCentral = new JPanel();
         panelCentral.setBackground(Color.WHITE);
@@ -60,7 +60,7 @@ public class DialogoLogin extends JDialog {
 
         JLabel lblPrompt = new JLabel("Ingresá tu matrícula:");
         lblPrompt.setFont(CargadorFuentes.cargar(13f));
-        lblPrompt.setForeground(new Color(30, 41, 59));
+        lblPrompt.setForeground(recursos.Color.INK);
         lblPrompt.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelCentral.add(lblPrompt);
 

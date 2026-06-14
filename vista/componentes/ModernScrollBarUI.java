@@ -26,7 +26,7 @@ public class ModernScrollBarUI extends BasicScrollBarUI {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         Color colorFinal = isDragging ? new Color(100, 116, 139)
-                : (isThumbRollover() ? new Color(148, 163, 184) : new Color(203, 213, 225));
+                : (isThumbRollover() ? recursos.Color.CAT_INACTIVO : new Color(203, 213, 225));
 
         g2.setColor(colorFinal);
         g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2,

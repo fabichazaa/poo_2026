@@ -17,7 +17,7 @@ public class DialogoComprobante extends JDialog {
         setSize(640, 620);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
-        getContentPane().setBackground(new Color(241, 245, 249));
+        getContentPane().setBackground(recursos.Color.BG);
 
         JPanel panelHeader = new JPanel(new BorderLayout());
         panelHeader.setBackground(new Color(13, 148, 136));
@@ -44,7 +44,7 @@ public class DialogoComprobante extends JDialog {
         JScrollPane scroll = new JScrollPane(areaTexto);
         scroll.setBorder(BorderFactory.createCompoundBorder(
             new EmptyBorder(16, 24, 16, 24),
-            new LineBorder(new Color(226, 232, 240), 1, true)
+            new LineBorder(recursos.Color.BORDER, 1, true)
         ));
         scroll.getViewport().setBackground(Color.WHITE);
         add(scroll, BorderLayout.CENTER);

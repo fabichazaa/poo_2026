@@ -60,7 +60,7 @@ public class CardPanel extends JPanel {
 
         // Dibujar el borde sutil
         g2.setClip(null);
-        g2.setColor(new Color(226, 232, 240));
+        g2.setColor(recursos.Color.BORDER);
         g2.setStroke(new BasicStroke(1));
         g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 

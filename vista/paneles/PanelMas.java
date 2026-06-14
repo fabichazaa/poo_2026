@@ -43,12 +43,12 @@ public class PanelMas extends JPanel {
         };
         panelHeader.setBackground(Color.WHITE);
         panelHeader.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(226, 232, 240), 1, true),
+            new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(16, 22, 16, 22)
         ));
         JLabel lblTitulo = new JLabel("Configuración y Más");
         lblTitulo.setFont(CargadorFuentes.cargar(16f));
-        lblTitulo.setForeground(new Color(30, 41, 59));
+        lblTitulo.setForeground(recursos.Color.INK);
         panelHeader.add(lblTitulo, BorderLayout.WEST);
         add(panelHeader, BorderLayout.NORTH);
 
@@ -64,7 +64,7 @@ public class PanelMas extends JPanel {
 
         JScrollPane scroll = new JScrollPane(panelCuerpo);
         scroll.setBorder(null);
-        scroll.getViewport().setBackground(new Color(241, 245, 249));
+        scroll.getViewport().setBackground(recursos.Color.BG);
         add(scroll, BorderLayout.CENTER);
     }
 
@@ -72,7 +72,7 @@ public class PanelMas extends JPanel {
         JPanel card = new JPanel(new GridLayout(2, 3, 12, 12));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(226, 232, 240), 1, true),
+            new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(20, 22, 20, 22)
         ));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 180));
@@ -119,7 +119,7 @@ public class PanelMas extends JPanel {
         JPanel card = new JPanel(new BorderLayout(15, 0));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(226, 232, 240), 1, true),
+            new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(18, 22, 18, 22)
         ));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
@@ -129,7 +129,7 @@ public class PanelMas extends JPanel {
         panelTexto.setLayout(new BoxLayout(panelTexto, BoxLayout.Y_AXIS));
         JLabel lblTit = new JLabel("Exportar comprobante de atención");
         lblTit.setFont(CargadorFuentes.cargar(13f));
-        lblTit.setForeground(new Color(30, 41, 59));
+        lblTit.setForeground(recursos.Color.INK);
         lblTit.setAlignmentX(Component.LEFT_ALIGNMENT);
         JLabel lblDesc = new JLabel("Visualizá o guardá un comprobante a partir de un turno existente.");
         lblDesc.setFont(CargadorFuentes.cargar(11f));
@@ -169,7 +169,7 @@ public class PanelMas extends JPanel {
         JPanel card = new JPanel();
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(226, 232, 240), 1, true),
+            new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(18, 22, 18, 22)
         ));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -177,7 +177,7 @@ public class PanelMas extends JPanel {
 
         JLabel lblTit = new JLabel("Acerca de Happy Paws");
         lblTit.setFont(CargadorFuentes.cargar(14f));
-        lblTit.setForeground(new Color(30, 41, 59));
+        lblTit.setForeground(recursos.Color.INK);
         lblTit.setAlignmentX(Component.LEFT_ALIGNMENT);
         card.add(lblTit);
 

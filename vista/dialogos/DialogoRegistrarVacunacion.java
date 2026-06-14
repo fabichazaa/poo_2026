@@ -147,7 +147,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
                 
                 Graphics2D gBorder = (Graphics2D) g.create();
                 gBorder.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                gBorder.setColor(new Color(226, 232, 240));
+                gBorder.setColor(recursos.Color.BORDER);
                 gBorder.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
                 gBorder.dispose();
             }
@@ -178,7 +178,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         txtBuscarVacuna.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         txtBuscarVacuna.setPreferredSize(new Dimension(0, 38));
         txtBuscarVacuna.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
         txtBuscarVacuna.setFont(new Font("Segoe UI", Font.PLAIN, 12));
@@ -195,7 +195,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         comboVacuna.setFont(CargadorFuentes.cargar(12f));
         comboVacuna.setAlignmentX(Component.LEFT_ALIGNMENT);
         comboVacuna.setBackground(Color.WHITE);
-        comboVacuna.setBorder(new LineBorder(new Color(226, 232, 240), 1, true));
+        comboVacuna.setBorder(new LineBorder(recursos.Color.BORDER, 1, true));
 
         // Renderer personalizado con jeringa
         comboVacuna.setRenderer(new DefaultListCellRenderer() {
@@ -255,7 +255,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         lblDosis.setForeground(recursos.Color.MUTED);
         campoTipoDosis = new JTextField("Dosis anual");
         campoTipoDosis.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
         campoTipoDosis.setFont(CargadorFuentes.cargar(12f));
@@ -272,7 +272,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         lblVia.setForeground(recursos.Color.MUTED);
         campoVia = new JTextField("Subcutánea");
         campoVia.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
         campoVia.setFont(CargadorFuentes.cargar(12f));
@@ -298,7 +298,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         campoLote.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         campoLote.setPreferredSize(new Dimension(0, 38));
         campoLote.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
         campoLote.setFont(CargadorFuentes.cargar(12f));
@@ -327,7 +327,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
                 g2.dispose();
             }
@@ -357,7 +357,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         lblVig.setForeground(recursos.Color.MUTED);
         campoVigenciaDias = new JTextField("365");
         campoVigenciaDias.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
         campoVigenciaDias.setFont(CargadorFuentes.cargar(12f));
@@ -408,7 +408,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         areaObservaciones.setWrapStyleWord(true);
 
         JScrollPane scrollObs = new JScrollPane(areaObservaciones);
-        scrollObs.setBorder(new LineBorder(new Color(226, 232, 240), 1, true));
+        scrollObs.setBorder(new LineBorder(recursos.Color.BORDER, 1, true));
         scrollObs.getViewport().setBackground(Color.WHITE);
         scrollObs.setAlignmentX(Component.LEFT_ALIGNMENT);
         scrollObs.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
@@ -439,7 +439,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         btnCancelar.setFocusPainted(false);
         btnCancelar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnCancelar.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(10, 20, 10, 20)
         ));
         btnCancelar.addActionListener(e -> dispose());
@@ -667,7 +667,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
             if (getText().isEmpty() && !isFocusOwner()) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(148, 163, 184));
+                g2.setColor(recursos.Color.CAT_INACTIVO);
                 g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
                 Insets insets = getInsets();
                 FontMetrics fm = g2.getFontMetrics();
@@ -694,7 +694,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
             if (getText().isEmpty() && !isFocusOwner()) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(148, 163, 184));
+                g2.setColor(recursos.Color.CAT_INACTIVO);
                 g2.setFont(getFont().deriveFont(Font.ITALIC));
                 Insets insets = getInsets();
                 g2.drawString(placeholder, insets.left + 2, insets.top + g2.getFontMetrics().getAscent());

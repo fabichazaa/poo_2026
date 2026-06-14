@@ -130,7 +130,7 @@ public class DialogoRecetarMedicamento extends JDialog {
 
                 Graphics2D gBorder = (Graphics2D) g.create();
                 gBorder.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                gBorder.setColor(new Color(226, 232, 240));
+                gBorder.setColor(recursos.Color.BORDER);
                 gBorder.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
                 gBorder.dispose();
             }
@@ -201,7 +201,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         txtBuscarMed.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         txtBuscarMed.setPreferredSize(new Dimension(0, 38));
         txtBuscarMed.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
         txtBuscarMed.setFont(new Font("Segoe UI", Font.PLAIN, 12));
@@ -218,7 +218,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         comboMedicamento.setFont(CargadorFuentes.cargar(12f));
         comboMedicamento.setAlignmentX(Component.LEFT_ALIGNMENT);
         comboMedicamento.setBackground(Color.WHITE);
-        comboMedicamento.setBorder(new LineBorder(new Color(226, 232, 240), 1, true));
+        comboMedicamento.setBorder(new LineBorder(recursos.Color.BORDER, 1, true));
 
         // Renderer personalizado
         comboMedicamento.setRenderer(new DefaultListCellRenderer() {
@@ -280,7 +280,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         txtMedMagistral.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         txtMedMagistral.setPreferredSize(new Dimension(0, 38));
         txtMedMagistral.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
         txtMedMagistral.setFont(CargadorFuentes.cargar(12f));
@@ -309,7 +309,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         lblDosis.setForeground(recursos.Color.MUTED);
         campoDosis = new PlaceHolderTextField("Ej: 1 comprimido");
         campoDosis.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
         campoDosis.setFont(CargadorFuentes.cargar(12f));
@@ -326,7 +326,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         lblVia.setForeground(recursos.Color.MUTED);
         campoVia = new JTextField("Oral");
         campoVia.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
         campoVia.setFont(CargadorFuentes.cargar(12f));
@@ -354,7 +354,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         lblFrec.setForeground(recursos.Color.MUTED);
         campoFrecuencia = new JTextField("Cada 12hs");
         campoFrecuencia.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
         campoFrecuencia.setFont(CargadorFuentes.cargar(12f));
@@ -377,7 +377,7 @@ public class DialogoRecetarMedicamento extends JDialog {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
                 g2.dispose();
             }
@@ -407,7 +407,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         lblVig.setForeground(recursos.Color.MUTED);
         campoVigenciaDias = new JTextField("7");
         campoVigenciaDias.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
         campoVigenciaDias.setFont(CargadorFuentes.cargar(12f));
@@ -437,7 +437,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         areaIndicaciones.setWrapStyleWord(true);
 
         JScrollPane scrollInd = new JScrollPane(areaIndicaciones);
-        scrollInd.setBorder(new LineBorder(new Color(226, 232, 240), 1, true));
+        scrollInd.setBorder(new LineBorder(recursos.Color.BORDER, 1, true));
         scrollInd.getViewport().setBackground(Color.WHITE);
         scrollInd.setAlignmentX(Component.LEFT_ALIGNMENT);
         scrollInd.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
@@ -468,7 +468,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         btnCancelar.setFocusPainted(false);
         btnCancelar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnCancelar.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(10, 20, 10, 20)
         ));
         btnCancelar.addActionListener(e -> dispose());
@@ -683,7 +683,7 @@ public class DialogoRecetarMedicamento extends JDialog {
             if (getText().isEmpty() && !isFocusOwner()) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(148, 163, 184));
+                g2.setColor(recursos.Color.CAT_INACTIVO);
                 g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
                 Insets insets = getInsets();
                 FontMetrics fm = g2.getFontMetrics();
@@ -710,7 +710,7 @@ public class DialogoRecetarMedicamento extends JDialog {
             if (getText().isEmpty() && !isFocusOwner()) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(148, 163, 184));
+                g2.setColor(recursos.Color.CAT_INACTIVO);
                 g2.setFont(getFont().deriveFont(Font.ITALIC));
                 Insets insets = getInsets();
                 g2.drawString(placeholder, insets.left + 2, insets.top + g2.getFontMetrics().getAscent());

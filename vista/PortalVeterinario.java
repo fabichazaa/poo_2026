@@ -50,7 +50,7 @@ public class PortalVeterinario extends JFrame {
             System.out.println("No se pudo cargar el icono de la aplicación: " + e.getMessage());
         }
         // ===============================================
-        getContentPane().setBackground(new Color(241, 245, 249));
+        getContentPane().setBackground(recursos.Color.BG);
 
         // --- PANEL SUPERIOR: Encabezado con bienvenida y contadores ---
         JPanel panelSuperiorAgrupado = new JPanel(new BorderLayout(0, 10));
@@ -96,7 +96,7 @@ public class PortalVeterinario extends JFrame {
         JPanel panelMenuInferior = new JPanel(new GridLayout(1, 6, 5, 0));
         panelMenuInferior.setBackground(Color.WHITE);
         panelMenuInferior.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(226, 232, 240)),
+                BorderFactory.createMatteBorder(1, 0, 0, 0, recursos.Color.BORDER),
                 new EmptyBorder(8, 10, 8, 10)
         ));
 
@@ -163,7 +163,7 @@ public class PortalVeterinario extends JFrame {
         };
         cardUsuario.setBackground(Color.WHITE);
         cardUsuario.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true), new EmptyBorder(25, 20, 20, 20)
+                new LineBorder(recursos.Color.BORDER, 1, true), new EmptyBorder(25, 20, 20, 20)
         ));
 
         // Contenedor del avatar del doctor
@@ -243,7 +243,7 @@ public class PortalVeterinario extends JFrame {
 
         JLabel lblNombreUser = new JLabel(veterinarioLogueado.getNombre() + " " + veterinarioLogueado.getApellido(), SwingConstants.CENTER);
         lblNombreUser.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        lblNombreUser.setForeground(new Color(30, 41, 59));
+        lblNombreUser.setForeground(recursos.Color.INK);
         lblNombreUser.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblRolUser = new JLabel("Veterinario Activo", SwingConstants.CENTER);
@@ -255,14 +255,14 @@ public class PortalVeterinario extends JFrame {
         JPanel cardMatricula = new JPanel(new GridLayout(2, 1, 0, 2));
         cardMatricula.setBackground(new Color(248, 250, 252));
         cardMatricula.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(241, 245, 249), 1, true), new EmptyBorder(10, 15, 10, 15)
+                new LineBorder(recursos.Color.BG, 1, true), new EmptyBorder(10, 15, 10, 15)
         ));
         JLabel lblMatTxt = new JLabel("Matrícula", SwingConstants.CENTER);
         lblMatTxt.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        lblMatTxt.setForeground(new Color(148, 163, 184));
+        lblMatTxt.setForeground(recursos.Color.CAT_INACTIVO);
         JLabel lblMatNum = new JLabel(veterinarioLogueado.getMatricula(), SwingConstants.CENTER);
         lblMatNum.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        lblMatNum.setForeground(new Color(30, 41, 59));
+        lblMatNum.setForeground(recursos.Color.INK);
         cardMatricula.add(lblMatTxt);
         cardMatricula.add(lblMatNum);
 
@@ -305,14 +305,14 @@ public class PortalVeterinario extends JFrame {
         };
         cardTurnos.setBackground(Color.WHITE);
         cardTurnos.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true), new EmptyBorder(20, 15, 15, 15)
+                new LineBorder(recursos.Color.BORDER, 1, true), new EmptyBorder(20, 15, 15, 15)
         ));
 
         JPanel headerTurnosInterno = new JPanel(new BorderLayout());
         headerTurnosInterno.setOpaque(false);
         JLabel lblTituloTurnos = new JLabel("Mis Próximos Turnos");
         lblTituloTurnos.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        lblTituloTurnos.setForeground(new Color(30, 41, 59));
+        lblTituloTurnos.setForeground(recursos.Color.INK);
 
         JLabel lblTagHoy = new BadgeRedondeado("Hoy", new Color(243, 232, 255), new Color(124, 58, 237));
         lblTagHoy.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -373,12 +373,12 @@ public class PortalVeterinario extends JFrame {
         };
         cardAcciones.setBackground(Color.WHITE);
         cardAcciones.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true), new EmptyBorder(20, 15, 15, 15)
+                new LineBorder(recursos.Color.BORDER, 1, true), new EmptyBorder(20, 15, 15, 15)
         ));
 
         JLabel lblTituloAcciones = new JLabel("Acciones Rápidas");
         lblTituloAcciones.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        lblTituloAcciones.setForeground(new Color(30, 41, 59));
+        lblTituloAcciones.setForeground(recursos.Color.INK);
         cardAcciones.add(lblTituloAcciones, BorderLayout.NORTH);
 
         JPanel panelBotonesAccion = new JPanel();
@@ -432,7 +432,7 @@ public class PortalVeterinario extends JFrame {
         itemTurno.setMaximumSize(new Dimension(385, 62));
         itemTurno.setPreferredSize(new Dimension(385, 62));
         itemTurno.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(241, 245, 249), 1, true), new EmptyBorder(6, 12, 6, 12)
+                BorderFactory.createLineBorder(recursos.Color.BG, 1, true), new EmptyBorder(6, 12, 6, 12)
         ));
 
         // --- CAJA DE LA HORA OPTIMIZADA (COMPACTA) ---
@@ -451,7 +451,7 @@ public class PortalVeterinario extends JFrame {
                 g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
 
                 // Borde gris claro delgado
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(recursos.Color.BORDER);
                 g2.setStroke(new BasicStroke(1));
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
 
@@ -460,7 +460,7 @@ public class PortalVeterinario extends JFrame {
             }
         };
         lblHora.setFont(fuenteNormal);
-        lblHora.setForeground(new Color(30, 41, 59));
+        lblHora.setForeground(recursos.Color.INK);
         lblHora.setPreferredSize(new Dimension(65, 28));
 
         // Contenedor para centrar la tarjeta de la hora verticalmente
@@ -494,7 +494,7 @@ public class PortalVeterinario extends JFrame {
 
         JLabel lblSubDescripcion = new JLabel(t.getTipo().getDescripcion());
         lblSubDescripcion.setFont(fuenteNormal);
-        lblSubDescripcion.setForeground(new Color(148, 163, 184));
+        lblSubDescripcion.setForeground(recursos.Color.CAT_INACTIVO);
 
         panelLabelsInternos.add(lblPaciente);
         panelLabelsInternos.add(lblSubDescripcion);
@@ -534,7 +534,7 @@ public class PortalVeterinario extends JFrame {
         panelFila.setMaximumSize(new Dimension(320, 52));
         panelFila.setPreferredSize(new Dimension(320, 52));
         panelFila.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(241, 245, 249), 1, true), new EmptyBorder(6, 12, 6, 12)
+                BorderFactory.createLineBorder(recursos.Color.BG, 1, true), new EmptyBorder(6, 12, 6, 12)
         ));
 
         // --- ICONO DE LA ACCIÓN ---
@@ -600,7 +600,7 @@ public class PortalVeterinario extends JFrame {
         ));
         JLabel lblT = new JLabel(titulo, SwingConstants.CENTER);
         lblT.setFont(new Font("Segoe UI", Font.PLAIN, 10));
-        lblT.setForeground(new Color(148, 163, 184));
+        lblT.setForeground(recursos.Color.CAT_INACTIVO);
         JLabel lblV = new JLabel(valor, SwingConstants.CENTER);
         lblV.setFont(new Font("Segoe UI", Font.BOLD, 12));
         lblV.setForeground(new Color(15, 23, 42));
@@ -845,7 +845,7 @@ public class PortalVeterinario extends JFrame {
                 colorFinal = new Color(100, 116, 139);
             } else if (isThumbRollover()) {
                 // Si solo tiene el mouse encima (Hover): Gris Slate Intermedio (#94A3B8)
-                colorFinal = new Color(148, 163, 184);
+                colorFinal = recursos.Color.CAT_INACTIVO;
             } else {
                 // Estado base pasivo: Tu gris suave original (#CBD5E1)
                 colorFinal = new Color(203, 213, 225);

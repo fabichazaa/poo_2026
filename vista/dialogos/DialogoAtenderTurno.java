@@ -165,7 +165,7 @@ public class DialogoAtenderTurno extends JDialog {
 
                 Graphics2D gBorder = (Graphics2D) g.create();
                 gBorder.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                gBorder.setColor(new Color(226, 232, 240));
+                gBorder.setColor(recursos.Color.BORDER);
                 gBorder.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
                 gBorder.dispose();
             }
@@ -338,7 +338,7 @@ public class DialogoAtenderTurno extends JDialog {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(new Color(248, 250, 252));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
                 g2.dispose();
             }
@@ -439,7 +439,7 @@ public class DialogoAtenderTurno extends JDialog {
                 if (getText().isEmpty() && !isFocusOwner()) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g2.setColor(new Color(148, 163, 184));
+                    g2.setColor(recursos.Color.CAT_INACTIVO);
                     g2.setFont(getFont().deriveFont(Font.ITALIC));
                     Insets insets = getInsets();
                     g2.drawString("🔍 Filtrar aplicados en esta sesión...", insets.left, getHeight() / 2 + g2.getFontMetrics().getAscent() / 2 - 2);
@@ -449,7 +449,7 @@ public class DialogoAtenderTurno extends JDialog {
         };
         txtFiltrarAplicados.setMaximumSize(new Dimension(Integer.MAX_VALUE, 34));
         txtFiltrarAplicados.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(6, 12, 6, 12)
         ));
         txtFiltrarAplicados.setFont(new Font("Segoe UI", Font.PLAIN, 11));
@@ -540,7 +540,7 @@ public class DialogoAtenderTurno extends JDialog {
                 if (getText().isEmpty() && !isFocusOwner()) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g2.setColor(new Color(148, 163, 184));
+                    g2.setColor(recursos.Color.CAT_INACTIVO);
                     g2.setFont(getFont().deriveFont(Font.ITALIC));
                     Insets insets = getInsets();
                     g2.drawString("Describa el diagnóstico, hallazgos, recomendaciones y próximos pasos...", insets.left + 2, insets.top + g2.getFontMetrics().getAscent());
@@ -565,7 +565,7 @@ public class DialogoAtenderTurno extends JDialog {
         });
 
         JScrollPane scrollObs = new JScrollPane(areaObservaciones);
-        scrollObs.setBorder(new LineBorder(new Color(226, 232, 240), 1, true));
+        scrollObs.setBorder(new LineBorder(recursos.Color.BORDER, 1, true));
         scrollObs.getViewport().setBackground(Color.WHITE);
         scrollObs.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
         scrollObs.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -661,16 +661,16 @@ public class DialogoAtenderTurno extends JDialog {
         btnGuardarBorrador.setForeground(recursos.Color.INK);
         btnGuardarBorrador.setFocusPainted(false);
         btnGuardarBorrador.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(10, 16, 10, 16)
         ));
         btnGuardarBorrador.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnGuardarBorrador.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                btnGuardarBorrador.setBackground(new Color(241, 245, 249));
+                btnGuardarBorrador.setBackground(recursos.Color.BG);
                 btnGuardarBorrador.setBorder(BorderFactory.createCompoundBorder(
-                        new LineBorder(new Color(148, 163, 184), 1, true),
+                        new LineBorder(recursos.Color.CAT_INACTIVO, 1, true),
                         new EmptyBorder(10, 16, 10, 16)
                 ));
             }
@@ -679,7 +679,7 @@ public class DialogoAtenderTurno extends JDialog {
             public void mouseExited(MouseEvent e) {
                 btnGuardarBorrador.setBackground(Color.WHITE);
                 btnGuardarBorrador.setBorder(BorderFactory.createCompoundBorder(
-                        new LineBorder(new Color(226, 232, 240), 1, true),
+                        new LineBorder(recursos.Color.BORDER, 1, true),
                         new EmptyBorder(10, 16, 10, 16)
                 ));
             }
@@ -734,7 +734,7 @@ public class DialogoAtenderTurno extends JDialog {
         JButton btn = new JButton();
         btn.setLayout(new BorderLayout(10, 0));
         btn.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(14, 14, 14, 14)
         ));
         btn.setBackground(Color.WHITE);
@@ -772,7 +772,7 @@ public class DialogoAtenderTurno extends JDialog {
             public void mouseExited(MouseEvent e) {
                 btn.setBackground(Color.WHITE);
                 btn.setBorder(BorderFactory.createCompoundBorder(
-                        new LineBorder(new Color(226, 232, 240), 1, true),
+                        new LineBorder(recursos.Color.BORDER, 1, true),
                         new EmptyBorder(10, 14, 10, 14)
                 ));
             }
@@ -787,14 +787,14 @@ public class DialogoAtenderTurno extends JDialog {
         btn.setForeground(recursos.Color.MUTED);
         btn.setFocusPainted(false);
         btn.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(226, 232, 240), 1, true),
+                new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(4, 10, 4, 10)
         ));
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                btn.setBackground(new Color(241, 245, 249));
+                btn.setBackground(recursos.Color.BG);
                 btn.setForeground(recursos.Color.INK);
             }
 
@@ -898,7 +898,7 @@ public class DialogoAtenderTurno extends JDialog {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(new Color(248, 250, 252));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
-                g2.setColor(new Color(226, 232, 240));
+                g2.setColor(recursos.Color.BORDER);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
                 g2.dispose();
             }

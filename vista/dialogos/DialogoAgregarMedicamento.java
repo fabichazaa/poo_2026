@@ -37,7 +37,7 @@ public class DialogoAgregarMedicamento extends JDialog {
         setSize(520, 580);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
-        getContentPane().setBackground(new Color(241, 245, 249));
+        getContentPane().setBackground(recursos.Color.BG);
 
         JPanel panelCentral = new JPanel();
         panelCentral.setBackground(Color.WHITE);
@@ -47,7 +47,7 @@ public class DialogoAgregarMedicamento extends JDialog {
         // Título
         JLabel lblTitulo = new JLabel("Agregar medicamento al catálogo");
         lblTitulo.setFont(CargadorFuentes.cargar(16f));
-        lblTitulo.setForeground(new Color(30, 41, 59));
+        lblTitulo.setForeground(recursos.Color.INK);
         lblTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(lblTitulo);
 
