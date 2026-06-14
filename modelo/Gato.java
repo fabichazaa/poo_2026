@@ -49,11 +49,11 @@ public class Gato extends Animal {
         return "imagenes/emojis/gato.png";
     }
 
-    public String getColorInicioHex() {
+    public String getColorInicioHexActivo() {
         return "#22D3EE";
     }
 
-    public String getColorFinHex() {
+    public String getColorFinHexActivo() {
         return "#2563EB";
     }
 

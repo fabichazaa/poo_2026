@@ -50,11 +50,11 @@ public class Conejo extends Animal {
         return "imagenes/emojis/conejo.png";
     }
 
-    public String getColorInicioHex() {
+    public String getColorInicioHexActivo() {
         return "#F472B6";
     }
         
-    public String getColorFinHex() {
+    public String getColorFinHexActivo() {
         return "#DB2777";
     }
 

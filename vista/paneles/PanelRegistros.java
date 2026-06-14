@@ -295,8 +295,8 @@ public final class PanelRegistros extends JPanel {
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), radioEsquina, radioEsquina);
                 
-                Color colorInicio = a.isActivo() ? Color.decode(a.getColorInicioHex()) : colorGrisCabeceraInicio;
-                Color colorFin = a.isActivo() ? Color.decode(a.getColorFinHex()) : colorGrisCabeceraFin;
+                Color colorInicio = Color.decode(a.getColorInicioHex());
+                Color colorFin = Color.decode(a.getColorFinHex());
 
                 GradientPaint degradadoCabecera = new GradientPaint(0, 0, colorInicio, 0, getHeight(), colorFin);
                 g2.setPaint(degradadoCabecera);
@@ -326,8 +326,8 @@ public final class PanelRegistros extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                Color colorInicio = a.isActivo() ? Color.decode(a.getColorInicioHex()) : colorGrisCabeceraInicio;
-                Color colorFin = a.isActivo() ? Color.decode(a.getColorFinHex()) : colorGrisCabeceraFin;
+                Color colorInicio = Color.decode(a.getColorInicioHex());
+                Color colorFin = Color.decode(a.getColorFinHex());
 
                 GradientPaint degradadoEspecie = new GradientPaint(0, 0, colorInicio, 0, getHeight(), colorFin);
                 
@@ -463,15 +463,23 @@ public final class PanelRegistros extends JPanel {
         btnFicha.setForeground(new Color(71, 85, 105)); 
 
         // 🔥 LOGICA CORREGIDA: El listener se agrega sobre el objeto de manera normal y externa
+        // 🔥 LOGICA CORREGIDA: El listener se agrega sobre el objeto de manera normal y externa
         btnFicha.addActionListener(e -> {
             this.removeAll();
             
             FichaPaciente vistaPerfil = new FichaPaciente(a, () -> {
+                // 1. Limpiamos la pantalla sacando la FichaPaciente vieja
                 this.removeAll();
+                
+                // 2. Volvemos a armar la estructura original de la grilla
                 this.setLayout(new BorderLayout(0, 15));
-                this.add(panelBarraSuperior, BorderLayout.NORTH);
+                this.add(panelBarraSuperior, BorderLayout.NORTH); // Vuelven tus filtros impecables
                 this.add(scrollGrilla, BorderLayout.CENTER);
                 this.actualizar();
+                
+                // 🚀 LA CLAVE: Forzamos a Swing a redibujar el contenedor borrando los fantasmas de la ficha
+                this.revalidate();
+                this.repaint();
             });
             
             this.setLayout(new BorderLayout());

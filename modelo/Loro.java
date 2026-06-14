@@ -50,11 +50,11 @@ public class Loro extends Animal {
         return "imagenes/emojis/loro.png";
     }
 
-    public String getColorInicioHex() {
+    public String getColorInicioHexActivo() {
         return "#34D399";
     }
 
-    public String getColorFinHex() {
+    public String getColorFinHexActivo() {
         return "#059669";
     } 
 

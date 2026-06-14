@@ -49,11 +49,11 @@ public class Perro extends Animal {
         return "imagenes/emojis/perro.png";
     }
 
-    public String getColorInicioHex() {
+    public String getColorInicioHexActivo() {
         return "#FFB200";
     }
 
-    public String getColorFinHex() {
+    public String getColorFinHexActivo() {
         return "#FF7300";
     }
 

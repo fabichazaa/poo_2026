@@ -104,11 +104,25 @@ public abstract class Animal {
         return this.activo ? "Activo" : "Inactivo";
     }
 
+    public final String getColorInicioHex() {
+        if (!this.activo) {
+            return "#94a3b8";
+        }
+        return getColorInicioHexActivo();
+    }
+
+    public final String getColorFinHex() {
+        if (!this.activo) {
+            return "#64748b";
+        }
+        return getColorFinHexActivo();
+    }
+
     abstract public String getImagen();
 
-    abstract public String getColorInicioHex();
+    abstract public String getColorInicioHexActivo();
 
-    abstract public String getColorFinHex();
+    abstract public String getColorFinHexActivo();
 
     abstract public String getCategoriaFiltro();
     
