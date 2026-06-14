@@ -1,5 +1,9 @@
 package modelo;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 public class Turno {
 
     public static final String ESTADO_PENDIENTE = "Pendiente";
@@ -14,6 +18,10 @@ public class Turno {
     private String estado;
     private TipoTurno tipo;
     private String observaciones;
+
+    private transient LocalDate fechaParsed;
+    private transient LocalTime horaParsed;
+
 
     public Turno(int idTurno, String fecha, String hora, Veterinario veterinario, Animal animal, TipoTurno tipo, String observaciones) {
         this.idTurno = idTurno;
@@ -70,17 +78,43 @@ public class Turno {
         return fecha;
     }
 
+    public LocalDate getFechaParsed() {
+        if (fechaParsed == null && fecha != null) {
+            try {
+                fechaParsed = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } catch (Exception e) {
+                fechaParsed = LocalDate.MIN;
+            }
+        }
+        return fechaParsed;
+    }
+
     public void setFecha(String fecha) {
         this.fecha = fecha;
+        this.fechaParsed = null;
     }
 
     public String getHora() {
         return hora;
     }
 
+    public LocalTime getHoraParsed() {
+        if (horaParsed == null && hora != null) {
+            try {
+                horaParsed = LocalTime.parse(hora, DateTimeFormatter.ofPattern("HH:mm"));
+            } catch (Exception e) {
+                horaParsed = LocalTime.MIN;
+            }
+        }
+        return horaParsed;
+    }
+
     public void setHora(String hora) {
         this.hora = hora;
+        this.horaParsed = null;
     }
+
+
 
     public String getEstado() {
         return estado;

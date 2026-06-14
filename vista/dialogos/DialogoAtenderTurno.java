@@ -11,6 +11,10 @@ import javax.swing.*;
 import javax.swing.border.*;
 import modelo.*;
 import recursos.CargadorFuentes;
+import recursos.ImageLoader;
+import vista.componentes.CardPanel;
+import vista.componentes.ModernScrollBarUI;
+import vista.componentes.ScrollablePanel;
 
 public class DialogoAtenderTurno extends JDialog {
 
@@ -18,7 +22,6 @@ public class DialogoAtenderTurno extends JDialog {
     private final Turno turno;
     private final Animal animal;
 
-    private Point initialClick;
     private int timerSeconds = 38 * 60 + 14; // Inicia en 38:14 como en la imagen
     private Timer swingTimer;
 
@@ -70,38 +73,16 @@ public class DialogoAtenderTurno extends JDialog {
 
     private void construir() {
         setSize(580, 780);
-        setUndecorated(false);
+        setUndecorated(true);
+        setShape(new java.awt.geom.RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 24, 24));
         setResizable(false);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
 
-        // Panel principal de fondo con esquinas redondeadas simuladas
-        JPanel panelFondo = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g2.setColor(recursos.Color.BG);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
-                g2.dispose();
-            }
-        };
-        panelFondo.setOpaque(false);
-
         // ==========================================
         //  HEADER BANNER (Teal)
         // ==========================================
-        JPanel headerPanel = new JPanel(new BorderLayout(12, 0)) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(recursos.Color.PRIMARY);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight() + 20, 24, 24);
-                g2.dispose();
-            }
-        };
+        JPanel headerPanel = new JPanel(new BorderLayout(12, 0));
         headerPanel.setOpaque(false);
         headerPanel.setBorder(new EmptyBorder(16, 24, 16, 24));
 
@@ -133,10 +114,65 @@ public class DialogoAtenderTurno extends JDialog {
                 new EmptyBorder(6, 12, 6, 12)
         ));
 
+        JButton btnClose = new JButton() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                if (getModel().isRollover()) {
+                    g2.setColor(new Color(255, 255, 255, 40));
+                    g2.fillOval(0, 0, getWidth(), getHeight());
+                }
+                g2.setColor(Color.WHITE);
+                g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                int size = 12;
+                int x = (getWidth() - size) / 2;
+                int y = (getHeight() - size) / 2;
+                g2.drawLine(x, y, x + size, y + size);
+                g2.drawLine(x + size, y, x, y + size);
+                g2.dispose();
+            }
+        };
+        btnClose.setPreferredSize(new Dimension(28, 28));
+        btnClose.setOpaque(false);
+        btnClose.setContentAreaFilled(false);
+        btnClose.setBorderPainted(false);
+        btnClose.setFocusPainted(false);
+        btnClose.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnClose.addActionListener(e -> dispose());
+
         headerRightPanel.add(lblHeaderTimer);
+        headerRightPanel.add(btnClose);
 
         headerPanel.add(headerTextPanel, BorderLayout.CENTER);
         headerPanel.add(headerRightPanel, BorderLayout.EAST);
+
+        // Panel principal de fondo con esquinas redondeadas simuladas
+        JPanel panelFondo = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+                g2.setColor(recursos.Color.BG);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+
+                int headerHeight = headerPanel.getHeight() > 0 ? headerPanel.getHeight() : 70;
+                g2.setColor(recursos.Color.PRIMARY);
+                g2.fillRect(0, 0, getWidth(), headerHeight + 1);
+                g2.dispose();
+
+                Graphics2D gBorder = (Graphics2D) g.create();
+                gBorder.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                gBorder.setColor(new Color(226, 232, 240));
+                gBorder.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
+                gBorder.dispose();
+            }
+        };
+        panelFondo.setOpaque(true);
+        panelFondo.setBorder(new EmptyBorder(1, 1, 1, 1));
+
         panelFondo.add(headerPanel, BorderLayout.NORTH);
 
         // ==========================================
@@ -153,12 +189,12 @@ public class DialogoAtenderTurno extends JDialog {
         cardPaciente.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Avatar circular
-        JPanel panelAvatar = new JPanel(null) {
+        JPanel panelAvatar = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(animal instanceof Perro ? recursos.Color.AVATAR_DOG : recursos.Color.AVATAR_CAT);
+                g2.setColor(java.awt.Color.decode(animal.getColorInicioHex()));
                 g2.fillOval(0, 0, getWidth(), getHeight());
                 g2.dispose();
             }
@@ -166,15 +202,12 @@ public class DialogoAtenderTurno extends JDialog {
         panelAvatar.setPreferredSize(new Dimension(56, 56));
         panelAvatar.setMinimumSize(new Dimension(56, 56));
         panelAvatar.setMaximumSize(new Dimension(56, 56));
+        panelAvatar.setOpaque(false);
 
-        ImageIcon iconPerro = new ImageIcon("imagenes/emojis/perro.png");
-        Image iconPerroResized = iconPerro.getImage().getScaledInstance(56, 56, Image.SCALE_SMOOTH);
-        ImageIcon iconGato = new ImageIcon("imagenes/emojis/gato.png");
-        Image iconGatoResized = iconGato.getImage().getScaledInstance(56, 56, Image.SCALE_SMOOTH);
-
-        JLabel lblAvatarEmoji = new JLabel(animal instanceof Perro ? new ImageIcon(iconPerroResized) : new ImageIcon(iconGatoResized));
+        String path = animal.getImagen();
+        ImageIcon avatarIcon = ImageLoader.loadScaled(path, 56, 56);
+        JLabel lblAvatarEmoji = new JLabel(avatarIcon);
         lblAvatarEmoji.setHorizontalAlignment(SwingConstants.CENTER);
-        lblAvatarEmoji.setBounds(0, 0, 56, 56);
         panelAvatar.add(lblAvatarEmoji);
 
         // Info paciente
@@ -192,13 +225,8 @@ public class DialogoAtenderTurno extends JDialog {
 
         panelNombreTag.add(lblNombrePac);
 
-        String raza = "Mixto";
-        if (animal instanceof Perro) {
-            raza = ((Perro) animal).getRaza();
-        } else if (animal instanceof Gato) {
-            raza = ((Gato) animal).getRaza();
-        }
-        JLabel lblRazaEdad = new JLabel(raza + " · " + animal.calcularEdad() + " años · 28 kg");
+        String raza = animal.getRaza();
+        JLabel lblRazaEdad = new JLabel(raza + " · " + animal.calcularEdad() + " años · " + animal.getPeso() + " kg");
         lblRazaEdad.setFont(CargadorFuentes.cargar(12f));
         lblRazaEdad.setForeground(recursos.Color.MUTED);
         lblRazaEdad.setBorder(new EmptyBorder(4, 0, 0, 0));
@@ -226,9 +254,11 @@ public class DialogoAtenderTurno extends JDialog {
         gbc.insets = new Insets(3, 6, 3, 6);
 
         // Usar estetoscopio PNG local para el título
-        ImageIcon iconEstetoscopio = new ImageIcon("imagenes/emojis/estetoscopio.png");
-        Image imgEstetoscopio = iconEstetoscopio.getImage().getScaledInstance(14, 14, Image.SCALE_SMOOTH);
-        JLabel lblTurnoTitulo = new JLabel(turno.getTipo().getDescripcion().toUpperCase(), new ImageIcon(imgEstetoscopio), SwingConstants.LEFT);
+        ImageIcon iconEstetoscopio = ImageLoader.loadScaled("imagenes/emojis/estetoscopio.png", 14, 14);
+        JLabel lblTurnoTitulo = new JLabel(turno.getTipo().getDescripcion().toUpperCase(), SwingConstants.LEFT);
+        if (iconEstetoscopio.getImage() != null && iconEstetoscopio.getIconWidth() > 0) {
+            lblTurnoTitulo.setIcon(iconEstetoscopio);
+        }
         lblTurnoTitulo.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
         lblTurnoTitulo.setForeground(catColor);
         lblTurnoTitulo.setIconTextGap(6);
@@ -288,12 +318,15 @@ public class DialogoAtenderTurno extends JDialog {
         cardControl.setLayout(new BoxLayout(cardControl, BoxLayout.Y_AXIS));
 
         // Usar calendario PNG local para el título
-        ImageIcon iconCal = new ImageIcon("imagenes/emojis/calendario.png");
-        Image imgCal = iconCal.getImage().getScaledInstance(14, 14, Image.SCALE_SMOOTH);
-        JLabel lblControlTitle = new JLabel("PRÓXIMO CONTROL", new ImageIcon(imgCal), SwingConstants.LEFT);
+        ImageIcon iconCal = ImageLoader.loadScaled("imagenes/emojis/calendario.png", 14, 14);
+        JLabel lblControlTitle = new JLabel("PRÓXIMO CONTROL", SwingConstants.LEFT);
+        if (iconCal.getImage() != null && iconCal.getIconWidth() > 0) {
+            lblControlTitle.setIcon(iconCal);
+        }
         lblControlTitle.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
         lblControlTitle.setForeground(recursos.Color.CAT_SEGUIMIENTO);
         lblControlTitle.setIconTextGap(6);
+
         lblControlTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         cardControl.add(lblControlTitle);
         cardControl.add(Box.createVerticalStrut(4));
@@ -369,11 +402,15 @@ public class DialogoAtenderTurno extends JDialog {
         cardAcciones.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Icono estetoscopio PNG local para el título
-        JLabel lblAccionesTitle = new JLabel("Acciones Clínicas", new ImageIcon(imgEstetoscopio), SwingConstants.LEFT);
+        JLabel lblAccionesTitle = new JLabel("Acciones Clínicas", SwingConstants.LEFT);
+        if (iconEstetoscopio.getImage() != null && iconEstetoscopio.getIconWidth() > 0) {
+            lblAccionesTitle.setIcon(iconEstetoscopio);
+        }
         lblAccionesTitle.setFont(CargadorFuentes.cargar(13f).deriveFont(Font.BOLD));
         lblAccionesTitle.setForeground(recursos.Color.ACCENT_BLUE);
         lblAccionesTitle.setIconTextGap(6);
         lblAccionesTitle.setBorder(new EmptyBorder(8, 12, 0, 0));
+
         lblAccionesTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         cardAcciones.add(lblAccionesTitle);
         cardAcciones.add(Box.createVerticalStrut(12));
@@ -415,18 +452,22 @@ public class DialogoAtenderTurno extends JDialog {
                 new LineBorder(new Color(226, 232, 240), 1, true),
                 new EmptyBorder(6, 12, 6, 12)
         ));
-        txtFiltrarAplicados.setFont(CargadorFuentes.cargar(11f));
+        txtFiltrarAplicados.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+
         txtFiltrarAplicados.setForeground(recursos.Color.INK);
         txtFiltrarAplicados.setAlignmentX(Component.LEFT_ALIGNMENT);
         txtFiltrarAplicados.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 refrescarMedicamentos();
             }
 
+            @Override
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
                 refrescarMedicamentos();
             }
 
+            @Override
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
                 refrescarMedicamentos();
             }
@@ -544,14 +585,17 @@ public class DialogoAtenderTurno extends JDialog {
 
         // Listener de conteo
         areaObservaciones.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 update();
             }
 
+            @Override
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
                 update();
             }
 
+            @Override
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
                 update();
             }
@@ -621,20 +665,40 @@ public class DialogoAtenderTurno extends JDialog {
                 new EmptyBorder(10, 16, 10, 16)
         ));
         btnGuardarBorrador.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnGuardarBorrador.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnGuardarBorrador.setBackground(new Color(241, 245, 249));
+                btnGuardarBorrador.setBorder(BorderFactory.createCompoundBorder(
+                        new LineBorder(new Color(148, 163, 184), 1, true),
+                        new EmptyBorder(10, 16, 10, 16)
+                ));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnGuardarBorrador.setBackground(Color.WHITE);
+                btnGuardarBorrador.setBorder(BorderFactory.createCompoundBorder(
+                        new LineBorder(new Color(226, 232, 240), 1, true),
+                        new EmptyBorder(10, 16, 10, 16)
+                ));
+            }
+        });
         btnGuardarBorrador.addActionListener(e -> guardarBorrador(true));
 
-        JButton btnCompletar = new JButton("Completar Turno ") {
+        JButton btnCompletar = new JButton("Completar Turno") {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g2.setColor(recursos.Color.PRIMARY);
+                g2.setColor(getBackground());
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 g2.dispose();
                 super.paintComponent(g);
             }
         };
+        btnCompletar.setBackground(recursos.Color.PRIMARY);
         btnCompletar.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
         btnCompletar.setForeground(recursos.Color.WHITE);
         btnCompletar.setFocusPainted(false);
@@ -914,131 +978,6 @@ public class DialogoAtenderTurno extends JDialog {
         if (tipo == null) {
             return recursos.Color.PRIMARY;
         }
-        return switch (tipo) {
-            case CIRUGIA ->
-                recursos.Color.CAT_CIRUGIA;
-            case CONSULTA_GENERAL ->
-                recursos.Color.CAT_CONSULTA;
-            case ANALISIS ->
-                recursos.Color.CAT_ANALISIS;
-            case VACUNACION ->
-                recursos.Color.CAT_VACUNA;
-            default ->
-                recursos.Color.CAT_CONTROL;
-        };
-    }
-
-    // ==========================================
-    //  HELPER INNER CLASSES (Modern UI elements)
-    // ==========================================
-    private static class CardPanel extends JPanel {
-
-        private final Color topColor;
-        private final int radius = 16;
-        private final int topBarHeight = 6;
-
-        public CardPanel(Color topColor) {
-            this.topColor = topColor;
-            setOpaque(false);
-            setBackground(Color.WHITE);
-            setBorder(new EmptyBorder(16, 20, 16, 20));
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            // Draw white card body
-            g2.setColor(Color.WHITE);
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-
-            // Paint colored top bar
-            g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
-            g2.setColor(topColor);
-            g2.fillRect(0, 0, getWidth(), topBarHeight);
-
-            // Draw subtle card border
-            g2.setClip(null);
-            g2.setColor(new Color(226, 232, 240));
-            g2.setStroke(new BasicStroke(1));
-            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
-
-            g2.dispose();
-        }
-    }
-
-    private static class ModernScrollBarUI extends javax.swing.plaf.basic.BasicScrollBarUI {
-
-        @Override
-        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
-        }
-
-        @Override
-        protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
-            if (thumbBounds.isEmpty() || !scrollbar.isEnabled()) {
-                return;
-            }
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            Color colorFinal = isDragging ? new Color(100, 116, 139)
-                    : (isThumbRollover() ? new Color(148, 163, 184) : new Color(203, 213, 225));
-
-            g2.setColor(colorFinal);
-            g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2,
-                    thumbBounds.width - 4, thumbBounds.height - 4, 8, 8);
-            g2.dispose();
-        }
-
-        @Override
-        protected JButton createDecreaseButton(int orientation) {
-            return crearBotonInvisible();
-        }
-
-        @Override
-        protected JButton createIncreaseButton(int orientation) {
-            return crearBotonInvisible();
-        }
-
-        private JButton crearBotonInvisible() {
-            JButton btn = new JButton();
-            btn.setPreferredSize(new Dimension(0, 0));
-            btn.setMinimumSize(new Dimension(0, 0));
-            btn.setMaximumSize(new Dimension(0, 0));
-            return btn;
-        }
-    }
-
-    private static class ScrollablePanel extends JPanel implements Scrollable {
-
-        public ScrollablePanel(LayoutManager layout) {
-            super(layout);
-        }
-
-        @Override
-        public Dimension getPreferredScrollableViewportSize() {
-            return getPreferredSize();
-        }
-
-        @Override
-        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-            return 16;
-        }
-
-        @Override
-        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-            return 64;
-        }
-
-        @Override
-        public boolean getScrollableTracksViewportWidth() {
-            return true;
-        }
-
-        @Override
-        public boolean getScrollableTracksViewportHeight() {
-            return false;
-        }
+        return (Color) tipo.getAccentColor();
     }
 }

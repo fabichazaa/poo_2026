@@ -3,28 +3,18 @@ package modelo;
 import java.time.LocalDate;
 
 public class Loro extends Animal {
-    private String raza;
+
     private boolean necesitaPaseo;
 
     public Loro(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso,
-        Responsable responsable, String raza) {
-        super(nombre, fechaNacimiento, sexo, peso, responsable);
-        this.raza = raza;
+            Responsable responsable, String raza) {
+        super(nombre, fechaNacimiento, sexo, peso, responsable, raza);
         this.necesitaPaseo = true;
     }
 
     public Loro(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, String raza) {
-        super(nombre, fechaNacimiento, sexo, peso);
-        this.raza = raza;
+        super(nombre, fechaNacimiento, sexo, peso, raza);
         this.necesitaPaseo = true;
-    }
-
-    public String getRaza() {
-        return raza;
-    }
-
-    public void setRaza(String raza) {
-        this.raza = raza;
     }
 
     public boolean isNecesitaPaseo() {
@@ -50,14 +40,17 @@ public class Loro extends Animal {
         return "imagenes/emojis/loro.png";
     }
 
+    @Override
     public String getColorInicioHex() {
         return "#34D399";
     }
 
+    @Override
     public String getColorFinHex() {
         return "#059669";
-    } 
+    }
 
+    @Override
     public String getCategoriaFiltro() {
         return "Otro";
     }

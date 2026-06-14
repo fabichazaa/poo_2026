@@ -50,15 +50,15 @@ public class DialogoRegistrarVacunacion extends JDialog {
     private void inicializarSemillaVacunas() {
         // Semilla de vacunas estándar para mostrar en el catálogo con descripciones atractivas
         Vacuna v1 = new Vacuna("VAC-001", "Antirrábica", 365);
-        v1.setSubtitulo("Nobivac Rabies");
+        v1.setCategoria("Nobivac Rabies");
         Vacuna v2 = new Vacuna("VAC-002", "Triple Felina", 365);
-        v2.setSubtitulo("Nobivac Tricat Trio");
+        v2.setCategoria("Nobivac Tricat Trio");
         Vacuna v3 = new Vacuna("VAC-003", "Parvovirus Canino", 365);
-        v3.setSubtitulo("Nobivac Parvo");
+        v3.setCategoria("Nobivac Parvo");
         Vacuna v4 = new Vacuna("VAC-004", "Quíntuple Canina", 365);
-        v4.setSubtitulo("Defensor 5");
+        v4.setCategoria("Defensor 5");
         Vacuna v5 = new Vacuna("VAC-005", "Leucemia Felina", 365);
-        v5.setSubtitulo("Nobivac FeLV");
+        v5.setCategoria("Nobivac FeLV");
 
         listaVacunasSemilla.add(v1);
         listaVacunasSemilla.add(v2);
@@ -70,38 +70,15 @@ public class DialogoRegistrarVacunacion extends JDialog {
     private void construir() {
         setSize(540, 640);
         setUndecorated(true);
+        setShape(new java.awt.geom.RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 24, 24));
         setResizable(false);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
 
-        JPanel panelFondo = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(Color.WHITE);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
-                g2.setColor(new Color(226, 232, 240));
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
-                g2.dispose();
-            }
-        };
-        panelFondo.setOpaque(false);
-        panelFondo.setBorder(new EmptyBorder(1, 1, 1, 1));
-
         // ==========================================
         //  HEADER BANNER (Purple/Violet)
         // ==========================================
-        JPanel headerPanel = new JPanel(new BorderLayout(12, 0)) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(147, 51, 234)); // Purple Dark
-                g2.fillRoundRect(0, 0, getWidth(), getHeight() + 20, 24, 24);
-                g2.dispose();
-            }
-        };
+        JPanel headerPanel = new JPanel(new BorderLayout(12, 0));
         headerPanel.setOpaque(false);
         headerPanel.setBorder(new EmptyBorder(16, 24, 16, 24));
 
@@ -113,12 +90,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         lblTitulo.setFont(CargadorFuentes.cargar(16f).deriveFont(Font.BOLD));
         lblTitulo.setForeground(Color.WHITE);
 
-        String raza = "Mixto";
-        if (animal instanceof Perro) {
-            raza = ((Perro) animal).getRaza();
-        } else if (animal instanceof Gato) {
-            raza = ((Gato) animal).getRaza();
-        }
+        String raza = animal.getRaza();
         JLabel lblSub = new JLabel("Para: " + animal.getNombre() + " (" + raza + " · " + animal.getEspecie() + ")");
         lblSub.setFont(CargadorFuentes.cargar(12f));
         lblSub.setForeground(new Color(243, 232, 255));
@@ -127,9 +99,26 @@ public class DialogoRegistrarVacunacion extends JDialog {
         textHeader.add(Box.createVerticalStrut(2));
         textHeader.add(lblSub);
 
-        JButton btnClose = new JButton("✕");
-        btnClose.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        btnClose.setForeground(Color.WHITE);
+        JButton btnClose = new JButton() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                if (getModel().isRollover()) {
+                    g2.setColor(new Color(255, 255, 255, 40));
+                    g2.fillOval(0, 0, getWidth(), getHeight());
+                }
+                g2.setColor(Color.WHITE);
+                g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                int size = 12;
+                int x = (getWidth() - size) / 2;
+                int y = (getHeight() - size) / 2;
+                g2.drawLine(x, y, x + size, y + size);
+                g2.drawLine(x + size, y, x, y + size);
+                g2.dispose();
+            }
+        };
+        btnClose.setPreferredSize(new Dimension(28, 28));
         btnClose.setOpaque(false);
         btnClose.setContentAreaFilled(false);
         btnClose.setBorderPainted(false);
@@ -139,6 +128,32 @@ public class DialogoRegistrarVacunacion extends JDialog {
 
         headerPanel.add(textHeader, BorderLayout.CENTER);
         headerPanel.add(btnClose, BorderLayout.EAST);
+
+        // Borde redondeado simulado para toda la ventana usando un panel principal con borde
+        JPanel panelFondo = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                
+                int headerHeight = headerPanel.getHeight() > 0 ? headerPanel.getHeight() : 70;
+                g2.setColor(new Color(147, 51, 234)); // Purple Dark
+                g2.fillRect(0, 0, getWidth(), headerHeight + 1);
+                g2.dispose();
+                
+                Graphics2D gBorder = (Graphics2D) g.create();
+                gBorder.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                gBorder.setColor(new Color(226, 232, 240));
+                gBorder.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
+                gBorder.dispose();
+            }
+        };
+        panelFondo.setOpaque(true);
+        panelFondo.setBorder(new EmptyBorder(1, 1, 1, 1));
 
         panelFondo.add(headerPanel, BorderLayout.NORTH);
 
@@ -166,7 +181,8 @@ public class DialogoRegistrarVacunacion extends JDialog {
                 new LineBorder(new Color(226, 232, 240), 1, true),
                 new EmptyBorder(8, 12, 8, 12)
         ));
-        txtBuscarVacuna.setFont(CargadorFuentes.cargar(12f));
+        txtBuscarVacuna.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+
         txtBuscarVacuna.setForeground(recursos.Color.INK);
         txtBuscarVacuna.setAlignmentX(Component.LEFT_ALIGNMENT);
         bodyPanel.add(txtBuscarVacuna);
@@ -197,8 +213,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
                     panel.setBackground(Color.WHITE);
                 }
 
-                if (value instanceof Vacuna) {
-                    Vacuna v = (Vacuna) value;
+                if (value instanceof Vacuna v) {
                     JLabel lblIcon = new JLabel("💉");
                     lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
 
@@ -210,7 +225,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
                     lblNombre.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
                     lblNombre.setForeground(isItemSelected ? Color.WHITE : recursos.Color.INK);
 
-                    JLabel lblSub = new JLabel(v.getSubtitulo().isEmpty() ? "Vacuna" : v.getSubtitulo());
+                    JLabel lblSub = new JLabel(v.getCategoria().isEmpty() ? "Vacuna" : v.getCategoria());
                     lblSub.setFont(CargadorFuentes.cargar(10f));
                     lblSub.setForeground(isItemSelected ? new Color(243, 232, 255) : recursos.Color.MUTED);
 
@@ -429,12 +444,26 @@ public class DialogoRegistrarVacunacion extends JDialog {
         ));
         btnCancelar.addActionListener(e -> dispose());
 
-        JButton btnConfirmar = new JButton("💉 Registrar vacunación");
-        btnConfirmar.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
+        JButton btnConfirmar = new JButton("💉 Registrar vacunación") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        btnConfirmar.setFont(new Font("Segoe UI Emoji", Font.BOLD, 12));
+
         btnConfirmar.setBackground(new Color(147, 51, 234));
         btnConfirmar.setForeground(Color.WHITE);
         btnConfirmar.setFocusPainted(false);
-        btnConfirmar.setOpaque(true);
+        btnConfirmar.setContentAreaFilled(false);
+        btnConfirmar.setOpaque(false);
+        btnConfirmar.setBorderPainted(false);
         btnConfirmar.setBorder(new EmptyBorder(10, 20, 10, 20));
         btnConfirmar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnConfirmar.addMouseListener(new MouseAdapter() {
@@ -464,14 +493,18 @@ public class DialogoRegistrarVacunacion extends JDialog {
     private void inicializarListeners() {
         // Cálculo reactivo
         javax.swing.event.DocumentListener calculador = new javax.swing.event.DocumentListener() {
+
+            @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 calcular();
             }
 
+            @Override
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
                 calcular();
             }
 
+            @Override
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
                 calcular();
             }
@@ -487,7 +520,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
                     } else {
                         campoProximaDosis.setText("—");
                     }
-                } catch (Exception ex) {
+                } catch (NumberFormatException ex) {
                     campoProximaDosis.setText("—");
                 }
             }
@@ -501,20 +534,23 @@ public class DialogoRegistrarVacunacion extends JDialog {
             LocalDate aplic = LocalDate.parse(campoFechaAplicacion.getText().trim(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             int vig = Integer.parseInt(campoVigenciaDias.getText().trim());
             campoProximaDosis.setText(aplic.plusDays(vig).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        } catch (Exception ex) {
+        } catch (NumberFormatException ex) {
             campoProximaDosis.setText("—");
         }
 
         // Buscador reactivo para vacunas
         txtBuscarVacuna.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 filtrar();
             }
 
+            @Override
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
                 filtrar();
             }
 
+            @Override
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
                 filtrar();
             }
@@ -528,7 +564,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
                 for (Vacuna v : listaVacunasSemilla) {
                     if (v.getNombreMedicamento().toLowerCase().contains(query)
                             || v.getCodigoSenasa().toLowerCase().contains(query)
-                            || v.getSubtitulo().toLowerCase().contains(query)) {
+                            || v.getCategoria().toLowerCase().contains(query)) {
                         filtrado.add(v);
                     }
                 }
@@ -599,7 +635,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
 
         // Crear vacuna final con la vigencia ingresada
         Vacuna v = new Vacuna(sel.getCodigoSenasa(), sel.getNombreMedicamento(), vigencia);
-        v.setSubtitulo(sel.getSubtitulo());
+        v.setCategoria(sel.getCategoria());
 
         // Crear registro completo de vacunación
         RegistroVacunacion registro = new RegistroVacunacion(
@@ -632,7 +668,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(new Color(148, 163, 184));
-                g2.setFont(getFont().deriveFont(Font.ITALIC));
+                g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
                 Insets insets = getInsets();
                 FontMetrics fm = g2.getFontMetrics();
                 int y = (getHeight() - insets.top - insets.bottom - fm.getHeight()) / 2 + fm.getAscent() + insets.top;

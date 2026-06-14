@@ -474,17 +474,13 @@ public class PortalVeterinario extends JFrame {
         JPanel panelContenidoCentral = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         panelContenidoCentral.setOpaque(false);
 
-        // Cargar imagen del animal (Perro o Gato)
-        String rutaImagen = (t.getAnimal() instanceof Perro) ? "imagenes/emojis/perro.png" : "imagenes/emojis/gato.png";
+        // Cargar imagen del animal dynamically
+        String rutaImagen = t.getAnimal().getImagen();
         JLabel lblEmoji = new JLabel();
-        try {
-            ImageIcon iconoAnimal = new ImageIcon(rutaImagen);
+        ImageIcon iconoAnimal = new ImageIcon(rutaImagen);
+        if (iconoAnimal.getImage() != null) {
             ImageIcon iconoEscalado = escalarImagenAltaCalidad(iconoAnimal.getImage(), 22, 22);
             lblEmoji.setIcon(iconoEscalado);
-        } catch (Exception e) {
-            String emojiMascota = (t.getAnimal() instanceof Perro) ? "🐕" : "🐈";
-            lblEmoji.setText(emojiMascota);
-            lblEmoji.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
         }
         panelContenidoCentral.add(lblEmoji);
 
@@ -520,25 +516,8 @@ public class PortalVeterinario extends JFrame {
         lblBadgePildora.setFont(fuenteNormal);
         lblBadgePildora.setBorder(new EmptyBorder(4, 12, 4, 12));
 
-        switch (t.getTipo()) {
-            case CIRUGIA -> {
-                lblBadgePildora.setCustomBackground(new Color(254, 226, 226));
-                lblBadgePildora.setForeground(new Color(220, 38, 38));
-            }
-            case CONSULTA_GENERAL -> {
-                lblBadgePildora.setCustomBackground(new Color(219, 234, 254));
-                lblBadgePildora.setForeground(new Color(37, 99, 235));
-            }
-            case ANALISIS -> {
-                lblBadgePildora.setCustomBackground(new Color(243, 232, 255));
-                lblBadgePildora.setForeground(new Color(147, 51, 234));
-            }
-            default -> {
-                lblBadgePildora.setCustomBackground(new Color(220, 252, 231));
-                lblBadgePildora.setForeground(new Color(22, 163, 74));
-                lblBadgePildora.setText("Vacunación");
-            }
-        }
+        lblBadgePildora.setCustomBackground(t.getTipo().getBadgeBgColor());
+        lblBadgePildora.setForeground(t.getTipo().getBadgeFgColor());
 
         JPanel panelBadgeWrapper = new JPanel(new GridBagLayout());
         panelBadgeWrapper.setOpaque(false);

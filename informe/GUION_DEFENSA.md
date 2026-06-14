@@ -86,7 +86,7 @@
 
 ## 5. Pruebas (2 min)
 
-> "Desarrollamos una suite de 59 pruebas integrales automatizadas en `Demo.java`. No usamos JUnit a propósito, para mostrar que con un simple `main()` bien estructurado se puede tener un *runner* claro. Las pruebas se dividen en 10 secciones:"
+> "Desarrollamos una suite de 62 pruebas integrales automatizadas en `Demo.java`. No usamos JUnit a propósito, para mostrar que con un simple `main()` bien estructurado se puede tener un *runner* claro. Las pruebas se dividen en 11 secciones:"
 
 *(Pasar el `Demo.java` por pantalla o terminal):*
 
@@ -100,9 +100,10 @@ Sección 6: Portal de adopciones                    5/5 ✓
 Sección 7: Notas y recordatorios                   5/5 ✓
 Sección 8: Búsquedas y filtros                    10/10 ✓
 Sección 9: Composición y agregación                4/4 ✓
-Sección 10: Cierre de sesión                       2/2 ✓
+Sección 10: Presentación de combos                 3/3 ✓
+Sección 11: Cierre de sesión                       2/2 ✓
 ══════════════════════════════════════════
-Resultado: 59 pasadas, 0 fallidas
+Resultado: 62 pasadas, 0 fallidas
 ```
 
 > "Cubren todos los requisitos del PDF, incluido el control de vencimiento de vacunas: Cheese tiene una vacuna vieja en su historia y el sistema la preserva para auditoría sin romper el alta."
@@ -111,7 +112,7 @@ Resultado: 59 pasadas, 0 fallidas
 
 ## 6. Cierre (1 min)
 
-> "Para cerrar: aplicamos los cinco pilares de POO con casos reales, no con ejemplos de libros. Separamos MVC con un Singleton como punto único de coordinación. Tenemos UML en cuatro formatos, 59 pruebas que pasan y un sistema con datos seed realistas — no es un *Hola Mundo* con esteroides, es un dominio donde las decisiones de diseño se notan.
+> "Para cerrar: aplicamos los cinco pilares de POO con casos reales, no con ejemplos de libros. Separamos MVC con un Singleton como punto único de coordinación. Tenemos UML en cuatro formatos, 62 pruebas que pasan y un sistema con datos seed realistas — no es un *Hola Mundo* con esteroides, es un dominio donde las decisiones de diseño se notan.
 >
 > Trabajos futuros: persistencia en disco, roles múltiples, migración a JavaFX preservando el mismo modelo.
 >
@@ -167,7 +168,7 @@ Resultado: 59 pasadas, 0 fallidas
 - [ ] Laptop con batería cargada
 - [ ] Proyector / adaptador probado
 - [ ] `java -cp build Main` corre sin errores
-- [ ] `java -cp build Demo` muestra 59/59
+- [ ] `java -cp build Demo` muestra 62/62
 - [ ] `INFORME_TECNICO_HappyPaws.docx` abierto y PDF de respaldo
 - [ ] UML en PNG y SVG en el escritorio (por si fallan los formatos)
 - [ ] Código fuente en un editor con syntax highlighting (VSCode, IntelliJ)
