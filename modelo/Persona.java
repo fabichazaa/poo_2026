@@ -58,4 +58,9 @@ public abstract class Persona {
     public void setCelular(String celular) {
         this.celular = celular;
     }
+
+    @Override
+    public String toString() {
+        return nombre + " " + apellido + " - " + DNI;
+    }
 }

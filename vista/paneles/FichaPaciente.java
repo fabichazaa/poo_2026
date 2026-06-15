@@ -269,14 +269,10 @@ public class FichaPaciente extends JPanel {
             panelContacto.add(filaCelular);
             panelContacto.add(filaUbicacion);
 
-            // 🌟 EL TRUCO: Creamos un Wrapper intermedio con FlowLayout.LEFT para frenar el estiramiento vertical
-            // El EmptyBorder de arriba (12) le da el aire justo abajo del título "DUEÑO"
             JPanel wrapperCompacto = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
             wrapperCompacto.setOpaque(false);
             wrapperCompacto.setBorder(new EmptyBorder(12, 0, 0, 0)); 
             wrapperCompacto.add(panelContacto); // Guardamos la grilla adentro del escudo
-
-            // Ahora agregamos el wrapper en el CENTER de la tarjeta
             cardDueno.add(wrapperCompacto, BorderLayout.CENTER);
             
         } else {
@@ -330,11 +326,9 @@ public class FichaPaciente extends JPanel {
         panelCabeceraDerecha.setBorder(new EmptyBorder(5, 5, 5, 5));
         
         JButton btnEditar = crearBtnEditarFicha();
-        panelCabeceraDerecha.add(btnEditar, BorderLayout.EAST); // Lo empuja a la derecha del todo
+        panelCabeceraDerecha.add(btnEditar, BorderLayout.EAST);
         
-        // Modificamos cómo se agrega el JTabbedPane 'tabs':
-        // En vez de añadir las tabs directo al panelDerecho, las dejamos en el CENTER, 
-        // y la cabecera con el lápiz la ponemos en el NORTH del panelDerecho.
+
         panelDerecho.add(panelCabeceraDerecha, BorderLayout.NORTH);
 
         JTabbedPane tabs = new JTabbedPane();
@@ -400,7 +394,6 @@ public class FichaPaciente extends JPanel {
         contenedorVacunasInmovil.setBackground(Color.WHITE);
         contenedorVacunasInmovil.add(panelVacunas, BorderLayout.NORTH);
 
-        // Traemos la lista de vacunas directamente desde el historial clínico del animal
         List<modelo.RegistroVacunacion> vacunasAplicadas = animal.getHistorial().getRegistroVacunas();
 
         if (vacunasAplicadas.isEmpty()) {
@@ -414,10 +407,8 @@ public class FichaPaciente extends JPanel {
             panelVacunas.setBorder(new EmptyBorder(15, 5, 15, 5));
             for (int i = 0; i < vacunasAplicadas.size(); i++) {
                 modelo.RegistroVacunacion reg = vacunasAplicadas.get(i);
-                // Usamos un método auxiliar para fabricar cada fila de vacuna
                 panelVacunas.add(crearFilaVacunaDinamica(reg));
                 
-                // Agregamos un colchón de aire vertical (row-gap) entre filas vecinas
                 if (i < vacunasAplicadas.size() - 1) {
                     panelVacunas.add(Box.createVerticalStrut(14));
                 }
@@ -644,7 +635,6 @@ public class FichaPaciente extends JPanel {
     }
 
     private JPanel crearFilaVacunaDinamica(modelo.RegistroVacunacion reg) {
-        // Contenedor principal de la fila (Tarjeta blanca redondeada)
         JPanel fila = new JPanel(new BorderLayout(0, 10)) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -661,24 +651,21 @@ public class FichaPaciente extends JPanel {
         fila.setOpaque(false);
         fila.setBorder(new EmptyBorder(12, 16, 12, 16));
 
-        // Alineación horizontal: Icono + Textos a la izquierda, Fecha a la derecha
         JPanel panelLineaSuperior = new JPanel(new BorderLayout());
         panelLineaSuperior.setOpaque(false);
 
         JPanel panelIzquierdoInfo = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         panelIzquierdoInfo.setOpaque(false);
 
-        // Icono de la Jeringa / Vacuna
         JLabel lblEmojiVacuna = new JLabel();
         ImageIcon iconoHD = cargarIconoHD("imagenes/emojis/jeringa.png", 20, 20); // Intentamos cargar tu PNG premium
         if (iconoHD != null) {
             lblEmojiVacuna.setIcon(iconoHD);
         } else {
-            lblEmojiVacuna.setText("💉"); // Respaldo nativo emoji
+            lblEmojiVacuna.setText("💉");
             lblEmojiVacuna.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
         }
 
-        // Bloque de textos (Nombre de la vacuna arriba, detalles abajo)
         JPanel panelTextosLabels = new JPanel(new GridLayout(2, 1, 0, 1));
         panelTextosLabels.setOpaque(false);
         
@@ -707,7 +694,6 @@ public class FichaPaciente extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                // Si está vencida, hacemos la píldora de fondo roja suave; si no, gris suave web standard
                 g2.setColor(reg.estaVencida() ? new Color(254, 226, 226) : new Color(241, 245, 249)); 
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                 g2.dispose();
@@ -723,7 +709,6 @@ public class FichaPaciente extends JPanel {
 
         fila.add(panelLineaSuperior, BorderLayout.NORTH);
 
-        // --- Bloque Inferior Opcional: Caja de Texto de Observaciones de la Vacuna ---
         String obs = reg.getObservaciones();
         if (obs != null && !obs.isBlank()) {
             JPanel panelTextBoxObs = new JPanel(new BorderLayout()) {
@@ -792,7 +777,7 @@ public class FichaPaciente extends JPanel {
     }
 
     // =========================================================================
-    // SCROLLBAR INTERNA PERSONALIZADA (ModernScrollBarUI)
+    // SCROLLBAR INTERNA PERSONALIZADA
     // =========================================================================
     private static class ModernScrollBarUI extends javax.swing.plaf.basic.BasicScrollBarUI {
         @Override protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
@@ -845,7 +830,6 @@ public class FichaPaciente extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                // Si hay hover se pone un gris clarito, si no, blanco puro
                 g2.setColor(hover ? new Color(241, 245, 249) : Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                 g2.setColor(recursos.Color.BORDER);
@@ -856,7 +840,6 @@ public class FichaPaciente extends JPanel {
         };
         btn.setPreferredSize(new Dimension(36, 36));
         
-        // Cargamos tu icono de lapicito premium
         ImageIcon icono = cargarIconoHD("imagenes/emojis/lapiz.png", 18, 18);
         if (icono != null) {
             btn.setIcon(icono);
@@ -865,37 +848,35 @@ public class FichaPaciente extends JPanel {
             btn.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
         }
         
-        // Al hacer click, abrimos el modal de edición pasándole el animal actual
         btn.addActionListener(e -> {
             JFrame ventanaPadre = (JFrame) SwingUtilities.getWindowAncestor(this);
             ModalEditarPaciente modal = new ModalEditarPaciente(ventanaPadre, animal);
             modal.setVisible(true);
-            lblNombre.setText(animal.getNombre());
-            lblRaza.setText(animal.getEspecie() + " · " + animal.getStringSexo());
-            lblRaza.setForeground(Color.decode(animal.getColorFinHex())); 
             
-            // B. 🔥 ¡LA PIEZA FALTANTE!: Forzamos a la grilla inferior a traer los números nuevos
-            actualizarGrillaValoresFicha();
+            // 🌟 LA JUGADA MAESTRA: Al cerrarse el modal, vaciamos por completo el JPanel de la ficha
+            this.removeAll();
             
-            // C. Repintamos el componente global de la ficha
+            // 🌟 Volvemos a ejecutar los inicializadores nativos. 
+            // Como el objeto 'animal' y su 'responsable' ya mutaron en RAM,
+            // initCuerpo() va a leer los GETTERS frescos y dibujará los nuevos JLabels perfectos.
+            initHeader();
+            initCuerpo();
+            
+            // Le avisamos al motor de Swing que la estructura cambió y debe repintarse en el acto
             this.revalidate();
             this.repaint();
         });
         
         return btn;
     }
-
     private void actualizarGrillaValoresFicha() {
-        // 1. Vaciamos por completo el contenedor de las filas grises
         panelDatosGrid.removeAll(); 
         
-        // 2. Volvemos a inyectar las filas consultando los datos actuales del objeto en memoria
         agregarFilaDatosFicha(panelDatosGrid, "Edad", animal.calcularEdad() + " años");
         agregarFilaDatosFicha(panelDatosGrid, "Peso", animal.getPeso() + " kg");
         agregarFilaDatosFicha(panelDatosGrid, "Estado", animal.getStringEstado());
         agregarFilaDatosFicha(panelDatosGrid, "Raza", animal.getRaza());
 
-        // 3. Le avisamos a Java Layout que la estructura interna cambió y debe recalcularse
         panelDatosGrid.revalidate();
         panelDatosGrid.repaint();
     }

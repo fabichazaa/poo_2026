@@ -7,7 +7,7 @@ public abstract class Animal {
     private final String idAnimal;
     private String nombre;
     private LocalDate fechaNacimiento;
-    private final boolean sexo; // True: macho, False: hembra
+    private boolean sexo; // True: macho, False: hembra
     private Responsable responsable;
     private final HistoriaClinica historiaClinica;
     private boolean enAdopcion;
@@ -98,6 +98,10 @@ public abstract class Animal {
 
     public void setRaza(String raza) {
         this.raza = raza;
+    }
+
+    public void setSexo(boolean sexo) {
+        this.sexo = sexo;
     }
 
     private String generarIdAnimal() {
