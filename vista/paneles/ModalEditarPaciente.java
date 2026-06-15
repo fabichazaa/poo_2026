@@ -41,7 +41,7 @@ public class ModalEditarPaciente extends JDialog {
     private JTextField txtCelularDueno;
     private JTextField txtCalleDueno;
     private JTextField txtAlturaDueno; 
-    private JTextField txtLocalidadDueno; // 鉁 CORREGIDO: Declaración limpia aquí
+    private JTextField txtLocalidadDueno; 
 
     // Atributos de respaldo para evitar el error de scope (effectively final)
     private String calleOriginal = "";
@@ -69,7 +69,7 @@ public class ModalEditarPaciente extends JDialog {
             this.especieSeleccionada = animal.getEspecie();
         }
 
-        setSize(460, esModoEdicion ? 590 : 640);
+        setSize(480, esModoEdicion ? 590 : 640);
         setLocationRelativeTo(padre); 
         setLayout(new BorderLayout());
 
@@ -102,19 +102,29 @@ public class ModalEditarPaciente extends JDialog {
         panelTabAnimal.setLayout(new BoxLayout(panelTabAnimal, BoxLayout.Y_AXIS));
         panelTabAnimal.setBorder(new EmptyBorder(25, 24, 20, 24));
 
+        // 🌟 LA SOLUCIÓN AL CORRIMIENTO: Envolvemos la grilla adentro de un FlowLayout contenedor protector
         if (!esModoEdicion) {
             panelTabAnimal.add(crearLabelFormulario("SELECCIONAR ESPECIE *"));
+            
+            // Este panel protector absorbe la tensión horizontal del BoxLayout impidiendo deformaciones
+            JPanel panelContenedorEspeciesHD = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            panelContenedorEspeciesHD.setOpaque(false);
+            panelContenedorEspeciesHD.setMaximumSize(new Dimension(Short.MAX_VALUE, 44));
+            panelContenedorEspeciesHD.setAlignmentX(Component.LEFT_ALIGNMENT);
+
             panelGrillaEspecies = new JPanel(new GridLayout(1, 5, 6, 0)); 
             panelGrillaEspecies.setOpaque(false);
-            panelGrillaEspecies.setMaximumSize(new Dimension(Short.MAX_VALUE, 44));
+            // El ancho de 412px es la medida exacta de la tarjeta interna menos los paddings laterales
+            panelGrillaEspecies.setPreferredSize(new Dimension(412, 38)); 
             
             String[] especiesDisponibles = {"Perro", "Gato", "Tortuga", "Loro", "Conejo"};
-            String[] emojisDisponibles = {"🐶", "🐱", "🐢", "🦜", "🐰"};
             
             for (int i = 0; i < especiesDisponibles.length; i++) {
-                panelGrillaEspecies.add(crearBotonPildoraEspecie(especiesDisponibles[i], emojisDisponibles[i]));
+                panelGrillaEspecies.add(crearBotonPildoraEspecie(especiesDisponibles[i]));
             }
-            panelTabAnimal.add(panelGrillaEspecies);
+            
+            panelContenedorEspeciesHD.add(panelGrillaEspecies);
+            panelTabAnimal.add(panelContenedorEspeciesHD);
             panelTabAnimal.add(Box.createVerticalStrut(14));
         }
 
@@ -344,14 +354,14 @@ public class ModalEditarPaciente extends JDialog {
         colCalle.add(crearLabelFormulario("CALLE *"));
         txtCalleDueno = crearTextFieldFormulario(calleOriginal);
         colCalle.add(txtCalleDueno);
-        gbcDir.gridx = 0; gbcDir.weightx = 0.50; gbcDir.insets = new Insets(0, 0, 0, 10); // 鉁 CORREGIDO: gbcDir
+        gbcDir.gridx = 0; gbcDir.weightx = 0.50; gbcDir.insets = new Insets(0, 0, 0, 10); 
         panelFilaDireccionTriple.add(colCalle, gbcDir);
 
         JPanel colAltura = new JPanel(); colAltura.setOpaque(false); colAltura.setLayout(new BoxLayout(colAltura, BoxLayout.Y_AXIS));
         colAltura.add(crearLabelFormulario("N° *"));
         txtAlturaDueno = crearTextFieldFormulario(alturaOriginal);
         colAltura.add(txtAlturaDueno);
-        gbcDir.gridx = 1; gbcDir.weightx = 0.20; gbcDir.insets = new Insets(0, 0, 0, 10); // 鉁 CORREGIDO: gbcDir
+        gbcDir.gridx = 1; gbcDir.weightx = 0.20; gbcDir.insets = new Insets(0, 0, 0, 10); 
         panelFilaDireccionTriple.add(colAltura, gbcDir);
 
         JPanel colLocalidad = new JPanel(); colLocalidad.setOpaque(false); colLocalidad.setLayout(new BoxLayout(colLocalidad, BoxLayout.Y_AXIS));
@@ -518,13 +528,13 @@ public class ModalEditarPaciente extends JDialog {
                 if (!esModoEdicion) {
                     controlador.getVeterinaria().getPacientesRegistrados().add(animal);
                     
-                    // 🌟 CARTEL DE ÉXITO: Para un registro nuevo
+                    // CARTEL DE ÉXITO: Para un registro nuevo
                     JOptionPane.showMessageDialog(this, 
                         "¡Paciente registrado con éxito en el sistema!", 
                         "Operación Exitosa", 
                         JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    // 🌟 CARTEL DE ÉXITO: Para cuando se edita un paciente existente
+                    // CARTEL DE ÉXITO: Para cuando se edita un paciente existente
                     JOptionPane.showMessageDialog(this, 
                         "Los cambios se han guardado correctamente.", 
                         "Operación Exitosa", 
@@ -548,8 +558,8 @@ public class ModalEditarPaciente extends JDialog {
         add(panelCuerpo, BorderLayout.CENTER);
     }
 
-    private JButton crearBotonPildoraEspecie(String nombre, String emoji) {
-        JButton btn = new JButton(emoji + " " + nombre) {
+    private JButton crearBotonPildoraEspecie(String nombre) {
+        JButton btn = new JButton(nombre) {
             {
                 setFocusPainted(false); setContentAreaFilled(false); setBorderPainted(false);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
