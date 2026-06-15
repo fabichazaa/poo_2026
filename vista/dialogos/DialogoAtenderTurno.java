@@ -13,7 +13,6 @@ import modelo.*;
 import recursos.CargadorFuentes;
 import recursos.ImageLoader;
 import vista.componentes.CardPanel;
-import vista.componentes.ModernScrollBarUI;
 import vista.componentes.ScrollablePanel;
 
 public class DialogoAtenderTurno extends JDialog {
@@ -643,7 +642,7 @@ public class DialogoAtenderTurno extends JDialog {
         mainScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         // Estilo de barra de scroll
-        mainScroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        mainScroll.getVerticalScrollBar().setUI(new vista.componentes.ModernScrollBarUI());
         mainScroll.getVerticalScrollBar().setPreferredSize(new Dimension(8, 0));
 
         panelFondo.add(mainScroll, BorderLayout.CENTER);

@@ -73,9 +73,8 @@ public class PanelMedicamentos extends JPanel {
         scroll.setOpaque(false);
         scroll.getViewport().setOpaque(false);
 
-        // Custom scrollbar (misma UI que PanelCitas)
         JScrollBar bar = scroll.getVerticalScrollBar();
-        bar.setUI(new ModernScrollBarUI());
+        bar.setUI(new vista.componentes.ModernScrollBarUI());
         bar.setPreferredSize(new Dimension(8, 0));
         bar.setUnitIncrement(16);
 
@@ -281,46 +280,6 @@ public class PanelMedicamentos extends JPanel {
         if (respuesta == JOptionPane.YES_OPTION) {
             controlador.getVeterinaria().getCatalogoMedicamentos().remove(med);
             actualizar();
-        }
-    }
-
-    private static class ModernScrollBarUI extends javax.swing.plaf.basic.BasicScrollBarUI {
-
-        @Override
-        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
-        }
-
-        @Override
-        protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
-            if (thumbBounds.isEmpty() || !scrollbar.isEnabled()) {
-                return;
-            }
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            java.awt.Color finalColor = isDragging ? Color.MUTED
-                    : (isThumbRollover() ? Color.CAT_INACTIVO : Color.DIVIDER);
-            g2.setColor(finalColor);
-            g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2,
-                    thumbBounds.width - 4, thumbBounds.height - 4, 8, 8);
-            g2.dispose();
-        }
-
-        @Override
-        protected JButton createDecreaseButton(int orientation) {
-            return crearBotonInvisible();
-        }
-
-        @Override
-        protected JButton createIncreaseButton(int orientation) {
-            return crearBotonInvisible();
-        }
-
-        private JButton crearBotonInvisible() {
-            JButton btn = new JButton();
-            btn.setPreferredSize(new Dimension(0, 0));
-            btn.setMinimumSize(new Dimension(0, 0));
-            btn.setMaximumSize(new Dimension(0, 0));
-            return btn;
         }
     }
 }

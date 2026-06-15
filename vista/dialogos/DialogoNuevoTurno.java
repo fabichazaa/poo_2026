@@ -13,7 +13,6 @@ import modelo.*;
 import recursos.CargadorFuentes;
 import recursos.ImageLoader;
 import vista.componentes.CardPanel;
-import vista.componentes.ModernScrollBarUI;
 
 public class DialogoNuevoTurno extends JDialog {
 
@@ -525,7 +524,7 @@ public class DialogoNuevoTurno extends JDialog {
 
         // Aplicamos el scrollbar personalizado
         JScrollBar barVertical = scrollHora.getVerticalScrollBar();
-        barVertical.setUI(new ModernScrollBarUI());
+        barVertical.setUI(new vista.componentes.ModernScrollBarUI(recursos.Color.WHITE));
         barVertical.setPreferredSize(new Dimension(8, 0));
         barVertical.setUnitIncrement(14);
 

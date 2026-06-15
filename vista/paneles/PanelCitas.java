@@ -15,7 +15,6 @@ import modelo.*;
 import recursos.CargadorFuentes;
 import recursos.Color;
 import recursos.ImageLoader;
-import vista.componentes.ModernScrollBarUI;
 
 public class PanelCitas extends JPanel {
 
@@ -207,7 +206,7 @@ public class PanelCitas extends JPanel {
 
         // Custom scrollbar
         JScrollBar bar = scrollLista.getVerticalScrollBar();
-        bar.setUI(new ModernScrollBarUI());
+        bar.setUI(new vista.componentes.ModernScrollBarUI());
         bar.setPreferredSize(new Dimension(8, 0));
         bar.setUnitIncrement(16);
 
