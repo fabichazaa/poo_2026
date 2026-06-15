@@ -44,3 +44,10 @@ desktop.ini
 .agents
 AGENTS.md
 skills-lock.json
+opencode.json
+.opencode/command/ponytail-audit.md
+.opencode/command/ponytail-debt.md
+.opencode/command/ponytail-help.md
+.opencode/command/ponytail-review.md
+.opencode/command/ponytail.md
+.opencode/plugins/ponytail.mjs

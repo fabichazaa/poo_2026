@@ -10,6 +10,7 @@ import javax.swing.border.LineBorder;
 import modelo.*;
 import recursos.CargadorFuentes;
 import vista.dialogos.DialogoEditarPaciente;
+import vista.dialogos.DialogoNuevoTurno;
 
 public class PortalVeterinario extends JFrame {
 
@@ -329,7 +330,17 @@ public class PortalVeterinario extends JFrame {
         panelBotonesAccion.setLayout(new BoxLayout(panelBotonesAccion, BoxLayout.Y_AXIS));
         panelBotonesAccion.setOpaque(false);
 
-        panelBotonesAccion.add(crearFilaAccionEstilizada("Nueva Consulta", new Color(115, 236, 255), "imagenes/emojis/estetoscopio.png"));
+        JPanel btnRegistrarConsulta = crearFilaAccionEstilizada("Nueva Consulta", new Color(115, 236, 255), "imagenes/emojis/estetoscopio.png");
+        btnRegistrarConsulta.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnRegistrarConsulta.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                DialogoNuevoTurno modalAlta = new DialogoNuevoTurno(PortalVeterinario.this, controlador);
+                modalAlta.setVisible(true);
+                panelCitas.actualizar();
+            }
+        });
+        panelBotonesAccion.add(btnRegistrarConsulta);
         panelBotonesAccion.add(Box.createVerticalStrut(12));
         
         JPanel btnRegistrarPaciente = crearFilaAccionEstilizada("Registrar Paciente", new Color(99, 102, 241), "imagenes/emojis/perro_cara.png");
