@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 import modelo.Animal;
 import modelo.Responsable;
 import modelo.Turno;
+import vista.dialogos.DialogoEditarPaciente;
 import modelo.TipoTurno;
 
 public class FichaPaciente extends JPanel {
@@ -850,7 +851,7 @@ public class FichaPaciente extends JPanel {
         
         btn.addActionListener(e -> {
             JFrame ventanaPadre = (JFrame) SwingUtilities.getWindowAncestor(this);
-            ModalEditarPaciente modal = new ModalEditarPaciente(ventanaPadre, animal);
+            DialogoEditarPaciente modal = new DialogoEditarPaciente(ventanaPadre, animal);
             modal.setVisible(true);
             
             // 🌟 LA JUGADA MAESTRA: Al cerrarse el modal, vaciamos por completo el JPanel de la ficha

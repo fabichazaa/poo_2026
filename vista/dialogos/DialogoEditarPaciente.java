@@ -1,4 +1,4 @@
-package vista.paneles;
+package vista.dialogos;
 
 import java.awt.*;
 import java.time.LocalDate;
@@ -11,7 +11,7 @@ import modelo.Animal;
 import modelo.Direccion;
 import modelo.Responsable;
 
-public class ModalEditarPaciente extends JDialog {
+public class DialogoEditarPaciente extends JDialog {
 
     private Animal animal; 
     private final controlador.ControladorVeterinaria controlador;
@@ -56,7 +56,7 @@ public class ModalEditarPaciente extends JDialog {
     private final Color VERDE_HOVER = new Color(15, 118, 110);     
     private final Color VERDE_SUAVE = new Color(204, 251, 241);    
 
-    public ModalEditarPaciente(Frame padre, Animal animalExistente) {
+    public DialogoEditarPaciente(Frame padre, Animal animalExistente) {
         super(padre, (animalExistente != null) ? "Editar paciente: " + animalExistente.getNombre() : "Registrar nuevo paciente", true); 
         
         this.animal = animalExistente;

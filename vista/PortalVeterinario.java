@@ -9,7 +9,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import modelo.*;
 import recursos.CargadorFuentes;
-import vista.paneles.ModalEditarPaciente;
+import vista.dialogos.DialogoEditarPaciente;
 
 public class PortalVeterinario extends JFrame {
 
@@ -98,10 +98,10 @@ public class PortalVeterinario extends JFrame {
         ));
 
         JButton btnInicio = crearBotonMenuNav("Inicio", "imagenes/emojis/casa.png", "🏠", "PANTALLA_INICIO");
-        JButton btnRegistros = crearBotonMenuNav("Registros", "imagenes/emojis/patitas.png", "📋", "PANTALLA_REGISTROS");
+        JButton btnRegistros = crearBotonMenuNav("Mascotas", "imagenes/emojis/patitas.png", "📋", "PANTALLA_REGISTROS");
         JButton btnMedicamentos = crearBotonMenuNav("Medicamentos", "imagenes/emojis/pastilla.png", "💊", "PANTALLA_MEDICAMENTOS");
         JButton btnCitas = crearBotonMenuNav("Turnos", "imagenes/emojis/calendario.png", "📅", "PANTALLA_CITAS");
-        JButton btnMas = crearBotonMenuNav("Más", null, "➕", "PANTALLA_MAS");
+        JButton btnMas = crearBotonMenuNav("Registros", "imagenes/emojis/usuario.png", "👤", "PANTALLA_MAS");
 
         ((BotonMenuNav) btnInicio).setActivo(true);
 
@@ -337,7 +337,7 @@ public class PortalVeterinario extends JFrame {
         btnRegistrarPaciente.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent e) {
-                ModalEditarPaciente modalAlta = new ModalEditarPaciente(PortalVeterinario.this, null);
+                DialogoEditarPaciente modalAlta = new DialogoEditarPaciente(PortalVeterinario.this, null);
                 modalAlta.setVisible(true);
                 
                 // 🌟 CORREGIDO: Buscamos el PanelRegistros en el índice 2 de tus pestañas limpias
@@ -608,7 +608,6 @@ public class PortalVeterinario extends JFrame {
         BotonMenuNav btn = new BotonMenuNav(titulo, icono, unicodeIcon, claveCapa);
 
         btn.addActionListener(e -> {
-            // 🌟 CORREGIDO: Actualizamos los índices del CardLayout basándonos en la remoción
             switch (claveCapa) {
                 case "PANTALLA_REGISTROS" ->
                     ((vista.paneles.PanelRegistros) panelContenedorSecciones.getComponent(2)).actualizar();
