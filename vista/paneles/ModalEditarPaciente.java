@@ -13,9 +13,14 @@ import modelo.Responsable;
 
 public class ModalEditarPaciente extends JDialog {
 
-    private final Animal animal;
+    private Animal animal; 
     private final controlador.ControladorVeterinaria controlador;
-    
+    private final boolean esModoEdicion; 
+
+    // Componentes - Selección de Especie 
+    private String especieSeleccionada = "Perro"; 
+    private JPanel panelGrillaEspecies;
+
     // Componentes - Pestaña Animal
     private JTextField txtNombre;
     private JTextField txtRaza;
@@ -36,7 +41,7 @@ public class ModalEditarPaciente extends JDialog {
     private JTextField txtCelularDueno;
     private JTextField txtCalleDueno;
     private JTextField txtAlturaDueno; 
-    private JTextField txtLocalidadDueno; 
+    private JTextField txtLocalidadDueno; // 鉁 CORREGIDO: Declaración limpia aquí
 
     // Atributos de respaldo para evitar el error de scope (effectively final)
     private String calleOriginal = "";
@@ -46,17 +51,25 @@ public class ModalEditarPaciente extends JDialog {
     private JButton btnGuardar;
     private JTabbedPane tabsFormulario;
 
-    // 🌟 PALETA DE COLORES CORPORATIVOS UNIFICADA (Estilo Figma)
-    private final Color VERDE_PRIMARY = new Color(13, 148, 136);   // Tu verde principal corporativo
-    private final Color VERDE_HOVER = new Color(15, 118, 110);     // Verde oscuro para feedback
-    private final Color VERDE_SUAVE = new Color(204, 251, 241);    // Fondo sutil para píldoras activas
+    // PALETA DE COLORES CORPORATIVOS UNIFICADA (Estilo Figma)
+    private final Color VERDE_PRIMARY = new Color(13, 148, 136);   
+    private final Color VERDE_HOVER = new Color(15, 118, 110);     
+    private final Color VERDE_SUAVE = new Color(204, 251, 241);    
 
-    public ModalEditarPaciente(Frame padre, Animal animal) {
-        super(padre, "Editar paciente: " + animal.getNombre(), true); 
-        this.animal = animal;
+    public ModalEditarPaciente(Frame padre, Animal animalExistente) {
+        super(padre, (animalExistente != null) ? "Editar paciente: " + animalExistente.getNombre() : "Registrar nuevo paciente", true); 
+        
+        this.animal = animalExistente;
+        this.esModoEdicion = (animalExistente != null);
         this.controlador = ControladorVeterinaria.getInstancia();
 
-        setSize(460, 590);
+        if (!esModoEdicion) {
+            this.especieSeleccionada = "Perro"; 
+        } else {
+            this.especieSeleccionada = animal.getEspecie();
+        }
+
+        setSize(460, esModoEdicion ? 590 : 640);
         setLocationRelativeTo(padre); 
         setLayout(new BorderLayout());
 
@@ -77,11 +90,8 @@ public class ModalEditarPaciente extends JDialog {
         tabsFormulario.setOpaque(true);
         
         tabsFormulario.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
-            @Override 
-            protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {}
-            
-            @Override
-            protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {}
+            @Override protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {}
+            @Override protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {}
         });
 
         // ========================================================
@@ -92,14 +102,30 @@ public class ModalEditarPaciente extends JDialog {
         panelTabAnimal.setLayout(new BoxLayout(panelTabAnimal, BoxLayout.Y_AXIS));
         panelTabAnimal.setBorder(new EmptyBorder(25, 24, 20, 24));
 
+        if (!esModoEdicion) {
+            panelTabAnimal.add(crearLabelFormulario("SELECCIONAR ESPECIE *"));
+            panelGrillaEspecies = new JPanel(new GridLayout(1, 5, 6, 0)); 
+            panelGrillaEspecies.setOpaque(false);
+            panelGrillaEspecies.setMaximumSize(new Dimension(Short.MAX_VALUE, 44));
+            
+            String[] especiesDisponibles = {"Perro", "Gato", "Tortuga", "Loro", "Conejo"};
+            String[] emojisDisponibles = {"🐶", "🐱", "🐢", "🦜", "🐰"};
+            
+            for (int i = 0; i < especiesDisponibles.length; i++) {
+                panelGrillaEspecies.add(crearBotonPildoraEspecie(especiesDisponibles[i], emojisDisponibles[i]));
+            }
+            panelTabAnimal.add(panelGrillaEspecies);
+            panelTabAnimal.add(Box.createVerticalStrut(14));
+        }
+
         panelTabAnimal.add(crearLabelFormulario("NOMBRE *"));
-        txtNombre = crearTextFieldFormulario(animal.getNombre());
+        txtNombre = crearTextFieldFormulario(esModoEdicion ? animal.getNombre() : "");
         txtNombre.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelTabAnimal.add(txtNombre);
         panelTabAnimal.add(Box.createVerticalStrut(12));
 
         panelTabAnimal.add(crearLabelFormulario("RAZA"));
-        txtRaza = crearTextFieldFormulario(animal.getRaza());
+        txtRaza = crearTextFieldFormulario(esModoEdicion ? animal.getRaza() : "");
         txtRaza.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelTabAnimal.add(txtRaza);
         panelTabAnimal.add(Box.createVerticalStrut(12));
@@ -118,8 +144,8 @@ public class ModalEditarPaciente extends JDialog {
         panelBotonesSexo.setOpaque(false);
         panelBotonesSexo.setMaximumSize(new Dimension(Short.MAX_VALUE, 38));
 
-        // Botón Macho estilizado con el color CORPORATIVO PRIMARY
-        rbMacho = new JRadioButton("Macho", animal.getSexo()) {
+        boolean sexoInicial = esModoEdicion ? animal.getSexo() : true; 
+        rbMacho = new JRadioButton("Macho", sexoInicial) {
             {
                 setFocusPainted(false); setContentAreaFilled(false); setBorderPainted(false);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -130,12 +156,8 @@ public class ModalEditarPaciente extends JDialog {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 if (isSelected()) {
-                    setForeground(VERDE_PRIMARY); // 鉁 Texto verde corporativo
-                    g2.setColor(VERDE_SUAVE);     // Fondo verde agua sutil
-                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-                    g2.setColor(VERDE_PRIMARY);   // Borde verde corporativo
-                    g2.setStroke(new BasicStroke(1.5f));
-                    g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 12, 12);
+                    setForeground(VERDE_PRIMARY); g2.setColor(VERDE_SUAVE); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                    g2.setColor(VERDE_PRIMARY); g2.setStroke(new BasicStroke(1.5f)); g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 12, 12);
                 } else {
                     setForeground(recursos.Color.INK); g2.setColor(recursos.Color.BG); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                     g2.setColor(recursos.Color.BORDER); g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
@@ -144,8 +166,7 @@ public class ModalEditarPaciente extends JDialog {
             }
         };
 
-        // Botón Hembra estilizado con el color CORPORATIVO PRIMARY
-        rbHembra = new JRadioButton("Hembra", !animal.getSexo()) {
+        rbHembra = new JRadioButton("Hembra", !sexoInicial) {
             {
                 setFocusPainted(false); setContentAreaFilled(false); setBorderPainted(false);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -156,12 +177,8 @@ public class ModalEditarPaciente extends JDialog {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 if (isSelected()) {
-                    setForeground(VERDE_PRIMARY); // 鉁 Texto verde corporativo
-                    g2.setColor(VERDE_SUAVE);     // Fondo verde agua sutil
-                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-                    g2.setColor(VERDE_PRIMARY);   // Borde verde corporativo
-                    g2.setStroke(new BasicStroke(1.5f));
-                    g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 12, 12);
+                    setForeground(VERDE_PRIMARY); g2.setColor(VERDE_SUAVE); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                    g2.setColor(VERDE_PRIMARY); g2.setStroke(new BasicStroke(1.5f)); g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 12, 12);
                 } else {
                     setForeground(recursos.Color.INK); g2.setColor(recursos.Color.BG); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                     g2.setColor(recursos.Color.BORDER); g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
@@ -172,7 +189,6 @@ public class ModalEditarPaciente extends JDialog {
 
         ButtonGroup grupoSexo = new ButtonGroup();
         grupoSexo.add(rbMacho); grupoSexo.add(rbHembra);
-        rbMacho.setSelected(animal.getSexo()); rbHembra.setSelected(!animal.getSexo());
         
         rbMacho.addActionListener(e -> { rbMacho.repaint(); rbHembra.repaint(); });
         rbHembra.addActionListener(e -> { rbMacho.repaint(); rbHembra.repaint(); });
@@ -183,15 +199,18 @@ public class ModalEditarPaciente extends JDialog {
         JPanel colPeso = new JPanel();
         colPeso.setOpaque(false); colPeso.setLayout(new BoxLayout(colPeso, BoxLayout.Y_AXIS));
         colPeso.add(crearLabelFormulario("PESO (KG) *"));
-        txtPeso = crearTextFieldFormulario(String.valueOf(animal.getPeso()));
+        
+        txtPeso = crearTextFieldFormulario(esModoEdicion ? String.valueOf(animal.getPeso()) : "");
         txtPeso.setAlignmentX(Component.LEFT_ALIGNMENT);
-        colPeso.add(txtPeso); panelFilaDividida.add(colPeso);
+        
+        colPeso.add(txtPeso); 
+        panelFilaDividida.add(colPeso);
 
         panelTabAnimal.add(panelFilaDividida);
         panelTabAnimal.add(Box.createVerticalStrut(12));
 
         panelTabAnimal.add(crearLabelFormulario("FECHA DE NAC. (DD/MM/AAAA)"));
-        String fechaStr = (animal.getFechaNacimiento() != null) ? animal.getFechaNacimiento().format(formato) : "";
+        String fechaStr = (esModoEdicion && animal.getFechaNacimiento() != null) ? animal.getFechaNacimiento().format(formato) : "";
         txtFechaNac = crearTextFieldFormulario(fechaStr);
         txtFechaNac.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelTabAnimal.add(txtFechaNac);
@@ -199,7 +218,7 @@ public class ModalEditarPaciente extends JDialog {
 
         JPanel panelCheck = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         panelCheck.setOpaque(false); panelCheck.setAlignmentX(Component.LEFT_ALIGNMENT);
-        chkActivo = new JCheckBox("Paciente Activo en la Veterinaria", animal.isActivo());
+        chkActivo = new JCheckBox("Paciente Activo en la Veterinaria", esModoEdicion ? animal.isActivo() : true);
         chkActivo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         chkActivo.setOpaque(false); chkActivo.setForeground(recursos.Color.INK);
         panelCheck.add(chkActivo); panelTabAnimal.add(panelCheck);
@@ -215,14 +234,24 @@ public class ModalEditarPaciente extends JDialog {
         panelTabResponsable.setLayout(new BoxLayout(panelTabResponsable, BoxLayout.Y_AXIS));
         panelTabResponsable.setBorder(new EmptyBorder(25, 24, 20, 24));
 
-        Responsable resp = animal.getResponsable();
+        Responsable resp = esModoEdicion ? animal.getResponsable() : null;
 
         panelTabResponsable.add(crearLabelFormulario("ACCION SOBRE EL RESPONSABLE"));
-        cmbModoResponsable = new JComboBox<>(new String[]{
-            "Editar Responsable Actual", 
-            "Asignar Dueño Existente", 
-            "Registrar y Asignar Nuevo Dueño"
-        });
+        cmbModoResponsable = new JComboBox<>();
+        
+        if (!esModoEdicion) {
+            cmbModoResponsable.setModel(new DefaultComboBoxModel<>(new String[]{
+                "Asignar Dueño Existente", 
+                "Registrar y Asignar Nuevo Dueño"
+            }));
+        } else {
+            cmbModoResponsable.setModel(new DefaultComboBoxModel<>(new String[]{
+                "Editar Responsable Actual", 
+                "Asignar Dueño Existente", 
+                "Registrar y Asignar Nuevo Dueño"
+            }));
+        }
+
         cmbModoResponsable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         cmbModoResponsable.setMaximumSize(new Dimension(Short.MAX_VALUE, 38));
         cmbModoResponsable.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -233,7 +262,7 @@ public class ModalEditarPaciente extends JDialog {
         panelDropdownExistente.setOpaque(false);
         panelDropdownExistente.setLayout(new BoxLayout(panelDropdownExistente, BoxLayout.Y_AXIS));
         panelDropdownExistente.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelDropdownExistente.setVisible(false);
+        panelDropdownExistente.setVisible(!esModoEdicion); 
 
         panelDropdownExistente.add(crearLabelFormulario("SELECCIONAR RESPONSABLE DE LA LISTA"));
         java.util.List<Responsable> listaVete = controlador.getVeterinaria().getListaClientes();
@@ -249,8 +278,8 @@ public class ModalEditarPaciente extends JDialog {
         panelCamposTextoResponsable.setOpaque(false);
         panelCamposTextoResponsable.setLayout(new BoxLayout(panelCamposTextoResponsable, BoxLayout.Y_AXIS));
         panelCamposTextoResponsable.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelCamposTextoResponsable.setVisible(esModoEdicion); 
 
-        // Fila Paralelo: DNI y Teléfono
         JPanel panelFilaDocumento = new JPanel(new GridBagLayout());
         panelFilaDocumento.setOpaque(false);
         panelFilaDocumento.setMaximumSize(new Dimension(Short.MAX_VALUE, 65));
@@ -276,7 +305,6 @@ public class ModalEditarPaciente extends JDialog {
         panelCamposTextoResponsable.add(panelFilaDocumento);
         panelCamposTextoResponsable.add(Box.createVerticalStrut(10));
 
-        // Fila Dividida: Nombre y Apellido
         JPanel panelFilaNombreCompuesto = new JPanel(new GridLayout(1, 2, 12, 0));
         panelFilaNombreCompuesto.setOpaque(false);
         panelFilaNombreCompuesto.setMaximumSize(new Dimension(Short.MAX_VALUE, 65));
@@ -297,7 +325,6 @@ public class ModalEditarPaciente extends JDialog {
         panelCamposTextoResponsable.add(panelFilaNombreCompuesto);
         panelCamposTextoResponsable.add(Box.createVerticalStrut(10));
 
-        // Carga de Datos de la Dirección Segura
         if (resp != null && resp.getDireccion() != null) {
             Direccion dir = resp.getDireccion();
             calleOriginal = dir.getCalle();
@@ -305,7 +332,6 @@ public class ModalEditarPaciente extends JDialog {
             localidadOriginal = dir.getLocalidad();
         }
 
-        // Fila Dividida para la Dirección Triple (Calle 50%, Altura 20%, Localidad 30%)
         JPanel panelFilaDireccionTriple = new JPanel(new GridBagLayout());
         panelFilaDireccionTriple.setOpaque(false);
         panelFilaDireccionTriple.setMaximumSize(new Dimension(Short.MAX_VALUE, 65));
@@ -318,21 +344,21 @@ public class ModalEditarPaciente extends JDialog {
         colCalle.add(crearLabelFormulario("CALLE *"));
         txtCalleDueno = crearTextFieldFormulario(calleOriginal);
         colCalle.add(txtCalleDueno);
-        gbcDir.gridx = 0; gbcDir.weightx = 0.50; gbcDir.insets = new Insets(0, 0, 0, 10);
+        gbcDir.gridx = 0; gbcDir.weightx = 0.50; gbcDir.insets = new Insets(0, 0, 0, 10); // 鉁 CORREGIDO: gbcDir
         panelFilaDireccionTriple.add(colCalle, gbcDir);
 
         JPanel colAltura = new JPanel(); colAltura.setOpaque(false); colAltura.setLayout(new BoxLayout(colAltura, BoxLayout.Y_AXIS));
         colAltura.add(crearLabelFormulario("N° *"));
         txtAlturaDueno = crearTextFieldFormulario(alturaOriginal);
         colAltura.add(txtAlturaDueno);
-        gbcDir.gridx = 1; gbcDir.weightx = 0.20; gbcDir.insets = new Insets(0, 0, 0, 10);
+        gbcDir.gridx = 1; gbcDir.weightx = 0.20; gbcDir.insets = new Insets(0, 0, 0, 10); // 鉁 CORREGIDO: gbcDir
         panelFilaDireccionTriple.add(colAltura, gbcDir);
 
         JPanel colLocalidad = new JPanel(); colLocalidad.setOpaque(false); colLocalidad.setLayout(new BoxLayout(colLocalidad, BoxLayout.Y_AXIS));
         colLocalidad.add(crearLabelFormulario("LOCALIDAD *"));
         txtLocalidadDueno = crearTextFieldFormulario(localidadOriginal);
         colLocalidad.add(txtLocalidadDueno);
-        gbcDir.gridx = 2; gbcDir.weightx = 0.30; gbcDir.insets = new Insets(0, 0, 0, 0); // 鉁 Corregido gbcDir
+        gbcDir.gridx = 2; gbcDir.weightx = 0.30; gbcDir.insets = new Insets(0, 0, 0, 0); 
         panelFilaDireccionTriple.add(colLocalidad, gbcDir);
 
         panelCamposTextoResponsable.add(panelFilaDireccionTriple);
@@ -341,8 +367,8 @@ public class ModalEditarPaciente extends JDialog {
         panelTabResponsable.add(Box.createVerticalGlue()); 
 
         cmbModoResponsable.addActionListener(e -> {
-            int index = cmbModoResponsable.getSelectedIndex();
-            if (index == 0) {
+            String seleccion = cmbModoResponsable.getSelectedItem().toString();
+            if (seleccion.equals("Editar Responsable Actual")) {
                 panelDropdownExistente.setVisible(false);
                 panelCamposTextoResponsable.setVisible(true);
                 txtDniDueno.setEditable(false);
@@ -353,10 +379,10 @@ public class ModalEditarPaciente extends JDialog {
                 txtCalleDueno.setText(calleOriginal);
                 txtAlturaDueno.setText(alturaOriginal);
                 txtLocalidadDueno.setText(localidadOriginal);
-            } else if (index == 1) {
+            } else if (seleccion.equals("Asignar Dueño Existente")) {
                 panelDropdownExistente.setVisible(true);
                 panelCamposTextoResponsable.setVisible(false);
-            } else {
+            } else { 
                 panelDropdownExistente.setVisible(false);
                 panelCamposTextoResponsable.setVisible(true);
                 txtDniDueno.setEditable(true);
@@ -372,7 +398,7 @@ public class ModalEditarPaciente extends JDialog {
             panelTabResponsable.repaint();
         });
 
-        if (resp != null) txtDniDueno.setEditable(false);
+        if (esModoEdicion && resp != null) txtDniDueno.setEditable(false);
 
         tabsFormulario.addTab("Datos del animal", panelTabAnimal);
         tabsFormulario.addTab("Responsable", panelTabResponsable);
@@ -380,11 +406,11 @@ public class ModalEditarPaciente extends JDialog {
         actualizarEstiloPestanas(tabsFormulario);
 
         // --- 4. BOTONERA INFERIOR ---
-        JPanel panelBotonesBottom = new JPanel(new GridLayout(1, 2, 12, 0));
-        panelBotonesBottom.setOpaque(false);
-        panelBotonesBottom.setBorder(new EmptyBorder(10, 24, 24, 24));
+        JPanel panelGridBotonesBottom = new JPanel(new GridLayout(1, 2, 12, 0));
+        panelGridBotonesBottom.setOpaque(false);
+        panelGridBotonesBottom.setBorder(new EmptyBorder(10, 24, 24, 24));
 
-        JButton btnCancelar = new JButton("Cancelar") {
+        JButton btnCancel = new JButton("Cancelar") {
             private boolean hover = false;
             {
                 setFont(new Font("Segoe UI", Font.BOLD, 14)); setFocusPainted(false);
@@ -404,10 +430,9 @@ public class ModalEditarPaciente extends JDialog {
                 setForeground(new Color(71, 85, 105)); g2.dispose(); super.paintComponent(g);
             }
         };
-        btnCancelar.addActionListener(e -> dispose());
+        btnCancel.addActionListener(e -> dispose());
 
-        // Botón Guardar Cambios Estilizado con el color PRIMARY y HOVER
-        btnGuardar = new JButton("Guardar Cambios") {
+        btnGuardar = new JButton(esModoEdicion ? "Guardar Cambios" : "Registrar Paciente") {
             private boolean hover = false;
             {
                 setFont(new Font("Segoe UI", Font.BOLD, 14)); setFocusPainted(false);
@@ -422,80 +447,139 @@ public class ModalEditarPaciente extends JDialog {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                
-                // 鉁 CAMBIO: Ahora usa el color corporativo estable de la App en vez del color del animal
                 g2.setColor(hover ? VERDE_HOVER : VERDE_PRIMARY);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
-                setForeground(Color.WHITE); 
-                g2.dispose(); 
-                super.paintComponent(g);
+                setForeground(Color.WHITE); g2.dispose(); super.paintComponent(g);
             }
         };
         
         btnGuardar.addActionListener(e -> {
             try {
-                animal.setNombre(txtNombre.getText().trim());
-                animal.setRaza(txtRaza.getText().trim());
-                animal.setPeso(Float.parseFloat(txtPeso.getText().trim()));
-                animal.setActivo(chkActivo.isSelected());
-                animal.setSexo(rbMacho.isSelected()); 
+                String nombreA = txtNombre.getText().trim();
+                String razaA = txtRaza.getText().trim();
+                float pesoA = Float.parseFloat(txtPeso.getText().trim());
+                boolean activoA = chkActivo.isSelected();
+                boolean sexoA = rbMacho.isSelected();
+                LocalDate fechaNacA = txtFechaNac.getText().isBlank() ? null : LocalDate.parse(txtFechaNac.getText().trim(), formato);
 
-                if (!txtFechaNac.getText().isBlank()) {
-                    animal.setFechaNacimiento(LocalDate.parse(txtFechaNac.getText().trim(), formato));
+                if (nombreA.isEmpty()) throw new IllegalArgumentException();
+
+                if (!esModoEdicion) {
+                    if (especieSeleccionada.equals("Perro")) {
+                        this.animal = new modelo.Perro(nombreA, fechaNacA, sexoA, pesoA, razaA);
+                    } else if (especieSeleccionada.equals("Gato")) {
+                        this.animal = new modelo.Gato(nombreA, fechaNacA, sexoA, pesoA, razaA);
+                    } else if (especieSeleccionada.equals("Tortuga")) {
+                        this.animal = new modelo.Tortuga(nombreA, fechaNacA, sexoA, pesoA, razaA);
+                    } else if (especieSeleccionada.equals("Loro")) {
+                        this.animal = new modelo.Loro(nombreA, fechaNacA, sexoA, pesoA, razaA);
+                    } else if (especieSeleccionada.equals("Conejo")) {
+                        this.animal = new modelo.Conejo(nombreA, fechaNacA, sexoA, pesoA, razaA);
+                    }
+                } else {
+                    animal.setNombre(nombreA);
+                    animal.setRaza(razaA);
+                    animal.setPeso(pesoA);
+                    animal.setActivo(activoA);
+                    animal.setSexo(sexoA);
+                    if (fechaNacA != null) animal.setFechaNacimiento(fechaNacA);
                 }
 
-                int modoSeleccionado = cmbModoResponsable.getSelectedIndex();
+                String seleccionModo = cmbModoResponsable.getSelectedItem().toString();
                 int alturaInt = txtAlturaDueno.getText().trim().isEmpty() ? 0 : Integer.parseInt(txtAlturaDueno.getText().trim());
-                String calleTexto = txtCalleDueno.getText().trim();
                 String localidadTexto = txtLocalidadDueno.getText().trim().isEmpty() ? "Pilar" : txtLocalidadDueno.getText().trim();
-                
-                Direccion nueva_direccion = new Direccion(calleTexto, alturaInt, localidadTexto);
-                
-                if (modoSeleccionado == 0) { 
+                Direccion nueva_direccion = new Direccion(txtCalleDueno.getText().trim(), alturaInt, localidadTexto);
+
+                if (seleccionModo.equals("Editar Responsable Actual")) {
                     if (animal.getResponsable() != null) {
                         Responsable r = animal.getResponsable();
                         r.setNombre(txtNombreDueno.getText().trim());
                         r.setApellido(txtApellidoDueno.getText().trim());
                         r.setCelular(txtCelularDueno.getText().trim());
-                        r.setDireccion(nueva_direccion); 
+                        r.setDireccion(nueva_direccion);
                     }
                 } 
-                else if (modoSeleccionado == 1) { 
+                else if (seleccionModo.equals("Asignar Dueño Existente")) {
                     Responsable seleccionado = (Responsable) cmbResponsablesExistentes.getSelectedItem();
-                    if (seleccionado != null) {
-                        animal.setResponsable(seleccionado);
-                    }
+                    if (seleccionado != null) animal.setResponsable(seleccionado);
                 } 
-                else if (modoSeleccionado == 2) { 
+                else if (seleccionModo.equals("Registrar y Asignar Nuevo Dueño")) {
                     Responsable nuevo = new Responsable(
-                        txtDniDueno.getText().trim(), 
+                        txtDniDueno.getText().trim(),
                         txtNombreDueno.getText().trim(),
                         txtApellidoDueno.getText().trim(),
                         txtCelularDueno.getText().trim(),
                         nueva_direccion
                     );
-                    // 鉁 CORREGIDO: Se añade a la lista unificada para evitar fallos de compilación
                     controlador.getVeterinaria().getListaClientes().add(nuevo);
                     animal.setResponsable(nuevo);
+                }
+
+                if (!esModoEdicion) {
+                    controlador.getVeterinaria().getPacientesRegistrados().add(animal);
+                    
+                    // 🌟 CARTEL DE ÉXITO: Para un registro nuevo
+                    JOptionPane.showMessageDialog(this, 
+                        "¡Paciente registrado con éxito en el sistema!", 
+                        "Operación Exitosa", 
+                        JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    // 🌟 CARTEL DE ÉXITO: Para cuando se edita un paciente existente
+                    JOptionPane.showMessageDialog(this, 
+                        "Los cambios se han guardado correctamente.", 
+                        "Operación Exitosa", 
+                        JOptionPane.INFORMATION_MESSAGE);
                 }
                 
                 dispose();
             } catch (NumberFormatException numEx) {
-                JOptionPane.showMessageDialog(this, "La altura (N°) debe ser un valor exclusivamente numérico entero.", "Error de formato", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Verifica que el Peso y el N° de calle sean numéricos correctos.", "Error de formato", JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Por favor, verifica que los campos obligatorios sean correctos.", "Error de validación", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Por favor, completa los campos obligatorios (*).", "Error de validación", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        btnCancelar.setPreferredSize(new Dimension(0, 42));
-        btnGuardar.setPreferredSize(new Dimension(0, 42));
-        panelBotonesBottom.add(btnCancelar);
-        panelBotonesBottom.add(btnGuardar);
+        panelGridBotonesBottom.add(btnCancel);
+        panelGridBotonesBottom.add(btnGuardar);
 
         panelCuerpo.add(tabsFormulario, BorderLayout.CENTER);
-        panelCuerpo.add(panelBotonesBottom, BorderLayout.SOUTH);
+        panelCuerpo.add(panelGridBotonesBottom, BorderLayout.SOUTH);
 
         add(panelCuerpo, BorderLayout.CENTER);
+    }
+
+    private JButton crearBotonPildoraEspecie(String nombre, String emoji) {
+        JButton btn = new JButton(emoji + " " + nombre) {
+            {
+                setFocusPainted(false); setContentAreaFilled(false); setBorderPainted(false);
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                setFont(new Font("Segoe UI", Font.BOLD, 12));
+                setBorder(new EmptyBorder(6, 10, 6, 10));
+            }
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                boolean activo = especieSeleccionada.equals(nombre);
+                if (activo) {
+                    setForeground(VERDE_PRIMARY); g2.setColor(VERDE_SUAVE); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                    g2.setColor(VERDE_PRIMARY); g2.setStroke(new BasicStroke(1.5f)); g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 16, 16);
+                } else {
+                    setForeground(new Color(100, 116, 139)); g2.setColor(new Color(248, 250, 252)); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                    g2.setColor(new Color(226, 232, 240)); g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
+                }
+                g2.dispose(); super.paintComponent(g);
+            }
+        };
+        
+        btn.addActionListener(e -> {
+            especieSeleccionada = nombre;
+            JPanel parent = (JPanel) btn.getParent();
+            if (parent != null) parent.repaint();
+        });
+        
+        return btn;
     }
 
     private void actualizarEstiloPestanas(JTabbedPane tabs) {
@@ -506,8 +590,7 @@ public class ModalEditarPaciente extends JDialog {
             JLabel lblTabCustom = new JLabel(titulo, SwingConstants.CENTER) {
                 private boolean mouseEncima = false;
                 {
-                    setFont(new Font("Segoe UI", Font.BOLD, 13));
-                    setPreferredSize(new Dimension(200, 40)); 
+                    setFont(new Font("Segoe UI", Font.BOLD, 13)); setPreferredSize(new Dimension(200, 40)); 
                     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     addMouseListener(new java.awt.event.MouseAdapter() {
                         public void mouseEntered(java.awt.event.MouseEvent e) { mouseEncima = true; repaint(); }
@@ -515,27 +598,17 @@ public class ModalEditarPaciente extends JDialog {
                         public void mousePressed(java.awt.event.MouseEvent e) { tabs.setSelectedIndex(indicePestana); }
                     });
                 }
-
                 @Override
                 protected void paintComponent(Graphics g) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    
                     boolean estaSeleccionada = (tabs.getSelectedIndex() == indicePestana);
-                    
                     if (estaSeleccionada) {
-                        setForeground(VERDE_PRIMARY); //
-                        g2.setColor(VERDE_SUAVE);     //
-                        g2.fillRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 14, 14);
+                        setForeground(VERDE_PRIMARY); g2.setColor(VERDE_SUAVE); g2.fillRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 14, 14);
                     } else if (mouseEncima) {
-                        setForeground(VERDE_HOVER);   //
-                        g2.setColor(new Color(241, 245, 249)); 
-                        g2.fillRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 14, 14);
-                    } else {
-                        setForeground(new Color(148, 163, 184)); 
-                    }
-                    g2.dispose();
-                    super.paintComponent(g);
+                        setForeground(VERDE_HOVER); g2.setColor(new Color(241, 245, 249)); g2.fillRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 14, 14);
+                    } else { setForeground(new Color(148, 163, 184)); }
+                    g2.dispose(); super.paintComponent(g);
                 }
             };
             tabs.setTabComponentAt(i, lblTabCustom);
@@ -545,10 +618,8 @@ public class ModalEditarPaciente extends JDialog {
 
     private JLabel crearLabelFormulario(String texto) {
         JLabel lbl = new JLabel(texto);
-        lbl.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        lbl.setForeground(new Color(148, 163, 184));
-        lbl.setBorder(new EmptyBorder(0, 2, 4, 0));
-        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lbl.setFont(new Font("Segoe UI", Font.BOLD, 11)); lbl.setForeground(new Color(148, 163, 184));
+        lbl.setBorder(new EmptyBorder(0, 2, 4, 0)); lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
         return lbl;
     }
 
@@ -558,19 +629,13 @@ public class ModalEditarPaciente extends JDialog {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(recursos.Color.BG); 
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-                g2.setColor(recursos.Color.BORDER);
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
-                g2.dispose();
-                super.paintComponent(g);
+                g2.setColor(recursos.Color.BG); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                g2.setColor(recursos.Color.BORDER); g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
+                g2.dispose(); super.paintComponent(g);
             }
         };
-        tf.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        tf.setForeground(recursos.Color.INK);
-        tf.setOpaque(false);
-        tf.setMaximumSize(new Dimension(Short.MAX_VALUE, 38));
-        tf.setPreferredSize(new Dimension(Short.MAX_VALUE, 38));
+        tf.setFont(new Font("Segoe UI", Font.PLAIN, 13)); tf.setForeground(recursos.Color.INK); tf.setOpaque(false);
+        tf.setMaximumSize(new Dimension(Short.MAX_VALUE, 38)); tf.setPreferredSize(new Dimension(Short.MAX_VALUE, 38));
         tf.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
         return tf;
     }

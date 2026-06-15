@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import modelo.*;
 import recursos.CargadorFuentes;
+import vista.paneles.ModalEditarPaciente;
 
 public class PortalVeterinario extends JFrame {
 
@@ -387,8 +388,24 @@ public class PortalVeterinario extends JFrame {
 
         panelBotonesAccion.add(crearFilaAccionEstilizada("Nueva Consulta", new Color(115, 236, 255), "imagenes/emojis/estetoscopio.png"));
         panelBotonesAccion.add(Box.createVerticalStrut(12));
-        panelBotonesAccion.add(crearFilaAccionEstilizada("Registrar Paciente", new Color(99, 102, 241), "imagenes/emojis/perro_cara.png"));
-        panelBotonesAccion.add(Box.createVerticalStrut(12));
+        JPanel btnRegistrarPaciente = crearFilaAccionEstilizada("Registrar Paciente", new Color(99, 102, 241), "imagenes/emojis/perro_cara.png");
+        btnRegistrarPaciente.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnRegistrarPaciente.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                // Invocamos nuestro modal híbrido pasándole 'null' en el segundo parámetro.
+                // Al ser null, el sistema se autoconfigura en Modo "Registrar Nuevo Paciente"!
+                ModalEditarPaciente modalAlta = new ModalEditarPaciente(PortalVeterinario.this, null);
+                modalAlta.setVisible(true);
+                
+                // Si el usuario tenía abierta la sección de registros de fondo, obligamos
+                // a la grilla a refrescarse para mostrar la nueva mascota al instante
+                if (panelContenedorSecciones.getComponent(2) instanceof vista.paneles.PanelRegistros pReg) {
+                    pReg.actualizar();
+                }
+            }
+        });
+        panelBotonesAccion.add(btnRegistrarPaciente);        panelBotonesAccion.add(Box.createVerticalStrut(12));
 
         cardAcciones.add(panelBotonesAccion, BorderLayout.CENTER);
 
@@ -529,24 +546,60 @@ public class PortalVeterinario extends JFrame {
 
     private JPanel crearFilaAccionEstilizada(String titulo, Color colorFondoIcono, String emojiIcono) {
         // Reducimos la altura a 52 para que se adapte de forma estilizada a una sola línea
-        JPanel panelFila = new JPanel(new BorderLayout(15, 0));
-        panelFila.setBackground(recursos.Color.CANVAS_GENERAL);
+        JPanel panelFila = new JPanel(new BorderLayout(15, 0)) {
+            // 🌟 Flag interna para rastrear el paso del mouse
+            private boolean mouseEncima = false; 
+            
+            {
+                // Configura el cursor con la manito de click de forma nativa para toda la fila
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                
+                // Escuchador dinámico de eventos de mouse
+                addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
+                    public void mouseEntered(java.awt.event.MouseEvent e) { mouseEncima = true; repaint(); }
+                    @Override
+                    public void mouseExited(java.awt.event.MouseEvent e) { mouseEncima = false; repaint(); }
+                });
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // 🌟 EFECTO HOVER: Si el mouse está encima, pinta un fondo gris Slate-100 interactivo,
+                // si no, mantiene el fondo claro Canvas general de tus tarjetas
+                g2.setColor(mouseEncima ? new Color(241, 245, 249) : recursos.Color.CANVAS_GENERAL);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                
+                // Dibujamos el contorno sutil redondeado de la píldora
+                g2.setColor(recursos.Color.BORDER);
+                g2.setStroke(new BasicStroke(1f));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
+                
+                g2.dispose();
+            }
+        };
+        
+        panelFila.setOpaque(false);
+        // Ajustamos márgenes internos estables
+        panelFila.setBorder(new EmptyBorder(6, 12, 6, 12));
         panelFila.setMaximumSize(new Dimension(320, 52));
         panelFila.setPreferredSize(new Dimension(320, 52));
-        panelFila.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(recursos.Color.BG, 1, true), new EmptyBorder(6, 12, 6, 12)
-        ));
 
         // --- ICONO DE LA ACCIÓN ---
         JPanel panelCuadroIcono = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g;
+                Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(colorFondoIcono);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
+                g2.dispose();
             }
         };
+        panelCuadroIcono.setOpaque(false);
         panelCuadroIcono.setPreferredSize(new Dimension(40, 40));
         panelCuadroIcono.setLayout(new GridBagLayout());
 
@@ -554,9 +607,8 @@ public class PortalVeterinario extends JFrame {
         if (emojiIcono.endsWith(".png")) {
             try {
                 ImageIcon icono = new ImageIcon(emojiIcono);
-                // Usando tu método de alta calidad o el escalado clásico suave
-                Image imagenEscalada = icono.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
-                lblEmoji.setIcon(new ImageIcon(imagenEscalada));
+                ImageIcon iconoEscalado = escalarImagenAltaCalidad(icono.getImage(), 24, 24);
+                lblEmoji.setIcon(iconoEscalado);
             } catch (Exception e) {
                 lblEmoji.setText("?");
                 lblEmoji.setFont(new Font("Segoe UI", Font.PLAIN, 18));
@@ -568,30 +620,23 @@ public class PortalVeterinario extends JFrame {
         panelCuadroIcono.add(lblEmoji);
         panelFila.add(panelCuadroIcono, BorderLayout.WEST);
 
-        // --- TEXTO DE LA ACCIÓN (SÓLO TÍTULO Y CENTRADO VERTICAL) ---
-        // Usamos GridBagLayout en el contenedor del texto para lograr un centrado vertical absoluto y limpio
+        // --- TEXTO DE LA ACCIÓN ---
         JPanel panelContenedorTexto = new JPanel(new GridBagLayout());
         panelContenedorTexto.setOpaque(false);
 
         JLabel lblT = new JLabel(titulo);
-        lblT.setFont(new Font("Segoe UI", Font.PLAIN, 12)); // Subido a 14 un toque para destacar más al estar solo
+        lblT.setFont(new Font("Segoe UI", Font.BOLD, 13)); // Un toque más de peso para que se lea perfecto
         lblT.setForeground(new Color(15, 23, 42));
 
         GridBagConstraints gbcTexto = new GridBagConstraints();
-        gbcTexto.anchor = GridBagConstraints.WEST; // Alineado firmemente a la izquierda (pegado al ícono)
-        gbcTexto.weightx = 1.0;                    // Empuja lo que esté a la derecha
+        gbcTexto.anchor = GridBagConstraints.WEST; 
+        gbcTexto.weightx = 1.0;                    
         panelContenedorTexto.add(lblT, gbcTexto);
 
         panelFila.add(panelContenedorTexto, BorderLayout.CENTER);
 
-        // La envolvemos en un GridBagLayout para que también mantenga el centro vertical perfecto
-        JPanel panelFlechaWrapper = new JPanel(new GridBagLayout());
-        panelFlechaWrapper.setOpaque(false);
-        panelFila.add(panelFlechaWrapper, BorderLayout.EAST);
-
         return panelFila;
     }
-
     private JPanel crearMiniBadgeInformación(String titulo, String valor) {
         JPanel panel = new JPanel(new GridLayout(2, 1, 0, 1));
         panel.setBackground(new Color(240, 253, 250));
