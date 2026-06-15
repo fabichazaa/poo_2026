@@ -82,7 +82,7 @@ public class PortalVeterinario extends JFrame {
         panelCitas = new vista.paneles.PanelCitas(controlador);
         panelContenedorSecciones.add(panelCitas, "PANTALLA_CITAS");
 
-        panelContenedorSecciones.add(new vista.paneles.PanelRegistros(controlador), "PANTALLA_REGISTROS");
+        panelContenedorSecciones.add(new vista.paneles.PanelMascotas(controlador), "PANTALLA_MASCOTAS");
         panelContenedorSecciones.add(new vista.paneles.PanelMedicamentos(controlador), "PANTALLA_MEDICAMENTOS");
         panelContenedorSecciones.add(new vista.paneles.PanelMas(controlador), "PANTALLA_MAS");
 
@@ -98,7 +98,7 @@ public class PortalVeterinario extends JFrame {
         ));
 
         JButton btnInicio = crearBotonMenuNav("Inicio", "imagenes/emojis/casa.png", "🏠", "PANTALLA_INICIO");
-        JButton btnRegistros = crearBotonMenuNav("Mascotas", "imagenes/emojis/patitas.png", "📋", "PANTALLA_REGISTROS");
+        JButton btnRegistros = crearBotonMenuNav("Mascotas", "imagenes/emojis/patitas.png", "📋", "PANTALLA_MASCOTAS");
         JButton btnMedicamentos = crearBotonMenuNav("Medicamentos", "imagenes/emojis/pastilla.png", "💊", "PANTALLA_MEDICAMENTOS");
         JButton btnCitas = crearBotonMenuNav("Turnos", "imagenes/emojis/calendario.png", "📅", "PANTALLA_CITAS");
         JButton btnMas = crearBotonMenuNav("Registros", "imagenes/emojis/usuario.png", "👤", "PANTALLA_MAS");
@@ -341,7 +341,7 @@ public class PortalVeterinario extends JFrame {
                 modalAlta.setVisible(true);
                 
                 // 🌟 CORREGIDO: Buscamos el PanelRegistros en el índice 2 de tus pestañas limpias
-                if (panelContenedorSecciones.getComponent(2) instanceof vista.paneles.PanelRegistros pReg) {
+                if (panelContenedorSecciones.getComponent(2) instanceof vista.paneles.PanelMascotas pReg) {
                     pReg.actualizar();
                 }
             }
@@ -609,8 +609,8 @@ public class PortalVeterinario extends JFrame {
 
         btn.addActionListener(e -> {
             switch (claveCapa) {
-                case "PANTALLA_REGISTROS" ->
-                    ((vista.paneles.PanelRegistros) panelContenedorSecciones.getComponent(2)).actualizar();
+                case "PANTALLA_MASCOTAS" ->
+                    ((vista.paneles.PanelMascotas) panelContenedorSecciones.getComponent(2)).actualizar();
                 case "PANTALLA_MEDICAMENTOS" ->
                     ((vista.paneles.PanelMedicamentos) panelContenedorSecciones.getComponent(3)).actualizar();
                 case "PANTALLA_MAS" ->

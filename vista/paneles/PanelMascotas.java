@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import modelo.*;
+import vista.dialogos.DialogoEditarPaciente; // 🌟 Importación unificada a la nueva carpeta
 
-public final class PanelRegistros extends JPanel {
+public final class PanelMascotas extends JPanel {
 
     private final ControladorVeterinaria controlador;
     private final JPanel panelGrillaPacientes;
@@ -20,15 +21,20 @@ public final class PanelRegistros extends JPanel {
     
     private final String PLACEHOLDER_BUSQUEDA = "Buscar por nombre del paciente...";
 
-    public PanelRegistros(ControladorVeterinaria controlador) {
+    public PanelMascotas(ControladorVeterinaria controlador) {
         this.controlador = controlador;
         
         setLayout(new BorderLayout(0, 15));
         setBackground(recursos.Color.BG);
         setBorder(new EmptyBorder(15, 25, 15, 25));
 
-        panelBarraSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 5));
+        // 🌟 CONFIGURACIÓN ESTRATÉGICA: Usamos BorderLayout para poder separar los filtros a la izquierda y el botón a la derecha
+        panelBarraSuperior = new JPanel(new BorderLayout());
         panelBarraSuperior.setOpaque(false);
+
+        // Contenedor interno izquierdo para agrupar el buscador y los filtros hilos
+        JPanel panelFiltrosIzquierda = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 5));
+        panelFiltrosIzquierda.setOpaque(false);
 
         final ImageIcon iconoLupaModerno;
         ImageIcon temporal = null;
@@ -89,7 +95,6 @@ public final class PanelRegistros extends JPanel {
                     txtBuscar.setForeground(recursos.Color.INK); 
                 }
             }
-
             @Override
             public void focusLost(java.awt.event.FocusEvent e) {
                 if (txtBuscar.getText().trim().isEmpty()) {
@@ -99,13 +104,13 @@ public final class PanelRegistros extends JPanel {
             }
         });
 
-        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            @Override
-            public void keyReleased(java.awt.event.KeyEvent e) {
-                filtrarYRefrescarGrilla();
-            }
-        });
-        panelBarraSuperior.add(txtBuscar);
+    txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+        @Override
+        public void keyReleased(java.awt.event.KeyEvent e) {
+            filtrarYRefrescarGrilla();
+        }
+    });
+        panelFiltrosIzquierda.add(txtBuscar);
 
         JPanel panelGrupoEspecies = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2)) {
             @Override
@@ -122,11 +127,11 @@ public final class PanelRegistros extends JPanel {
         panelGrupoEspecies.setOpaque(false);
         panelGrupoEspecies.setBorder(new EmptyBorder(2, 6, 2, 6));
         
-        String[] especies = {"Todos", "Perro", "Gato", "Conejo", "Otro"};
+        String[] especies = {"Todos", "Perro", "Gato", "Otro"};
         for (String esp : especies) {
             panelGrupoEspecies.add(crearBotonFiltroPildora(esp, true));
         }
-        panelBarraSuperior.add(panelGrupoEspecies);
+        panelFiltrosIzquierda.add(panelGrupoEspecies);
 
         JPanel panelGrupoEstado = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2)) {
             @Override
@@ -147,7 +152,59 @@ public final class PanelRegistros extends JPanel {
         for (String est : estados) {
             panelGrupoEstado.add(crearBotonFiltroPildora(est, false));
         }
-        panelBarraSuperior.add(panelGrupoEstado);
+        panelFiltrosIzquierda.add(panelGrupoEstado);
+
+        panelBarraSuperior.add(panelFiltrosIzquierda, BorderLayout.WEST);
+
+        JPanel panelContenedorBotonDerecha = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+        panelContenedorBotonDerecha.setOpaque(false);
+
+        JButton btnAgregarMascota = new JButton("Agregar Mascota") {
+            private boolean hover = false;
+            {
+                setFont(new Font("Segoe UI", Font.BOLD, 13));
+                setFocusPainted(false);
+                setContentAreaFilled(false);
+                setBorderPainted(false);
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                setBorder(new EmptyBorder(0, 20, 0, 20));
+                setPreferredSize(new Dimension(170, 40));
+
+                addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override public void mouseEntered(java.awt.event.MouseEvent e) { hover = true; repaint(); }
+                    @Override public void mouseExited(java.awt.event.MouseEvent e) { hover = false; repaint(); }
+                });
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Transición cromática interactiva (PRIMARY a HOVER VERDE)
+                Color colorFondo = hover ? new Color(15, 118, 110) : recursos.Color.PRIMARY;
+                g2.setColor(colorFondo);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36); // Redondeo perfecto tipo píldora
+                
+                setForeground(Color.WHITE);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+
+        // Escuchador dinámico: Levanta el diálogo pasando "null" como segundo parámetro para activar el Modo Registrar
+        btnAgregarMascota.addActionListener(e -> {
+            JFrame ventanaPadre = (JFrame) SwingUtilities.getWindowAncestor(this);
+            DialogoEditarPaciente dialogoAlta = new DialogoEditarPaciente(ventanaPadre, null); //
+            dialogoAlta.setVisible(true);
+            
+            // Cuando se cierra el diálogo, refrescamos automáticamente la grilla por si dio de alta una nueva mascota
+            filtrarYRefrescarGrilla();
+        });
+
+        panelContenedorBotonDerecha.add(btnAgregarMascota);
+        // Añadimos el contenedor del botón al lado ESTE de la barra superior
+        panelBarraSuperior.add(panelContenedorBotonDerecha, BorderLayout.EAST);
 
         add(panelBarraSuperior, BorderLayout.NORTH);
 
@@ -396,7 +453,6 @@ public final class PanelRegistros extends JPanel {
         agregarFilaFicha(panelDatosGrid, "Edad", "3 años"); 
         agregarFilaFicha(panelDatosGrid, "Próx. turno", "06 Jun 2026");
 
-        // BOTÓN ACCIÓN INFERIOR
         JButton btnFicha = new JButton("Ver ficha →") {
             private boolean mouseEncima = false;
             {
@@ -408,16 +464,8 @@ public final class PanelRegistros extends JPanel {
                 setBorder(new EmptyBorder(8, 0, 8, 0));
 
                 addMouseListener(new java.awt.event.MouseAdapter() {
-                    @Override
-                    public void mouseEntered(java.awt.event.MouseEvent e) {
-                        mouseEncima = true;
-                        repaint();
-                    }
-                    @Override
-                    public void mouseExited(java.awt.event.MouseEvent e) {
-                        mouseEncima = false;
-                        repaint();
-                    }
+                    @Override public void mouseEntered(java.awt.event.MouseEvent e) { mouseEncima = true; repaint(); }
+                    @Override public void mouseExited(java.awt.event.MouseEvent e) { mouseEncima = false; repaint(); }
                 });
             }
 
@@ -447,7 +495,7 @@ public final class PanelRegistros extends JPanel {
                 this.removeAll();
                 
                 this.setLayout(new BorderLayout(0, 15));
-                this.add(panelBarraSuperior, BorderLayout.NORTH); // Vuelven tus filtros impecables
+                this.add(panelBarraSuperior, BorderLayout.NORTH); 
                 this.add(scrollGrilla, BorderLayout.CENTER);
                 this.actualizar();
                 
@@ -488,9 +536,7 @@ public final class PanelRegistros extends JPanel {
     }
 
     private static class ModernScrollBarUI extends javax.swing.plaf.basic.BasicScrollBarUI {
-        @Override
-        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
-
+        @Override protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
         @Override
         protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
             if (thumbBounds.isEmpty() || !scrollbar.isEnabled()) {
@@ -514,15 +560,8 @@ public final class PanelRegistros extends JPanel {
             g2.dispose();
         }
 
-        @Override
-        protected JButton createDecreaseButton(int orientation) {
-            return crearBotonInvisible();
-        }
-
-        @Override
-        protected JButton createIncreaseButton(int orientation) {
-            return crearBotonInvisible();
-        }
+        @Override protected JButton createDecreaseButton(int orientation) { return crearBotonInvisible(); }
+        @Override protected JButton createIncreaseButton(int orientation) { return crearBotonInvisible(); }
 
         private JButton crearBotonInvisible() {
             JButton btn = new JButton();

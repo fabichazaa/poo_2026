@@ -50,6 +50,6 @@ public class Conejo extends Animal {
 
     @Override
     public String getCategoriaFiltro() {
-        return "Conejo";
+        return "Otro";
     }
 }
