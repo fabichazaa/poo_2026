@@ -19,7 +19,7 @@ public final class PanelMascotas extends JPanel {
     private JPanel panelBarraSuperior;
     private JScrollPane scrollGrilla;
     
-    private final String PLACEHOLDER_BUSQUEDA = "Buscar por nombre del paciente...";
+    private final String PLACEHOLDER_BUSQUEDA = "Buscar por nombre de la mascota...";
 
     public PanelMascotas(ControladorVeterinaria controlador) {
         this.controlador = controlador;
