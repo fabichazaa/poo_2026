@@ -64,7 +64,11 @@ public class ControladorVeterinaria {
     }
 
     public Turno registrarTurno(String fecha, String hora, Veterinario vet, Animal animal, TipoTurno tipo, String observaciones) {
-        int nuevoId = veterinaria.getListaTurnos().size() + 1;
+        int maxId = 0;
+        for (Turno t : veterinaria.getListaTurnos()) {
+            if (t.getIdTurno() > maxId) maxId = t.getIdTurno();
+        }
+        int nuevoId = maxId + 1;
         Turno t = new Turno(nuevoId, fecha, hora, vet, animal, tipo, observaciones);
         veterinaria.registrarTurno(t);
         return t;

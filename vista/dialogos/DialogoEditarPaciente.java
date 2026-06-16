@@ -1,12 +1,11 @@
 package vista.dialogos;
 
+import controlador.ControladorVeterinaria;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
-import controlador.ControladorVeterinaria;
 import modelo.Animal;
 import modelo.Direccion;
 import modelo.Responsable;
@@ -50,11 +49,6 @@ public class DialogoEditarPaciente extends JDialog {
 
     private JButton btnGuardar;
     private JTabbedPane tabsFormulario;
-
-    // PALETA DE COLORES CORPORATIVOS UNIFICADA (Estilo Figma)
-    private final Color VERDE_PRIMARY = new Color(13, 148, 136);   
-    private final Color VERDE_HOVER = new Color(15, 118, 110);     
-    private final Color VERDE_SUAVE = new Color(204, 251, 241);    
 
     public DialogoEditarPaciente(Frame padre, Animal animalExistente) {
         super(padre, (animalExistente != null) ? "Editar paciente: " + animalExistente.getNombre() : "Registrar nuevo paciente", true); 
@@ -119,8 +113,8 @@ public class DialogoEditarPaciente extends JDialog {
             
             String[] especiesDisponibles = {"Perro", "Gato", "Tortuga", "Loro", "Conejo"};
             
-            for (int i = 0; i < especiesDisponibles.length; i++) {
-                panelGrillaEspecies.add(crearBotonPildoraEspecie(especiesDisponibles[i]));
+            for (String especiesDisponible : especiesDisponibles) {
+                panelGrillaEspecies.add(crearBotonPildoraEspecie(especiesDisponible));
             }
             
             panelContenedorEspeciesHD.add(panelGrillaEspecies);
@@ -166,8 +160,8 @@ public class DialogoEditarPaciente extends JDialog {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 if (isSelected()) {
-                    setForeground(VERDE_PRIMARY); g2.setColor(VERDE_SUAVE); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-                    g2.setColor(VERDE_PRIMARY); g2.setStroke(new BasicStroke(1.5f)); g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 12, 12);
+                    setForeground(recursos.Color.PRIMARY); g2.setColor(recursos.Color.PRIMARY_LIGHT); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                    g2.setColor(recursos.Color.PRIMARY); g2.setStroke(new BasicStroke(1.5f)); g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 12, 12);
                 } else {
                     setForeground(recursos.Color.INK); g2.setColor(recursos.Color.BG); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                     g2.setColor(recursos.Color.BORDER); g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
@@ -187,8 +181,8 @@ public class DialogoEditarPaciente extends JDialog {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 if (isSelected()) {
-                    setForeground(VERDE_PRIMARY); g2.setColor(VERDE_SUAVE); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-                    g2.setColor(VERDE_PRIMARY); g2.setStroke(new BasicStroke(1.5f)); g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 12, 12);
+                    setForeground(recursos.Color.PRIMARY); g2.setColor(recursos.Color.PRIMARY_LIGHT); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                    g2.setColor(recursos.Color.PRIMARY); g2.setStroke(new BasicStroke(1.5f)); g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 12, 12);
                 } else {
                     setForeground(recursos.Color.INK); g2.setColor(recursos.Color.BG); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                     g2.setColor(recursos.Color.BORDER); g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
@@ -276,7 +270,7 @@ public class DialogoEditarPaciente extends JDialog {
 
         panelDropdownExistente.add(crearLabelFormulario("SELECCIONAR RESPONSABLE DE LA LISTA"));
         java.util.List<Responsable> listaVete = controlador.getVeterinaria().getListaClientes();
-        cmbResponsablesExistentes = new JComboBox<>(new java.util.Vector<>(listaVete));
+        cmbResponsablesExistentes = new JComboBox<>(new DefaultComboBoxModel<>(listaVete.toArray(Responsable[]::new)));
         cmbResponsablesExistentes.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         cmbResponsablesExistentes.setMaximumSize(new Dimension(Short.MAX_VALUE, 38));
         cmbResponsablesExistentes.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -378,31 +372,35 @@ public class DialogoEditarPaciente extends JDialog {
 
         cmbModoResponsable.addActionListener(e -> {
             String seleccion = cmbModoResponsable.getSelectedItem().toString();
-            if (seleccion.equals("Editar Responsable Actual")) {
-                panelDropdownExistente.setVisible(false);
-                panelCamposTextoResponsable.setVisible(true);
-                txtDniDueno.setEditable(false);
-                txtDniDueno.setText(resp != null ? resp.getDNI() : "");
-                txtNombreDueno.setText(resp != null ? resp.getNombre() : "");
-                txtApellidoDueno.setText(resp != null ? resp.getApellido() : "");
-                txtCelularDueno.setText(resp != null ? resp.getCelular() : "");
-                txtCalleDueno.setText(calleOriginal);
-                txtAlturaDueno.setText(alturaOriginal);
-                txtLocalidadDueno.setText(localidadOriginal);
-            } else if (seleccion.equals("Asignar Dueño Existente")) {
-                panelDropdownExistente.setVisible(true);
-                panelCamposTextoResponsable.setVisible(false);
-            } else { 
-                panelDropdownExistente.setVisible(false);
-                panelCamposTextoResponsable.setVisible(true);
-                txtDniDueno.setEditable(true);
-                txtDniDueno.setText("");
-                txtNombreDueno.setText("");
-                txtApellidoDueno.setText("");
-                txtCelularDueno.setText("");
-                txtCalleDueno.setText("");
-                txtAlturaDueno.setText("");
-                txtLocalidadDueno.setText("");
+            switch (seleccion) {
+                case "Editar Responsable Actual" -> {
+                    panelDropdownExistente.setVisible(false);
+                    panelCamposTextoResponsable.setVisible(true);
+                    txtDniDueno.setEditable(false);
+                    txtDniDueno.setText(resp != null ? resp.getDNI() : "");
+                    txtNombreDueno.setText(resp != null ? resp.getNombre() : "");
+                    txtApellidoDueno.setText(resp != null ? resp.getApellido() : "");
+                    txtCelularDueno.setText(resp != null ? resp.getCelular() : "");
+                    txtCalleDueno.setText(calleOriginal);
+                    txtAlturaDueno.setText(alturaOriginal);
+                    txtLocalidadDueno.setText(localidadOriginal);
+                }
+                case "Asignar Dueño Existente" -> {
+                    panelDropdownExistente.setVisible(true);
+                    panelCamposTextoResponsable.setVisible(false);
+                }
+                default -> {
+                    panelDropdownExistente.setVisible(false);
+                    panelCamposTextoResponsable.setVisible(true);
+                    txtDniDueno.setEditable(true);
+                    txtDniDueno.setText("");
+                    txtNombreDueno.setText("");
+                    txtApellidoDueno.setText("");
+                    txtCelularDueno.setText("");
+                    txtCalleDueno.setText("");
+                    txtAlturaDueno.setText("");
+                    txtLocalidadDueno.setText("");
+                }
             }
             panelTabResponsable.revalidate();
             panelTabResponsable.repaint();
@@ -427,7 +425,9 @@ public class DialogoEditarPaciente extends JDialog {
                 setContentAreaFilled(false); setBorderPainted(false);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
                     public void mouseEntered(java.awt.event.MouseEvent e) { hover = true; repaint(); }
+                    @Override
                     public void mouseExited(java.awt.event.MouseEvent e) { hover = false; repaint(); }
                 });
             }
@@ -449,7 +449,9 @@ public class DialogoEditarPaciente extends JDialog {
                 setContentAreaFilled(false); setBorderPainted(false);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
                     public void mouseEntered(java.awt.event.MouseEvent e) { hover = true; repaint(); }
+                    @Override
                     public void mouseExited(java.awt.event.MouseEvent e) { hover = false; repaint(); }
                 });
             }
@@ -457,7 +459,7 @@ public class DialogoEditarPaciente extends JDialog {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(hover ? VERDE_HOVER : VERDE_PRIMARY);
+                g2.setColor(hover ? recursos.Color.PRIMARY_DEEP : recursos.Color.PRIMARY);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 setForeground(Color.WHITE); g2.dispose(); super.paintComponent(g);
             }
@@ -475,16 +477,24 @@ public class DialogoEditarPaciente extends JDialog {
                 if (nombreA.isEmpty()) throw new IllegalArgumentException();
 
                 if (!esModoEdicion) {
-                    if (especieSeleccionada.equals("Perro")) {
-                        this.animal = new modelo.Perro(nombreA, fechaNacA, sexoA, pesoA, razaA);
-                    } else if (especieSeleccionada.equals("Gato")) {
-                        this.animal = new modelo.Gato(nombreA, fechaNacA, sexoA, pesoA, razaA);
-                    } else if (especieSeleccionada.equals("Tortuga")) {
-                        this.animal = new modelo.Tortuga(nombreA, fechaNacA, sexoA, pesoA, razaA);
-                    } else if (especieSeleccionada.equals("Loro")) {
-                        this.animal = new modelo.Loro(nombreA, fechaNacA, sexoA, pesoA, razaA);
-                    } else if (especieSeleccionada.equals("Conejo")) {
-                        this.animal = new modelo.Conejo(nombreA, fechaNacA, sexoA, pesoA, razaA);
+                    switch (especieSeleccionada) {
+                        case "Perro":
+                            this.animal = new modelo.Perro(nombreA, fechaNacA, sexoA, pesoA, razaA);
+                            break;
+                        case "Gato":
+                            this.animal = new modelo.Gato(nombreA, fechaNacA, sexoA, pesoA, razaA);
+                            break;
+                        case "Tortuga":
+                            this.animal = new modelo.Tortuga(nombreA, fechaNacA, sexoA, pesoA, razaA);
+                            break;
+                        case "Loro":
+                            this.animal = new modelo.Loro(nombreA, fechaNacA, sexoA, pesoA, razaA);
+                            break;
+                        case "Conejo":
+                            this.animal = new modelo.Conejo(nombreA, fechaNacA, sexoA, pesoA, razaA);
+                            break;
+                        default:
+                            break;
                     }
                 } else {
                     animal.setNombre(nombreA);
@@ -500,29 +510,36 @@ public class DialogoEditarPaciente extends JDialog {
                 String localidadTexto = txtLocalidadDueno.getText().trim().isEmpty() ? "Pilar" : txtLocalidadDueno.getText().trim();
                 Direccion nueva_direccion = new Direccion(txtCalleDueno.getText().trim(), alturaInt, localidadTexto);
 
-                if (seleccionModo.equals("Editar Responsable Actual")) {
-                    if (animal.getResponsable() != null) {
-                        Responsable r = animal.getResponsable();
-                        r.setNombre(txtNombreDueno.getText().trim());
-                        r.setApellido(txtApellidoDueno.getText().trim());
-                        r.setCelular(txtCelularDueno.getText().trim());
-                        r.setDireccion(nueva_direccion);
+                switch (seleccionModo) {
+                    case "Editar Responsable Actual" -> {
+                        if (animal.getResponsable() != null) {
+                            Responsable r = animal.getResponsable();
+                            r.setNombre(txtNombreDueno.getText().trim());
+                            r.setApellido(txtApellidoDueno.getText().trim());
+                            r.setCelular(txtCelularDueno.getText().trim());
+                            r.setDireccion(nueva_direccion);
+                        }
                     }
-                } 
-                else if (seleccionModo.equals("Asignar Dueño Existente")) {
-                    Responsable seleccionado = (Responsable) cmbResponsablesExistentes.getSelectedItem();
-                    if (seleccionado != null) animal.setResponsable(seleccionado);
-                } 
-                else if (seleccionModo.equals("Registrar y Asignar Nuevo Dueño")) {
-                    Responsable nuevo = new Responsable(
-                        txtDniDueno.getText().trim(),
-                        txtNombreDueno.getText().trim(),
-                        txtApellidoDueno.getText().trim(),
-                        txtCelularDueno.getText().trim(),
-                        nueva_direccion
-                    );
-                    controlador.getVeterinaria().getListaClientes().add(nuevo);
-                    animal.setResponsable(nuevo);
+                    case "Asignar Dueño Existente" -> {
+                        Responsable seleccionado = (Responsable) cmbResponsablesExistentes.getSelectedItem();
+                        if (seleccionado != null) {
+                            animal.setResponsable(seleccionado);
+                            seleccionado.agregarMascota(animal);
+                        }
+                    }
+                    case "Registrar y Asignar Nuevo Dueño" -> {
+                        Responsable nuevo = new Responsable(
+                                txtDniDueno.getText().trim(),
+                                txtNombreDueno.getText().trim(),
+                                txtApellidoDueno.getText().trim(),
+                                txtCelularDueno.getText().trim(),
+                                nueva_direccion
+                        );  controlador.getVeterinaria().getListaClientes().add(nuevo);
+                        animal.setResponsable(nuevo);
+                        nuevo.agregarMascota(animal);
+                    }
+                    default -> {
+                    }
                 }
 
                 if (!esModoEdicion) {
@@ -544,7 +561,7 @@ public class DialogoEditarPaciente extends JDialog {
                 dispose();
             } catch (NumberFormatException numEx) {
                 JOptionPane.showMessageDialog(this, "Verifica que el Peso y el N° de calle sean numéricos correctos.", "Error de formato", JOptionPane.ERROR_MESSAGE);
-            } catch (Exception ex) {
+            } catch (HeadlessException | IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(this, "Por favor, completa los campos obligatorios (*).", "Error de validación", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -573,8 +590,8 @@ public class DialogoEditarPaciente extends JDialog {
                 
                 boolean activo = especieSeleccionada.equals(nombre);
                 if (activo) {
-                    setForeground(VERDE_PRIMARY); g2.setColor(VERDE_SUAVE); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
-                    g2.setColor(VERDE_PRIMARY); g2.setStroke(new BasicStroke(1.5f)); g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 16, 16);
+                    setForeground(recursos.Color.PRIMARY); g2.setColor(recursos.Color.PRIMARY_LIGHT); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                    g2.setColor(recursos.Color.PRIMARY); g2.setStroke(new BasicStroke(1.5f)); g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 16, 16);
                 } else {
                     setForeground(new Color(100, 116, 139)); g2.setColor(new Color(248, 250, 252)); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                     g2.setColor(new Color(226, 232, 240)); g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
@@ -603,8 +620,11 @@ public class DialogoEditarPaciente extends JDialog {
                     setFont(new Font("Segoe UI", Font.BOLD, 13)); setPreferredSize(new Dimension(200, 40)); 
                     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     addMouseListener(new java.awt.event.MouseAdapter() {
+                        @Override
                         public void mouseEntered(java.awt.event.MouseEvent e) { mouseEncima = true; repaint(); }
+                        @Override
                         public void mouseExited(java.awt.event.MouseEvent e) { mouseEncima = false; repaint(); }
+                        @Override
                         public void mousePressed(java.awt.event.MouseEvent e) { tabs.setSelectedIndex(indicePestana); }
                     });
                 }
@@ -614,9 +634,9 @@ public class DialogoEditarPaciente extends JDialog {
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     boolean estaSeleccionada = (tabs.getSelectedIndex() == indicePestana);
                     if (estaSeleccionada) {
-                        setForeground(VERDE_PRIMARY); g2.setColor(VERDE_SUAVE); g2.fillRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 14, 14);
+                        setForeground(recursos.Color.PRIMARY); g2.setColor(recursos.Color.PRIMARY_LIGHT); g2.fillRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 14, 14);
                     } else if (mouseEncima) {
-                        setForeground(VERDE_HOVER); g2.setColor(new Color(241, 245, 249)); g2.fillRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 14, 14);
+                        setForeground(recursos.Color.PRIMARY_DEEP); g2.setColor(new Color(241, 245, 249)); g2.fillRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 14, 14);
                     } else { setForeground(new Color(148, 163, 184)); }
                     g2.dispose(); super.paintComponent(g);
                 }

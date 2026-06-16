@@ -231,21 +231,22 @@ public class PanelCitas extends JPanel {
             return;
         }
 
-        // 1. Hoy (Carlos, no cancelados, fecha "06/06/2026")
+        // 1. Hoy (no cancelados, fecha actual)
+        String hoy = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         int hoyCount = 0;
         for (Turno t : controlador.getVeterinaria().getListaTurnos()) {
             if (vet.equals(t.getVeterinario())
-                    && t.getFecha().equals("06/06/2026")
+                    && t.getFecha().equals(hoy)
                     && !t.getEstado().equals(Turno.ESTADO_CANCELADO)) {
                 hoyCount++;
             }
         }
         lblStatHoyVal.setText(String.valueOf(hoyCount));
 
-        // 2. Pendientes en toda la clínica
+        // 2. Pendientes del veterinario
         int pendientesCount = 0;
         for (Turno t : controlador.getVeterinaria().getListaTurnos()) {
-            if (t.esPendiente()) {
+            if (t.esPendiente() && t.getVeterinario().equals(vet)) {
                 pendientesCount++;
             }
         }

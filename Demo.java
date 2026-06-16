@@ -21,7 +21,7 @@ public class Demo {
         verificar("Hay 4 veterinarios cargados", v.getListaVeterinarios().size() == 4);
         verificar("Hay 4 clientes cargados",     v.getListaClientes().size() == 4);
         verificar("Hay 17 animales en total",    v.obtenerTodosLosAnimales().size() == 17);
-        verificar("Hay 21 turnos cargados",      v.getListaTurnos().size() == 21);
+        verificar("Hay 27 turnos cargados",      v.getListaTurnos().size() == 27);
         verificar("Hay 8 medicamentos en el catálogo", v.getCatalogoMedicamentos().size() == 8);
         verificar("Notas cargadas (>=4)",        c.getNotas().size() >= 4);
 

@@ -2,6 +2,7 @@ package vista.paneles;
 
 import controlador.ControladorVeterinaria;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -17,7 +18,7 @@ public final class PanelMascotas extends JPanel {
     private String filtroEstadoActual = "Todos";
     
     private JPanel panelBarraSuperior;
-    private JScrollPane scrollGrilla;
+    private final JScrollPane scrollGrilla;
     
     private final String PLACEHOLDER_BUSQUEDA = "Buscar por nombre de la mascota...";
 
@@ -48,7 +49,7 @@ public final class PanelMascotas extends JPanel {
             g2.drawImage(imgBuffer, 0, 0, 18, 18, null);
             g2.dispose();
             temporal = new ImageIcon(resizedImg);
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("No se pudo cargar la imagen de la lupa, usando respaldo de texto.");
         }
         iconoLupaModerno = temporal;
@@ -389,7 +390,7 @@ public final class PanelMascotas extends JPanel {
             g2.drawImage(imgBuffer, 0, 0, 42, 42, null);
             g2.dispose();
             lblIcono.setIcon(new ImageIcon(resizedImg));
-        } catch (Exception e) {
+        } catch (IOException e) {
             lblIcono.setText("🐾");
             lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 30));
         }
@@ -403,7 +404,7 @@ public final class PanelMascotas extends JPanel {
         panelInfoCentral.setOpaque(false);
         panelInfoCentral.setLayout(new BoxLayout(panelInfoCentral, BoxLayout.Y_AXIS));
 
-        JLabel lblNombre = new JLabel((a != null && a.getNombre() != null) ? a.getNombre() : "Sin nombre", SwingConstants.CENTER);
+        JLabel lblNombre = new JLabel(a.getNombre() != null ? a.getNombre() : "Sin nombre", SwingConstants.CENTER);
         lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 15));
         lblNombre.setForeground(recursos.Color.INK);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -450,8 +451,18 @@ public final class PanelMascotas extends JPanel {
         panelDatosGrid.setBorder(new EmptyBorder(10, 5, 5, 5));
 
         agregarFilaFicha(panelDatosGrid, "Dueño", a.getResponsable().getNombre());
-        agregarFilaFicha(panelDatosGrid, "Edad", "3 años"); 
-        agregarFilaFicha(panelDatosGrid, "Próx. turno", "06 Jun 2026");
+
+        String edadStr = a.calcularEdad() >= 0 ? a.calcularEdad() + " años" : "—";
+        agregarFilaFicha(panelDatosGrid, "Edad", edadStr);
+
+        String proxTurno = "—";
+        for (Turno t : controlador.getVeterinaria().getListaTurnos()) {
+            if (t.getAnimal().getIdAnimal().equals(a.getIdAnimal()) && t.esPendiente()) {
+                proxTurno = t.getFecha() + " " + t.getHora();
+                break;
+            }
+        }
+        agregarFilaFicha(panelDatosGrid, "Próx. turno", proxTurno);
 
         JButton btnFicha = new JButton("Ver ficha →") {
             private boolean mouseEncima = false;

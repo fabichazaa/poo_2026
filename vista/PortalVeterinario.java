@@ -512,7 +512,7 @@ public class PortalVeterinario extends JFrame {
             try {
                 java.awt.image.BufferedImage imgBuffer = javax.imageio.ImageIO.read(new java.io.File(emojiIcono));
                 lblEmoji.setIcon(escalarImagenAltaCalidad(imgBuffer, 24, 24));
-            } catch (Exception e) {
+            } catch (IOException e) {
                 lblEmoji.setText("?");
                 lblEmoji.setFont(new Font("Segoe UI", Font.PLAIN, 18));
             }
@@ -708,7 +708,7 @@ public class PortalVeterinario extends JFrame {
             UIManager.put("Label.font", fuenteBaseUI);
             UIManager.put("Button.font", fuenteBaseUI);
             UIManager.put("ComboBox.font", fuenteBaseUI);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | javax.swing.UnsupportedLookAndFeelException e) {
             System.out.println("No se pudo cargar la fuente del sistema UI.");
         }
         SwingUtilities.invokeLater(() -> new PortalVeterinario().setVisible(true));
@@ -745,7 +745,7 @@ public class PortalVeterinario extends JFrame {
                 try {
                     java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(new java.io.File(icono));
                     lblIcon.setIcon(escalarImagenAltaCalidad(img, 32, 32));
-                } catch (Exception e) {
+                } catch (IOException e) {
                     lblIcon.setText(unicodeIcon);
                     lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
                 }
