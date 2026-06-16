@@ -59,7 +59,7 @@ public class PanelNotas extends JPanel {
 
         JLabel lblEditor = new JLabel("Nueva nota");
         lblEditor.setFont(CargadorFuentes.cargar(12f));
-        lblEditor.setForeground(new Color(71, 85, 105));
+        lblEditor.setForeground(recursos.Color.SLATE_600);
         panelEditor.add(lblEditor, BorderLayout.NORTH);
 
         campoNuevaNota = new JTextArea(3, 1);

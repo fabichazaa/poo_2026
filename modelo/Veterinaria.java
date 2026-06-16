@@ -36,10 +36,8 @@ public class Veterinaria {
 
     public void registrarVeterinario(Veterinario v) { listaVeterinarios.add(v); }
     public void registrarCliente(Responsable d) { listaClientes.add(d); }
-    public void registrarTurno(Turno t) {
-        listaTurnos.add(t);
-        t.registrarEnVeterinario();
-    }
+    // ponytail: nadie consulta Veterinario.turnos — registrarEnVeterinario() es ruido muerto
+    public void registrarTurno(Turno t) { listaTurnos.add(t); }
     public void agregarMedicamentoAlCatalogo(Medicamento m) { catalogoMedicamentos.add(m); }
 
     public ArrayList<Veterinario> getListaVeterinarios() { return listaVeterinarios; }

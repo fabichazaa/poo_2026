@@ -88,7 +88,7 @@ public class DialogoAgregarMedicamento extends JDialog {
         campoCodigoSenasa.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         JLabel lblCodigo = new JLabel("Código SENASA");
         lblCodigo.setFont(CargadorFuentes.cargar(11f));
-        lblCodigo.setForeground(new Color(71, 85, 105));
+        lblCodigo.setForeground(recursos.Color.SLATE_600);
         lblCodigo.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(lblCodigo);
         panelCentral.add(Box.createVerticalStrut(4));
@@ -112,7 +112,7 @@ public class DialogoAgregarMedicamento extends JDialog {
         campoNombre.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         JLabel lblNombre = new JLabel("Nombre del medicamento");
         lblNombre.setFont(CargadorFuentes.cargar(11f));
-        lblNombre.setForeground(new Color(71, 85, 105));
+        lblNombre.setForeground(recursos.Color.SLATE_600);
         lblNombre.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(lblNombre);
         panelCentral.add(Box.createVerticalStrut(4));
@@ -136,7 +136,7 @@ public class DialogoAgregarMedicamento extends JDialog {
         campoFechaAplicacion.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         JLabel lblAplic = new JLabel("Vigencia (días)");
         lblAplic.setFont(CargadorFuentes.cargar(11f));
-        lblAplic.setForeground(new Color(71, 85, 105));
+        lblAplic.setForeground(recursos.Color.SLATE_600);
         lblAplic.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(lblAplic);
         panelCentral.add(Box.createVerticalStrut(4));
@@ -154,7 +154,7 @@ public class DialogoAgregarMedicamento extends JDialog {
         campoFechaVencimiento.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         JLabel lblVenc = new JLabel("(Reservado)");
         lblVenc.setFont(CargadorFuentes.cargar(11f));
-        lblVenc.setForeground(new Color(71, 85, 105));
+        lblVenc.setForeground(recursos.Color.SLATE_600);
         lblVenc.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelCentral.add(lblVenc);
         panelCentral.add(Box.createVerticalStrut(4));

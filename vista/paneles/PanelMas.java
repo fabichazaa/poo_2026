@@ -21,7 +21,7 @@ public class PanelMas extends JPanel {
     private JLabel lblEnAdopcion;
     private JLabel lblNotas;
 
-    private static final Color COLOR_TOPE = new Color(71, 85, 105);
+    private static final Color COLOR_TOPE = recursos.Color.SLATE_600;
 
     public PanelMas(ControladorVeterinaria controlador) {
         this.controlador = controlador;

@@ -12,6 +12,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import modelo.*;
 import recursos.CargadorFuentes;
+import vista.componentes.Placeholders;
 
 public class DialogoRecetarMedicamento extends JDialog {
 
@@ -120,7 +121,7 @@ public class DialogoRecetarMedicamento extends JDialog {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-                g2.setColor(Color.WHITE);
+                g2.setColor(recursos.Color.SURFACE);
                 g2.fillRect(0, 0, getWidth(), getHeight());
 
                 int headerHeight = headerPanel.getHeight() > 0 ? headerPanel.getHeight() : 70;
@@ -197,7 +198,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         panelDelCatalogo.add(Box.createVerticalStrut(6));
 
         // Input buscador
-        txtBuscarMed = new PlaceHolderTextField("🔍 Escribí para buscar medicamento...");
+        txtBuscarMed = new Placeholders.TextField("🔍 Escribí para buscar medicamento...");
         txtBuscarMed.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         txtBuscarMed.setPreferredSize(new Dimension(0, 38));
         txtBuscarMed.setBorder(BorderFactory.createCompoundBorder(
@@ -276,7 +277,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         panelMagistral.add(lblMag);
         panelMagistral.add(Box.createVerticalStrut(6));
 
-        txtMedMagistral = new PlaceHolderTextField("Ej: Amoxicilina suspensión especial");
+        txtMedMagistral = new Placeholders.TextField("Ej: Amoxicilina suspensión especial");
         txtMedMagistral.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         txtMedMagistral.setPreferredSize(new Dimension(0, 38));
         txtMedMagistral.setBorder(BorderFactory.createCompoundBorder(
@@ -307,7 +308,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         JLabel lblDosis = new JLabel("DOSIS");
         lblDosis.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
         lblDosis.setForeground(recursos.Color.MUTED);
-        campoDosis = new PlaceHolderTextField("Ej: 1 comprimido");
+        campoDosis = new Placeholders.TextField("Ej: 1 comprimido");
         campoDosis.setBorder(BorderFactory.createCompoundBorder(
                 new LineBorder(recursos.Color.BORDER, 1, true),
                 new EmptyBorder(8, 12, 8, 12)
@@ -430,7 +431,7 @@ public class DialogoRecetarMedicamento extends JDialog {
         bodyPanel.add(lblInd);
         bodyPanel.add(Box.createVerticalStrut(6));
 
-        areaIndicaciones = new PlaceHolderTextArea("Ej: Administrar con alimento para evitar malestar gástrico...", 4, 20);
+        areaIndicaciones = new Placeholders.TextArea("Ej: Administrar con alimento para evitar malestar gástrico...", 4, 20);
         areaIndicaciones.setFont(CargadorFuentes.cargar(12f));
         areaIndicaciones.setForeground(recursos.Color.INK);
         areaIndicaciones.setLineWrap(true);
@@ -664,58 +665,5 @@ public class DialogoRecetarMedicamento extends JDialog {
 
         JOptionPane.showMessageDialog(this, "Medicamento recetado con éxito.");
         dispose();
-    }
-
-    // ==========================================================
-    //  PLACEHOLDER CUSTOM COMPONENTS HELPERS
-    // ==========================================================
-    private static class PlaceHolderTextField extends JTextField {
-
-        private final String placeholder;
-
-        public PlaceHolderTextField(String placeholder) {
-            this.placeholder = placeholder;
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (getText().isEmpty() && !isFocusOwner()) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(recursos.Color.CAT_INACTIVO);
-                g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
-                Insets insets = getInsets();
-                FontMetrics fm = g2.getFontMetrics();
-                int y = (getHeight() - insets.top - insets.bottom - fm.getHeight()) / 2 + fm.getAscent() + insets.top;
-                g2.drawString(placeholder, insets.left, y);
-                g2.dispose();
-            }
-        }
-    }
-
-    private static class PlaceHolderTextArea extends JTextArea {
-
-        private final String placeholder;
-
-        public PlaceHolderTextArea(String placeholder, int rows, int columns) {
-            super(rows, columns);
-            this.placeholder = placeholder;
-            setBorder(new EmptyBorder(8, 10, 8, 10));
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (getText().isEmpty() && !isFocusOwner()) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(recursos.Color.CAT_INACTIVO);
-                g2.setFont(getFont().deriveFont(Font.ITALIC));
-                Insets insets = getInsets();
-                g2.drawString(placeholder, insets.left + 2, insets.top + g2.getFontMetrics().getAscent());
-                g2.dispose();
-            }
-        }
     }
 }

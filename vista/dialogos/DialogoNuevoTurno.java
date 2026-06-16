@@ -22,8 +22,6 @@ public class DialogoNuevoTurno extends JDialog {
     private JComboBox<Animal> comboAnimales;
     private TipoTurno tipoSeleccionado = null;
     private TimeSlotButton slotSeleccionado = null;
-    @SuppressWarnings("unused")
-    private String prioridadSeleccionada = "Normal";
     private JTextField campoFecha;
     private JTextArea campoNotas;
     private JLabel lblError;
@@ -152,7 +150,7 @@ public class DialogoNuevoTurno extends JDialog {
                 : "Veterinario no identificado";
         JLabel lblSubtitle = new JLabel(vetStr);
         lblSubtitle.setFont(CargadorFuentes.cargar(11f));
-        lblSubtitle.setForeground(new Color(100, 116, 139));
+        lblSubtitle.setForeground(recursos.Color.MUTED);
 
         panelTitulos.add(lblTitulo);
         panelTitulos.add(lblSubtitle);
@@ -330,12 +328,12 @@ public class DialogoNuevoTurno extends JDialog {
         panelColIzq.add(Box.createVerticalStrut(12));
 
         // 2. Card Tipo de Turno
-        CardPanel cardTipo = new CardPanel(new Color(139, 92, 246)); // Purple
+        CardPanel cardTipo = new CardPanel(recursos.Color.PURPLE_DARK);
         cardTipo.setLayout(new BorderLayout(0, 8));
 
         JLabel lblTipoTit = new JLabel("TIPO DE TURNO *");
         lblTipoTit.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblTipoTit.setForeground(new Color(100, 116, 139));
+        lblTipoTit.setForeground(recursos.Color.MUTED);
         cardTipo.add(lblTipoTit, BorderLayout.NORTH);
 
         JPanel panelTipoGrid = new JPanel(new GridLayout(3, 2, 2, 4));
@@ -367,18 +365,18 @@ public class DialogoNuevoTurno extends JDialog {
         panelColIzq.add(Box.createVerticalStrut(12));
 
         // 3. Card Prioridad
-        CardPanel cardPrioridad = new CardPanel(new Color(249, 115, 22), orangeGlow());
+        CardPanel cardPrioridad = new CardPanel(recursos.Color.CAT_CONTROL, orangeGlow());
         cardPrioridad.setLayout(new BorderLayout(0, 8));
 
         JLabel lblPrioridadTit = new JLabel("PRIORIDAD");
         lblPrioridadTit.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblPrioridadTit.setForeground(new Color(100, 116, 139));
+        lblPrioridadTit.setForeground(recursos.Color.MUTED);
         cardPrioridad.add(lblPrioridadTit, BorderLayout.NORTH);
 
         JPanel panelPills = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         panelPills.setOpaque(false);
 
-        PrioridadButton pillNormal = new PrioridadButton("Normal", new Color(100, 116, 139));
+        PrioridadButton pillNormal = new PrioridadButton("Normal", recursos.Color.MUTED);
         PrioridadButton pillMedia = new PrioridadButton("Media", new Color(234, 179, 8));
         PrioridadButton pillAlta = new PrioridadButton("Alta", recursos.Color.BADGE_ALERT);
 
@@ -422,7 +420,7 @@ public class DialogoNuevoTurno extends JDialog {
 
         JLabel lblFechaTit = new JLabel("FECHA *");
         lblFechaTit.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblFechaTit.setForeground(new Color(100, 116, 139));
+        lblFechaTit.setForeground(recursos.Color.MUTED);
         lblFechaTit.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelSubFecha.add(lblFechaTit);
         panelSubFecha.add(Box.createVerticalStrut(6));
@@ -490,7 +488,7 @@ public class DialogoNuevoTurno extends JDialog {
 
         JLabel lblHoraTit = new JLabel("HORA *");
         lblHoraTit.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblHoraTit.setForeground(new Color(100, 116, 139));
+        lblHoraTit.setForeground(recursos.Color.MUTED);
         lblHoraTit.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelSubHora.add(lblHoraTit);
         panelSubHora.add(Box.createVerticalStrut(6));
@@ -544,7 +542,7 @@ public class DialogoNuevoTurno extends JDialog {
 
         JLabel lblNotasTit = new JLabel("NOTAS / MOTIVO DE CONSULTA");
         lblNotasTit.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblNotasTit.setForeground(new Color(100, 116, 139));
+        lblNotasTit.setForeground(recursos.Color.MUTED);
         cardNotas.add(lblNotasTit, BorderLayout.NORTH);
 
         campoNotas = new JTextArea(3, 20);
@@ -751,7 +749,7 @@ public class DialogoNuevoTurno extends JDialog {
     }
 
     private Color orangeGlow() {
-        return new Color(236, 72, 153);
+        return recursos.Color.CAT_VACUNA;
     }
 
     private JPanel crearFilaResumen(String label, JLabel lblValue) {
@@ -777,14 +775,13 @@ public class DialogoNuevoTurno extends JDialog {
         }
         tipoSeleccionado = selected.getTipo();
         lblResumenTipoVal.setText(selected.getTexto());
-        lblResumenTipoVal.setForeground(recursos.Color.INK);
+        lblResumenTipoVal.setForeground(selected.getTipo().getBadgeFgColor());
     }
 
     private void seleccionarPrioridad(PrioridadButton selected) {
         for (PrioridadButton p : botonesPrioridad) {
             p.setSeleccionado(p == selected);
         }
-        prioridadSeleccionada = selected.getTexto();
     }
 
     private void seleccionarHora(TimeSlotButton selected) {
@@ -908,8 +905,6 @@ public class DialogoNuevoTurno extends JDialog {
         private boolean seleccionado = false;
         private final Color colorNormalBg = recursos.Color.CANVAS_GENERAL;
         private final Color colorNormalBorder = recursos.Color.BORDER;
-        private final Color colorSelectedBg = new Color(240, 253, 250);
-        private final Color colorSelectedBorder = recursos.Color.PRIMARY;
 
         public TipoTurnoButton(String texto, TipoTurno tipo) {
             this.texto = texto;
@@ -935,7 +930,7 @@ public class DialogoNuevoTurno extends JDialog {
 
             JLabel lblText = new JLabel(texto);
             lblText.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-            lblText.setForeground(new Color(71, 85, 105)); // Slate-600
+            lblText.setForeground(recursos.Color.SLATE_600);
 
             JPanel innerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 16));
             innerPanel.setOpaque(false);
@@ -983,16 +978,25 @@ public class DialogoNuevoTurno extends JDialog {
             g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
-            Color bg = seleccionado ? colorSelectedBg : getBackground();
-            if (bg == null) {
-                bg = colorNormalBg;
+            Color bg;
+            Color border;
+            Color textCol;
+
+            if (seleccionado) {
+                bg = tipo.getBadgeBgColor();
+                border = tipo.getAccentColor();
+                textCol = tipo.getBadgeFgColor();
+            } else {
+                bg = getBackground() != null ? getBackground() : colorNormalBg;
+                border = colorNormalBorder;
+                textCol = recursos.Color.SLATE_600;
             }
+
             g2.setColor(bg);
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
 
-            Color border = seleccionado ? colorSelectedBorder : colorNormalBorder;
             g2.setColor(border);
-            g2.setStroke(new BasicStroke(seleccionado ? 1.5f : 1f));
+            g2.setStroke(new BasicStroke(seleccionado ? 2f : 1f));
             g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
 
             g2.dispose();
@@ -1071,7 +1075,7 @@ public class DialogoNuevoTurno extends JDialog {
             g2.fillOval(12, getHeight() / 2 - 4, 8, 8);
 
             // Draw text
-            g2.setColor(new Color(71, 85, 105));
+            g2.setColor(recursos.Color.SLATE_600);
             g2.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
             FontMetrics fm = g2.getFontMetrics();
             int textX = 26;
@@ -1100,7 +1104,7 @@ public class DialogoNuevoTurno extends JDialog {
             setPreferredSize(new Dimension(85, 30));
 
             setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-            setForeground(new Color(71, 85, 105));
+            setForeground(recursos.Color.SLATE_600);
 
             addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override
@@ -1135,7 +1139,7 @@ public class DialogoNuevoTurno extends JDialog {
 
         public void setSeleccionado(boolean s) {
             this.seleccionado = s;
-            setForeground(seleccionado ? Color.WHITE : new Color(71, 85, 105));
+            setForeground(seleccionado ? Color.WHITE : recursos.Color.SLATE_600);
             repaint();
         }
 
@@ -1161,8 +1165,8 @@ public class DialogoNuevoTurno extends JDialog {
                 border = recursos.Color.BORDER;
                 textCol = recursos.Color.CAT_INACTIVO;
             } else if (seleccionado) {
-                bg = new Color(2, 132, 199);
-                border = new Color(2, 132, 199);
+                bg = recursos.Color.SLOT_BLUE;
+                border = recursos.Color.SLOT_BLUE;
                 textCol = Color.WHITE;
             } else {
                 bg = hovered ? recursos.Color.BG : recursos.Color.CANVAS_GENERAL;

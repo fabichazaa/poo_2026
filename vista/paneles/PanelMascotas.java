@@ -320,7 +320,7 @@ public final class PanelMascotas extends JPanel {
  
         Color colorGrisTagFondo = recursos.Color.BG;       
         Color colorGrisTagBorde = recursos.Color.BORDER;       
-        Color colorGrisTagTexto = new Color(71, 85, 105);         
+        Color colorGrisTagTexto = recursos.Color.SLATE_600;         
 
         JPanel card = new JPanel(new BorderLayout(0, 10)) {
             @Override
@@ -497,7 +497,7 @@ public final class PanelMascotas extends JPanel {
             }
         };
         btnFicha.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnFicha.setForeground(new Color(71, 85, 105)); 
+        btnFicha.setForeground(recursos.Color.SLATE_600); 
 
         btnFicha.addActionListener(e -> {
             this.removeAll();
@@ -540,7 +540,7 @@ public final class PanelMascotas extends JPanel {
         
         JLabel lblValor = new JLabel(valor, SwingConstants.RIGHT);
         lblValor.setFont(new Font("Segoe UI", Font.PLAIN, 12)); 
-        lblValor.setForeground(new Color(71, 85, 105)); 
+        lblValor.setForeground(recursos.Color.SLATE_600); 
 
         panel.add(lblClave);
         panel.add(lblValor);

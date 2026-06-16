@@ -12,6 +12,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import modelo.*;
 import recursos.CargadorFuentes;
+import vista.componentes.Placeholders;
 
 public class DialogoRegistrarVacunacion extends JDialog {
 
@@ -93,7 +94,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         String raza = animal.getRaza();
         JLabel lblSub = new JLabel("Para: " + animal.getNombre() + " (" + raza + " · " + animal.getEspecie() + ")");
         lblSub.setFont(CargadorFuentes.cargar(12f));
-        lblSub.setForeground(new Color(243, 232, 255));
+        lblSub.setForeground(recursos.Color.PURPLE_LIGHT);
 
         textHeader.add(lblTitulo);
         textHeader.add(Box.createVerticalStrut(2));
@@ -141,7 +142,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
                 g2.fillRect(0, 0, getWidth(), getHeight());
                 
                 int headerHeight = headerPanel.getHeight() > 0 ? headerPanel.getHeight() : 70;
-                g2.setColor(new Color(147, 51, 234)); // Purple Dark
+                g2.setColor(recursos.Color.PURPLE_DARK); // Purple Dark
                 g2.fillRect(0, 0, getWidth(), headerHeight + 1);
                 g2.dispose();
                 
@@ -174,7 +175,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         bodyPanel.add(Box.createVerticalStrut(6));
 
         // Buscador reactivo
-        txtBuscarVacuna = new PlaceHolderTextField("🔍 Escribí para buscar vacuna...");
+        txtBuscarVacuna = new Placeholders.TextField("🔍 Escribí para buscar vacuna...");
         txtBuscarVacuna.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         txtBuscarVacuna.setPreferredSize(new Dimension(0, 38));
         txtBuscarVacuna.setBorder(BorderFactory.createCompoundBorder(
@@ -208,7 +209,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
                 boolean isItemSelected = isSelected && index != -1;
 
                 if (isItemSelected) {
-                    panel.setBackground(new Color(147, 51, 234));
+                    panel.setBackground(recursos.Color.PURPLE_DARK);
                 } else {
                     panel.setBackground(Color.WHITE);
                 }
@@ -227,7 +228,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
 
                     JLabel lblSub = new JLabel(v.getCategoria().isEmpty() ? "Vacuna" : v.getCategoria());
                     lblSub.setFont(CargadorFuentes.cargar(10f));
-                    lblSub.setForeground(isItemSelected ? new Color(243, 232, 255) : recursos.Color.MUTED);
+                    lblSub.setForeground(isItemSelected ? recursos.Color.PURPLE_LIGHT : recursos.Color.MUTED);
 
                     textPanel.add(lblNombre);
                     textPanel.add(lblSub);
@@ -294,7 +295,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         bodyPanel.add(lblLote);
         bodyPanel.add(Box.createVerticalStrut(6));
 
-        campoLote = new PlaceHolderTextField("Ej: LOT2026-A4892");
+        campoLote = new Placeholders.TextField("Ej: LOT2026-A4892");
         campoLote.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         campoLote.setPreferredSize(new Dimension(0, 38));
         campoLote.setBorder(BorderFactory.createCompoundBorder(
@@ -376,12 +377,12 @@ public class DialogoRegistrarVacunacion extends JDialog {
         campoProximaDosis = new JTextField();
         campoProximaDosis.setEditable(false);
         campoProximaDosis.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(243, 232, 255), 1, true), // purple border
+                new LineBorder(recursos.Color.PURPLE_LIGHT, 1, true), // purple border
                 new EmptyBorder(8, 12, 8, 12)
         ));
         campoProximaDosis.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
-        campoProximaDosis.setBackground(new Color(243, 232, 255)); // Light purple background
-        campoProximaDosis.setForeground(new Color(147, 51, 234)); // Purple text
+        campoProximaDosis.setBackground(recursos.Color.PURPLE_LIGHT); // Light purple background
+        campoProximaDosis.setForeground(recursos.Color.PURPLE_DARK); // Purple text
 
         pProx.add(lblProx);
         pProx.add(Box.createVerticalStrut(6));
@@ -401,7 +402,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         bodyPanel.add(lblObs);
         bodyPanel.add(Box.createVerticalStrut(6));
 
-        areaObservaciones = new PlaceHolderTextArea("Reacciones post-vacunación, condiciones especiales del animal...", 3, 20);
+        areaObservaciones = new Placeholders.TextArea("Reacciones post-vacunación, condiciones especiales del animal...", 3, 20);
         areaObservaciones.setFont(CargadorFuentes.cargar(12f));
         areaObservaciones.setForeground(recursos.Color.INK);
         areaObservaciones.setLineWrap(true);
@@ -458,7 +459,7 @@ public class DialogoRegistrarVacunacion extends JDialog {
         };
         btnConfirmar.setFont(new Font("Segoe UI Emoji", Font.BOLD, 12));
 
-        btnConfirmar.setBackground(new Color(147, 51, 234));
+        btnConfirmar.setBackground(recursos.Color.PURPLE_DARK);
         btnConfirmar.setForeground(Color.WHITE);
         btnConfirmar.setFocusPainted(false);
         btnConfirmar.setContentAreaFilled(false);
@@ -469,12 +470,12 @@ public class DialogoRegistrarVacunacion extends JDialog {
         btnConfirmar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                btnConfirmar.setBackground(new Color(126, 34, 206)); // darker purple
+                btnConfirmar.setBackground(recursos.Color.PURPLE_HOVER); // darker purple
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                btnConfirmar.setBackground(new Color(147, 51, 234));
+                btnConfirmar.setBackground(recursos.Color.PURPLE_DARK);
             }
         });
         btnConfirmar.addActionListener(e -> intentarConfirmar());
@@ -648,58 +649,5 @@ public class DialogoRegistrarVacunacion extends JDialog {
 
         JOptionPane.showMessageDialog(this, "Vacunación registrada con éxito.");
         dispose();
-    }
-
-    // ==========================================================
-    //  PLACEHOLDER CUSTOM COMPONENTS HELPERS
-    // ==========================================================
-    private static class PlaceHolderTextField extends JTextField {
-
-        private final String placeholder;
-
-        public PlaceHolderTextField(String placeholder) {
-            this.placeholder = placeholder;
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (getText().isEmpty() && !isFocusOwner()) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(recursos.Color.CAT_INACTIVO);
-                g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
-                Insets insets = getInsets();
-                FontMetrics fm = g2.getFontMetrics();
-                int y = (getHeight() - insets.top - insets.bottom - fm.getHeight()) / 2 + fm.getAscent() + insets.top;
-                g2.drawString(placeholder, insets.left, y);
-                g2.dispose();
-            }
-        }
-    }
-
-    private static class PlaceHolderTextArea extends JTextArea {
-
-        private final String placeholder;
-
-        public PlaceHolderTextArea(String placeholder, int rows, int columns) {
-            super(rows, columns);
-            this.placeholder = placeholder;
-            setBorder(new EmptyBorder(8, 10, 8, 10));
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (getText().isEmpty() && !isFocusOwner()) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(recursos.Color.CAT_INACTIVO);
-                g2.setFont(getFont().deriveFont(Font.ITALIC));
-                Insets insets = getInsets();
-                g2.drawString(placeholder, insets.left + 2, insets.top + g2.getFontMetrics().getAscent());
-                g2.dispose();
-            }
-        }
     }
 }

@@ -50,6 +50,7 @@ public class DialogoEditarPaciente extends JDialog {
     private JButton btnGuardar;
     private JTabbedPane tabsFormulario;
 
+    // ponytail: colores vía recursos.Color.* en vez de locales — YAGNI marginal, pero ya compila así
     public DialogoEditarPaciente(Frame padre, Animal animalExistente) {
         super(padre, (animalExistente != null) ? "Editar paciente: " + animalExistente.getNombre() : "Registrar nuevo paciente", true); 
         
@@ -437,7 +438,7 @@ public class DialogoEditarPaciente extends JDialog {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(hover ? new Color(226, 232, 240) : new Color(241, 245, 249));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
-                setForeground(new Color(71, 85, 105)); g2.dispose(); super.paintComponent(g);
+                setForeground(recursos.Color.SLATE_600); g2.dispose(); super.paintComponent(g);
             }
         };
         btnCancel.addActionListener(e -> dispose());

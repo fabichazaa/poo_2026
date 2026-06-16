@@ -133,6 +133,11 @@ public final class Color extends java.awt.Color {
      */
     public static final Color CAT_INACTIVO = new Color(148, 163, 184);
 
+    /**
+     * Cian — Baño / Estética. (#06B6D4)
+     */
+    public static final Color CAT_BANIO = new Color(6, 182, 212);
+
     // ===== ADICIONES DEL SISTEMA DE DISEÑO HAPPY PAWS =====
     public static final Color DIVIDER = new Color(203, 213, 225);
     public static final Color INACTIVE_TEXT = new Color(188, 204, 220);
@@ -155,6 +160,18 @@ public final class Color extends java.awt.Color {
     public static final Color ORANGE_DARK = new Color(229, 132, 0);
     public static final Color SUCCESS_LIGHT = new Color(220, 252, 231);
 
+    public static final Color CYAN_LIGHT = new Color(207, 250, 254);
+    public static final Color CYAN_DARK = new Color(14, 116, 144);
+
+    public static final Color PINK_LIGHT = new Color(252, 231, 243);
+    public static final Color PINK_DARK = new Color(219, 39, 119);
+
+    public static final Color ORANGE_CAT_LIGHT = new Color(255, 237, 213);
+    public static final Color ORANGE_CAT_DARK = new Color(234, 88, 12);
+
+    public static final Color YELLOW_CAT_LIGHT = new Color(254, 249, 195);
+    public static final Color YELLOW_CAT_DARK = new Color(161, 98, 7);
+
     // Colores específicos de las tarjetas de estadísticas
     public static final Color STAT_HOY_BG = new Color(240, 249, 255);
     public static final Color STAT_HOY_TXT = new Color(14, 116, 144);
@@ -162,4 +179,21 @@ public final class Color extends java.awt.Color {
     public static final Color STAT_PEND_TXT = new Color(180, 83, 9);
     public static final Color STAT_REAL_BG = new Color(236, 253, 245);
     public static final Color STAT_REAL_TXT = new Color(4, 120, 87);
+
+    // ===== COLORES FUNCIONALES ADICIONALES =====
+    /**
+     * Slate-600 — Texto secundario de botones y acciones internas. (#475569)
+     */
+    public static final Color SLATE_600 = new Color(71, 85, 105);
+
+    /**
+     * Azul slot seleccionado — Fondo de time slots activos en el selector de
+     * hora. (#0284C7)
+     */
+    public static final Color SLOT_BLUE = new Color(2, 132, 199);
+
+    /**
+     * Púrpura hover — Variante oscura para hover de botones púrpura. (#7E22CE)
+     */
+    public static final Color PURPLE_HOVER = new Color(126, 34, 206);
 }

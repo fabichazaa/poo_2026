@@ -252,7 +252,7 @@ public class PanelCitas extends JPanel {
         }
         lblStatPendVal.setText(String.valueOf(pendientesCount));
 
-        // 3. Realizados por Carlos
+        // 3. Realizados
         int realizadosCount = 0;
         for (Turno t : controlador.getVeterinaria().getListaTurnos()) {
             if (vet.equals(t.getVeterinario()) && t.estaCompletado()) {
@@ -750,7 +750,7 @@ public class PanelCitas extends JPanel {
         try {
             DateTimeFormatter parser = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             LocalDate date = LocalDate.parse(dateStr, parser);
-            LocalDate todaySystem = LocalDate.of(2026, 6, 6); // Matches PortalVeterinario fixed today
+            LocalDate todaySystem = LocalDate.now();
 
             String formatted = date.getDayOfMonth() + " " + date.getMonth().getDisplayName(TextStyle.SHORT, java.util.Locale.forLanguageTag("es-AR")) + " " + date.getYear();
             // capitalize first letter of month
@@ -804,7 +804,7 @@ public class PanelCitas extends JPanel {
                     setForeground(Color.SURFACE);
                 } else {
                     if (hovered) {
-                        g2.setColor(new java.awt.Color(241, 245, 249));
+                        g2.setColor(Color.BG);
                         g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
                         setForeground(Color.INK);
                     } else {

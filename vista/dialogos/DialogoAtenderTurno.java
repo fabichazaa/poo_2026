@@ -21,7 +21,7 @@ public class DialogoAtenderTurno extends JDialog {
     private final Turno turno;
     private final Animal animal;
 
-    private int timerSeconds = 38 * 60 + 14; // Inicia en 38:14 como en la imagen
+    private int timerSeconds = 0;
     private Timer swingTimer;
 
     private JLabel lblHeaderTimer;
