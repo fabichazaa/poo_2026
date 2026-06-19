@@ -28,7 +28,7 @@
 
 > "Buen día. Somos [nombres] y vamos a presentar **Happy Paws**, un sistema de gestión veterinaria desarrollado en Java con Swing como trabajo integrador de Programación Orientada a Objetos.
 >
-> El sistema modela el día a día de una veterinaria: clientes, mascotas, veterinarios, turnos, historias clínicas, prescripciones y portal de adopciones. El dominio fue elegido a propósito porque tiene **dos jerarquías de herencia paralelas** — `Animal`/`Perro`/`Gato` y `Persona`/`Responsable`/`Veterinario` — y una variedad de relaciones de composición y agregación, lo que nos obligó a tomar decisiones de diseño explícitas en lugar de tratarlo todo como asociación genérica."
+> El sistema modela el día a día de una veterinaria: clientes, mascotas, veterinarios, turnos, historias clínicas, prescripciones y portal de adopciones. El dominio fue elegido a propósito porque tiene **dos jerarquías de herencia paralelas** — `Animal`/`Perro`/`Gato`/`Conejo`/`Loro`/`Tortuga` y `Persona`/`Responsable`/`Veterinario` — y una variedad de relaciones de composición y agregación, lo que nos obligó a tomar decisiones de diseño explícitas en lugar de tratarlo todo como asociación genérica."
 
 ---
 
@@ -46,9 +46,9 @@
 
 ### 3.1 Herencia y polimorfismo (1.5 min)
 
-> "Tenemos **dos clases abstractas**: `Animal` y `Persona`. `Animal` declara el método polimórfico `getTipoAlimentacion()`, que retorna un enum `TipoAlimentacion`. En `Perro` retorna `OMNIVORO`; en `Gato`, `CARNIVORO_ESTRICTO`. Esto demuestra polimorfismo dinámico real: el llamador no necesita saber el tipo concreto."
+> "Tenemos **dos clases abstractas**: `Animal` y `Persona`. `Animal` declara el método polimórfico `getTipoAlimentacion()`, que retorna un enum `TipoAlimentacion`. En `Perro` retorna `OMNIVORO`; en `Gato` y `Conejo`, `CARNIVORO_ESTRICTO`. Esto demuestra polimorfismo dinámico real: el llamador no necesita saber el tipo concreto."
 
-*(Si la profe pregunta, abrir `Animal.java` y mostrar el override en `Perro.java` y `Gato.java`.)*
+*(Si la profe pregunta, abrir `Animal.java` y mostrar el override en `Perro.java`, `Gato.java`, `Conejo.java`, etc.)*
 
 ### 3.2 Composición vs. agregación (1.5 min)
 
@@ -60,7 +60,7 @@
 
 ### 3.3 Sobrecarga de constructores (1 min)
 
-> "Las clases con varios niveles de uso exponen al menos dos constructores. Por ejemplo, `Veterinaria` tiene un constructor `Veterinaria(String nombreNegocio)` que delega a `Veterinaria(String, boolean autoSembrar)`. Esto permite crear la veterinaria con o sin datos sembrados — útil para testing. Lo mismo pasa en `Persona`, `Responsable`, `Veterinario`, `Animal`, `Perro`, `Gato` y `Turno`."
+> "Las clases con varios niveles de uso exponen al menos dos constructores. Por ejemplo, `Veterinaria` tiene un constructor `Veterinaria(String nombreNegocio)` que delega a `Veterinaria(String, boolean autoSembrar)`. Esto permite crear la veterinaria con o sin datos sembrados — útil para testing. Lo mismo pasa en `Persona`, `Responsable`, `Veterinario`, `Animal`, `Perro`, `Gato`, `Conejo`, `Loro`, `Tortuga` y `Turno`."
 
 ### 3.4 Clase de reporte (1 min)
 

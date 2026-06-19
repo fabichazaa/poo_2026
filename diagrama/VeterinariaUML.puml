@@ -21,12 +21,20 @@ enum TipoTurno <<enum>> {
     CIRUGIA
     BANIO
     ANALISIS
+    SEGUIMIENTO
     --
     - descripcion : String
     - duracionMinutos : int
+    - rutaEmoji : String
+    - emojiRespaldo : String
     --
     + getDescripcion() : String
     + getDuracionMinutos() : int
+    + getRutaEmoji() : String
+    + getEmojiRespaldo() : String
+    + getAccentColor() : Color
+    + getBadgeBgColor() : Color
+    + getBadgeFgColor() : Color
 }
 
 enum TipoAlimentacion <<enum>> {
@@ -48,6 +56,12 @@ class Direccion {
     - localidad : String
     --
     + Direccion(calle: String, numero: int, localidad: String)
+    + getCalle() : String
+    + getNumero() : int
+    + getLocalidad() : String
+    + setCalle(calle: String) : void
+    + setNumero(numero: int) : void
+    + setLocalidad(localidad: String) : void
     + actualizarDireccion(calle: String, numero: int, localidad: String) : void
     + getDireccionCompleta() : String
     + toString() : String
@@ -60,13 +74,16 @@ abstract class Persona <<abstract>> {
     - DNI : String {final}
     - nombre : String
     - apellido : String
+    - celular : String
     - direccion : Direccion
     --
-    + Persona(DNI: String, nombre: String, apellido: String, direccion: Direccion)
+    + Persona(DNI: String, nombre: String, apellido: String, celular: String, direccion: Direccion)
     + Persona(DNI: String, nombre: String, apellido: String)
     + getDNI() : String
     + getNombre() : String
     + getApellido() : String
+    + getCelular() : String
+    + setCelular(celular: String) : void
     + getDireccion() : Direccion
     + getDireccionCompleta() : String
     + setNombre(nombre: String) : void
@@ -80,7 +97,7 @@ class Veterinario {
     - especialidad : String
     - turnoTrabajo : String
     --
-    + Veterinario(DNI: String, nombre: String, apellido: String, direccion: Direccion, matricula: String)
+    + Veterinario(DNI: String, nombre: String, apellido: String, celular: String, direccion: Direccion, matricula: String)
     + Veterinario(DNI: String, nombre: String, apellido: String, matricula: String)
     + getMatricula() : String
     + setMatricula(matricula: String) : void
@@ -96,7 +113,7 @@ class Veterinario {
 class Responsable {
     - mascotas : ArrayList<Animal>
     --
-    + Responsable(DNI: String, nombre: String, apellido: String, direccion: Direccion)
+    + Responsable(DNI: String, nombre: String, apellido: String, celular: String, direccion: Direccion)
     + Responsable(DNI: String, nombre: String, apellido: String)
     + agregarMascota(animal: Animal) : void
     + removerMascota(animal: Animal) : void
@@ -110,21 +127,23 @@ abstract class Animal <<abstract>> {
     - idAnimal : String {final}
     - nombre : String
     - fechaNacimiento : LocalDate
-    - sexo : boolean {final}
+    - sexo : boolean
     - responsable : Responsable
     - historiaClinica : HistoriaClinica {final}
     - enAdopcion : boolean
     - activo : boolean
     - peso : float
+    - raza : String
     --
-    + Animal(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable)
-    + Animal(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float)
+    + Animal(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable, raza: String)
+    + Animal(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, raza: String)
     + getIdAnimal() : String
     + getNombre() : String
     + setNombre(nombre: String) : void
     + getFechaNacimiento() : LocalDate
     + setFechaNacimiento(fechaNacimiento: LocalDate) : void
     + getSexo() : boolean
+    + setSexo(sexo: boolean) : void
     + isActivo() : boolean
     + setActivo(activo: boolean) : void
     + getResponsable() : Responsable
@@ -134,104 +153,94 @@ abstract class Animal <<abstract>> {
     + setEnAdopcion(enAdopcion: boolean) : void
     + getPeso() : float
     + setPeso(peso: float) : void
+    + getRaza() : String
+    + setRaza(raza: String) : void
     + calcularEdad() : int
+    + getStringEstado() : String
+    + getStringSexo() : String
+    + getColorInicioHex() : String
+    + getColorFinHex() : String
     + {abstract} getImagen() : String
-    + {abstract} getColorInicioHex() : String
-    + {abstract} getColorFinHex() : String
+    + {abstract} getColorInicioHexActivo() : String
+    + {abstract} getColorFinHexActivo() : String
     + {abstract} getCategoriaFiltro() : String
     + {abstract} getTipoAlimentacion() : TipoAlimentacion
     + {abstract} getEspecie() : String
-    + {abstract} getRaza() : String
     + toString() : String
 }
 
 class Perro {
-    - raza : String
     - necesitaPaseo : boolean
     --
     + Perro(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable, raza: String)
     + Perro(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, raza: String)
-    + getRaza() : String
-    + setRaza(raza: String) : void
     + isNecesitaPaseo() : boolean
     + setNecesitaPaseo(necesitaPaseo: boolean) : void
     + getTipoAlimentacion() : TipoAlimentacion
     + getEspecie() : String
     + getImagen() : String
-    + getColorInicioHex() : String
-    + getColorFinHex() : String
+    + getColorInicioHexActivo() : String
+    + getColorFinHexActivo() : String
     + getCategoriaFiltro() : String
 }
 
 class Gato {
-    - raza : String
     - esEsterilizado : boolean
     --
     + Gato(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable, raza: String)
     + Gato(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, raza: String)
-    + getRaza() : String
-    + setRaza(raza: String) : void
     + isEsEsterilizado() : boolean
     + setEsEsterilizado(esEsterilizado: boolean) : void
     + getTipoAlimentacion() : TipoAlimentacion
     + getEspecie() : String
     + getImagen() : String
-    + getColorInicioHex() : String
-    + getColorFinHex() : String
+    + getColorInicioHexActivo() : String
+    + getColorFinHexActivo() : String
     + getCategoriaFiltro() : String
 }
 
 class Conejo {
-    - raza : String
     - esEsterilizado : boolean
     --
     + Conejo(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable, raza: String)
     + Conejo(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, raza: String)
-    + getRaza() : String
-    + setRaza(raza: String) : void
     + isEsEsterilizado() : boolean
     + setEsEsterilizado(esEsterilizado: boolean) : void
     + getTipoAlimentacion() : TipoAlimentacion
     + getEspecie() : String
     + getImagen() : String
-    + getColorInicioHex() : String
-    + getColorFinHex() : String
+    + getColorInicioHexActivo() : String
+    + getColorFinHexActivo() : String
     + getCategoriaFiltro() : String
 }
 
 class Loro {
-    - raza : String
     - necesitaPaseo : boolean
     --
     + Loro(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable, raza: String)
     + Loro(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, raza: String)
-    + getRaza() : String
-    + setRaza(raza: String) : void
     + isNecesitaPaseo() : boolean
     + setNecesitaPaseo(necesitaPaseo: boolean) : void
     + getTipoAlimentacion() : TipoAlimentacion
     + getEspecie() : String
     + getImagen() : String
-    + getColorInicioHex() : String
-    + getColorFinHex() : String
+    + getColorInicioHexActivo() : String
+    + getColorFinHexActivo() : String
     + getCategoriaFiltro() : String
 }
 
 class Tortuga {
-    - raza : String
     - necesitaPaseo : boolean
     --
     + Tortuga(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, responsable: Responsable, raza: String)
     + Tortuga(nombre: String, fechaNacimiento: LocalDate, sexo: boolean, peso: float, raza: String)
-    + getRaza() : String
-    + setRaza(raza: String) : void
     + isNecesitaPaseo() : boolean
     + setNecesitaPaseo(necesitaPaseo: boolean) : void
     + getTipoAlimentacion() : TipoAlimentacion
     + getEspecie() : String
     + getImagen() : String
-    + getColorInicioHex() : String
-    + getColorFinHex() : String
+    + getColorInicioHexActivo() : String
+    + getColorFinHexActivo() : String
     + getCategoriaFiltro() : String
 }
 
@@ -330,9 +339,30 @@ class Turno {
     - estado : String
     - tipo : TipoTurno
     - observaciones : String
+    - fechaParsed : LocalDate
+    - horaParsed : LocalTime
     --
     + Turno(idTurno: int, fecha: String, hora: String, veterinario: Veterinario, animal: Animal, tipo: TipoTurno, observaciones: String)
     + Turno(fecha: String, hora: String, veterinario: Veterinario, animal: Animal, tipo: TipoTurno)
+    + getIdTurno() : int
+    + setIdTurno(idTurno: int) : void
+    + getVeterinario() : Veterinario
+    + setVeterinario(veterinario: Veterinario) : void
+    + registrarEnVeterinario() : void
+    + getAnimal() : Animal
+    + setAnimal(animal: Animal) : void
+    + getFecha() : String
+    + getFechaParsed() : LocalDate
+    + setFecha(fecha: String) : void
+    + getHora() : String
+    + getHoraParsed() : LocalTime
+    + setHora(hora: String) : void
+    + getEstado() : String
+    + setEstado(estado: String) : void
+    + getTipo() : TipoTurno
+    + setTipo(tipo: TipoTurno) : void
+    + getObservaciones() : String
+    + setObservaciones(observaciones: String) : void
     + completarTurno() : void
     + cancelarTurno() : void
     + esPendiente() : boolean
@@ -359,6 +389,11 @@ class Veterinaria {
     + registrarTurno(t: Turno) : void
     + registrarPaciente(a: Animal) : void
     + agregarMedicamentoAlCatalogo(m: Medicamento) : void
+    + getListaVeterinarios() : ArrayList<Veterinario>
+    + getListaClientes() : ArrayList<Responsable>
+    + getListaTurnos() : ArrayList<Turno>
+    + getCatalogoMedicamentos() : ArrayList<Medicamento>
+    + getPacientesRegistrados() : ArrayList<Animal>
     + buscarVeterinarioPorMatricula(matricula: String) : Veterinario
     + buscarVeterinarioPorDni(dni: String) : Veterinario
     + buscarClientePorDni(dni: String) : Responsable
@@ -367,7 +402,7 @@ class Veterinaria {
     + obtenerTurnosDeVeterinario(v: Veterinario) : ArrayList<Turno>
     + obtenerTurnosPendientes() : ArrayList<Turno>
     + obtenerTurnosCompletados() : ArrayList<Turno>
-    + obtenerTodosLosAnimales() : ArrayList<Animal>
+    + obtenerTodosLosAnimales() : List<Animal>
     + obtenerAnimalesEnAdopcion() : ArrayList<Animal>
     + contarTurnosDelDia(fecha: String) : int
 }
