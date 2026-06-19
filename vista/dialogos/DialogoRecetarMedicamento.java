@@ -521,7 +521,12 @@ public class DialogoRecetarMedicamento extends JDialog {
     }
 
     private void inicializarCatalogo() {
-        ArrayList<Medicamento> catalogo = controlador.getVeterinaria().getCatalogoMedicamentos();
+        ArrayList<Medicamento> catalogo = new ArrayList<>();
+        for (Medicamento m : controlador.getVeterinaria().getCatalogoMedicamentos()) {
+            if (!(m instanceof Vacuna)) {
+                catalogo.add(m);
+            }
+        }
 
         // Llenar combo inicialmente
         refrescarCombo(catalogo);
@@ -550,15 +555,20 @@ public class DialogoRecetarMedicamento extends JDialog {
                 }
                 ArrayList<Medicamento> filtrado = new ArrayList<>();
                 for (Medicamento m : catalogo) {
+                    String categoria = m.getCategoria() == null ? "" : m.getCategoria();
                     if (m.getNombreMedicamento().toLowerCase().contains(query)
                             || m.getCodigoSenasa().toLowerCase().contains(query)
-                            || m.getCategoria().toLowerCase().contains(query)) {
+                            || categoria.toLowerCase().contains(query)) {
                         filtrado.add(m);
                     }
                 }
                 refrescarCombo(filtrado);
             }
         });
+
+        if (catalogo.isEmpty()) {
+            lblError.setText("No hay medicamentos cargados en el catálogo.");
+        }
 
         actualizarVisibilidad();
     }

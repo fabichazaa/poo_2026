@@ -34,13 +34,12 @@ public class DialogoRegistrarVacunacion extends JDialog {
     private JTextArea areaObservaciones;
     private JLabel lblError;
 
-    private final List<Vacuna> listaVacunasSemilla = new ArrayList<>();
+    private final List<Vacuna> listaVacunasCatalogo = new ArrayList<>();
 
     public DialogoRegistrarVacunacion(Window owner, ControladorVeterinaria controlador, Animal animal) {
         super(owner, "Registrar vacunación — " + animal.getNombre(), Dialog.ModalityType.APPLICATION_MODAL);
         this.controlador = controlador;
         this.animal = animal;
-        inicializarSemillaVacunas();
         construir();
     }
 
@@ -48,24 +47,20 @@ public class DialogoRegistrarVacunacion extends JDialog {
         return registrado;
     }
 
-    private void inicializarSemillaVacunas() {
-        // Semilla de vacunas estándar para mostrar en el catálogo con descripciones atractivas
-        Vacuna v1 = new Vacuna("VAC-001", "Antirrábica", 365);
-        v1.setCategoria("Nobivac Rabies");
-        Vacuna v2 = new Vacuna("VAC-002", "Triple Felina", 365);
-        v2.setCategoria("Nobivac Tricat Trio");
-        Vacuna v3 = new Vacuna("VAC-003", "Parvovirus Canino", 365);
-        v3.setCategoria("Nobivac Parvo");
-        Vacuna v4 = new Vacuna("VAC-004", "Quíntuple Canina", 365);
-        v4.setCategoria("Defensor 5");
-        Vacuna v5 = new Vacuna("VAC-005", "Leucemia Felina", 365);
-        v5.setCategoria("Nobivac FeLV");
+    private void inicializarVacunasDesdeCatalogo() {
+        listaVacunasCatalogo.clear();
+        for (Medicamento m : controlador.getVeterinaria().getCatalogoMedicamentos()) {
+            if (m instanceof Vacuna vacuna) {
+                listaVacunasCatalogo.add(vacuna);
+            }
+        }
+        refrescarCombo(listaVacunasCatalogo);
 
-        listaVacunasSemilla.add(v1);
-        listaVacunasSemilla.add(v2);
-        listaVacunasSemilla.add(v3);
-        listaVacunasSemilla.add(v4);
-        listaVacunasSemilla.add(v5);
+        if (!listaVacunasCatalogo.isEmpty()) {
+            campoVigenciaDias.setText(String.valueOf(listaVacunasCatalogo.get(0).getVigenciaDias()));
+        } else {
+            lblError.setText("No hay vacunas cargadas en el catálogo.");
+        }
     }
 
     private void construir() {
@@ -487,7 +482,8 @@ public class DialogoRegistrarVacunacion extends JDialog {
 
         add(panelFondo, BorderLayout.CENTER);
 
-        // Listeners reactivos para el cálculo de fecha
+        // Cargar catálogo e inicializar comportamiento reactivo
+        inicializarVacunasDesdeCatalogo();
         inicializarListeners();
     }
 
@@ -562,10 +558,11 @@ public class DialogoRegistrarVacunacion extends JDialog {
                     query = "";
                 }
                 ArrayList<Vacuna> filtrado = new ArrayList<>();
-                for (Vacuna v : listaVacunasSemilla) {
+                for (Vacuna v : listaVacunasCatalogo) {
+                    String categoria = v.getCategoria() == null ? "" : v.getCategoria();
                     if (v.getNombreMedicamento().toLowerCase().contains(query)
                             || v.getCodigoSenasa().toLowerCase().contains(query)
-                            || v.getCategoria().toLowerCase().contains(query)) {
+                            || categoria.toLowerCase().contains(query)) {
                         filtrado.add(v);
                     }
                 }
@@ -573,7 +570,12 @@ public class DialogoRegistrarVacunacion extends JDialog {
             }
         });
 
-        refrescarCombo(listaVacunasSemilla);
+        comboVacuna.addActionListener(e -> {
+            Vacuna sel = (Vacuna) comboVacuna.getSelectedItem();
+            if (sel != null) {
+                campoVigenciaDias.setText(String.valueOf(sel.getVigenciaDias()));
+            }
+        });
     }
 
     private void refrescarCombo(List<Vacuna> items) {
