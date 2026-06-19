@@ -155,4 +155,11 @@ public class Turno {
     public boolean estaCompletado() {
         return ESTADO_COMPLETADO.equals(this.estado);
     }
+
+    @Override
+    public String toString() {
+        String pac = (animal != null) ? animal.getNombre() : "Sin mascota";
+        String desc = (tipo != null) ? tipo.getDescripcion() : "Sin tipo";
+        return "Turno #" + idTurno + " - " + fecha + " " + hora + " - Paciente: " + pac + " (" + desc + ") [" + estado + "]";
+    }
 }

@@ -2,6 +2,8 @@ package vista.paneles;
 
 import controlador.ControladorVeterinaria;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.PrintWriter;
 import javax.swing.*;
@@ -10,6 +12,7 @@ import modelo.ComprobanteTurno;
 import modelo.Turno;
 import recursos.CargadorFuentes;
 import vista.dialogos.DialogoComprobante;
+import vista.dialogos.DialogoSeleccionarTurno;
 
 public class PanelMas extends JPanel {
 
@@ -21,11 +24,28 @@ public class PanelMas extends JPanel {
     private JLabel lblEnAdopcion;
     private JLabel lblNotas;
 
+    private JPanel panelEstadisticas;
+    private JPanel panelExportar;
+    private JPanel panelTextoExportar;
+    private JPanel panelBotonesExportar;
+    private JPanel panelAcercaDe;
+    private JPanel panelCuerpo;
+    private JScrollPane scroll;
+    private JLabel lblAcercaTitulo;
+    private JTextPane txtAcercaDesc;
+
     private static final Color COLOR_TOPE = recursos.Color.SLATE_600;
 
     public PanelMas(ControladorVeterinaria controlador) {
         this.controlador = controlador;
         construir();
+
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                reajustarLayout();
+            }
+        });
     }
 
     private void construir() {
@@ -52,7 +72,7 @@ public class PanelMas extends JPanel {
         panelHeader.add(lblTitulo, BorderLayout.WEST);
         add(panelHeader, BorderLayout.NORTH);
 
-        JPanel panelCuerpo = new JPanel();
+        panelCuerpo = new ScrollablePanel();
         panelCuerpo.setOpaque(false);
         panelCuerpo.setLayout(new BoxLayout(panelCuerpo, BoxLayout.Y_AXIS));
 
@@ -62,20 +82,21 @@ public class PanelMas extends JPanel {
         panelCuerpo.add(Box.createVerticalStrut(15));
         panelCuerpo.add(crearPanelAcercaDe());
 
-        JScrollPane scroll = new JScrollPane(panelCuerpo);
+        scroll = new JScrollPane(panelCuerpo);
         scroll.setBorder(null);
         scroll.getViewport().setBackground(recursos.Color.BG);
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         add(scroll, BorderLayout.CENTER);
     }
 
     private JPanel crearPanelEstadisticas() {
-        JPanel card = new JPanel(new GridLayout(2, 3, 12, 12));
-        card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createCompoundBorder(
+        panelEstadisticas = new JPanel(new GridLayout(2, 3, 12, 12));
+        panelEstadisticas.setBackground(Color.WHITE);
+        panelEstadisticas.setBorder(BorderFactory.createCompoundBorder(
             new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(20, 22, 20, 22)
         ));
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 180));
+        panelEstadisticas.setMaximumSize(new Dimension(Integer.MAX_VALUE, 180));
 
         lblNombre = new JLabel();
         lblVets = new JLabel();
@@ -84,14 +105,14 @@ public class PanelMas extends JPanel {
         lblEnAdopcion = new JLabel();
         lblNotas = new JLabel();
 
-        card.add(crearStat("Veterinaria", lblNombre, recursos.Color.PRIMARY));
-        card.add(crearStat("Veterinarios", lblVets, new Color(99, 102, 241)));
-        card.add(crearStat("Clientes", lblClientes, new Color(124, 58, 237)));
-        card.add(crearStat("Turnos", lblTurnos, recursos.Color.PENDING));
-        card.add(crearStat("En adopción", lblEnAdopcion, new Color(236, 72, 153)));
-        card.add(crearStat("Notas activas", lblNotas, recursos.Color.SUCCESS));
+        panelEstadisticas.add(crearStat("Veterinaria", lblNombre, recursos.Color.PRIMARY));
+        panelEstadisticas.add(crearStat("Veterinarios", lblVets, new Color(99, 102, 241)));
+        panelEstadisticas.add(crearStat("Clientes", lblClientes, new Color(124, 58, 237)));
+        panelEstadisticas.add(crearStat("Turnos", lblTurnos, recursos.Color.PENDING));
+        panelEstadisticas.add(crearStat("En adopción", lblEnAdopcion, new Color(236, 72, 153)));
+        panelEstadisticas.add(crearStat("Notas activas", lblNotas, recursos.Color.SUCCESS));
 
-        return card;
+        return panelEstadisticas;
     }
 
     private JPanel crearStat(String titulo, JLabel lblValor, Color color) {
@@ -116,17 +137,17 @@ public class PanelMas extends JPanel {
     }
 
     private JPanel crearPanelExportar() {
-        JPanel card = new JPanel(new BorderLayout(15, 0));
-        card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createCompoundBorder(
+        panelExportar = new JPanel(new BorderLayout(15, 10));
+        panelExportar.setBackground(Color.WHITE);
+        panelExportar.setBorder(BorderFactory.createCompoundBorder(
             new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(18, 22, 18, 22)
         ));
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
+        panelExportar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
 
-        JPanel panelTexto = new JPanel();
-        panelTexto.setOpaque(false);
-        panelTexto.setLayout(new BoxLayout(panelTexto, BoxLayout.Y_AXIS));
+        panelTextoExportar = new JPanel();
+        panelTextoExportar.setOpaque(false);
+        panelTextoExportar.setLayout(new BoxLayout(panelTextoExportar, BoxLayout.Y_AXIS));
         JLabel lblTit = new JLabel("Exportar comprobante de atención");
         lblTit.setFont(CargadorFuentes.cargar(13f));
         lblTit.setForeground(recursos.Color.INK);
@@ -135,66 +156,180 @@ public class PanelMas extends JPanel {
         lblDesc.setFont(CargadorFuentes.cargar(11f));
         lblDesc.setForeground(new Color(100, 116, 139));
         lblDesc.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelTexto.add(lblTit);
-        panelTexto.add(Box.createVerticalStrut(2));
-        panelTexto.add(lblDesc);
+        panelTextoExportar.add(lblTit);
+        panelTextoExportar.add(Box.createVerticalStrut(2));
+        panelTextoExportar.add(lblDesc);
 
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
-        panelBotones.setOpaque(false);
-        JButton btnVer = new JButton("Ver comprobante");
-        btnVer.setFont(CargadorFuentes.cargar(12f));
+        panelBotonesExportar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        panelBotonesExportar.setOpaque(false);
+        JButton btnVer = new JButton("Ver comprobante") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
         btnVer.setBackground(recursos.Color.PRIMARY);
+        btnVer.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
         btnVer.setForeground(Color.WHITE);
+        btnVer.setContentAreaFilled(false);
+        btnVer.setBorderPainted(false);
         btnVer.setFocusPainted(false);
-        btnVer.setOpaque(true);
+        btnVer.setPreferredSize(new Dimension(150, 36));
         btnVer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnVer.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnVer.setBackground(recursos.Color.PRIMARY_DEEP);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnVer.setBackground(recursos.Color.PRIMARY);
+            }
+        });
         btnVer.addActionListener(e -> verComprobante());
-        JButton btnGuardar = new JButton("Guardar en archivo…");
-        btnGuardar.setFont(CargadorFuentes.cargar(12f));
-        btnGuardar.setBackground(Color.WHITE);
-        btnGuardar.setForeground(recursos.Color.PRIMARY);
-        btnGuardar.setFocusPainted(false);
-        btnGuardar.setBorder(new LineBorder(recursos.Color.PRIMARY, 1, true));
-        btnGuardar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnGuardar.addActionListener(e -> guardarComprobante());
-        panelBotones.add(btnVer);
-        panelBotones.add(btnGuardar);
 
-        card.add(panelTexto, BorderLayout.CENTER);
-        card.add(panelBotones, BorderLayout.EAST);
-        return card;
+        JButton btnGuardar = new JButton("Guardar en archivo…") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                g2.setColor(getForeground());
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        btnGuardar.setBackground(Color.WHITE);
+        btnGuardar.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
+        btnGuardar.setForeground(recursos.Color.PRIMARY);
+        btnGuardar.setContentAreaFilled(false);
+        btnGuardar.setBorderPainted(false);
+        btnGuardar.setFocusPainted(false);
+        btnGuardar.setPreferredSize(new Dimension(170, 36));
+        btnGuardar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnGuardar.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnGuardar.setBackground(recursos.Color.PRIMARY_LIGHT);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnGuardar.setBackground(Color.WHITE);
+            }
+        });
+        btnGuardar.addActionListener(e -> guardarComprobante());
+
+        panelBotonesExportar.add(btnVer);
+        panelBotonesExportar.add(btnGuardar);
+
+        panelExportar.add(panelTextoExportar, BorderLayout.CENTER);
+        panelExportar.add(panelBotonesExportar, BorderLayout.EAST);
+        return panelExportar;
     }
 
     private JPanel crearPanelAcercaDe() {
-        JPanel card = new JPanel();
-        card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createCompoundBorder(
+        panelAcercaDe = new JPanel();
+        panelAcercaDe.setBackground(Color.WHITE);
+        panelAcercaDe.setBorder(BorderFactory.createCompoundBorder(
             new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(18, 22, 18, 22)
         ));
-        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
+        panelAcercaDe.setLayout(new BoxLayout(panelAcercaDe, BoxLayout.Y_AXIS));
+        panelAcercaDe.setMaximumSize(new Dimension(Integer.MAX_VALUE, 180));
 
-        JLabel lblTit = new JLabel("Acerca de Happy Paws");
-        lblTit.setFont(CargadorFuentes.cargar(14f));
-        lblTit.setForeground(recursos.Color.INK);
-        lblTit.setAlignmentX(Component.LEFT_ALIGNMENT);
-        card.add(lblTit);
+        lblAcercaTitulo = new JLabel("Acerca de Happy Paws");
+        lblAcercaTitulo.setFont(CargadorFuentes.cargar(14f));
+        lblAcercaTitulo.setForeground(recursos.Color.INK);
+        lblAcercaTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelAcercaDe.add(lblAcercaTitulo);
 
-        card.add(Box.createVerticalStrut(8));
+        panelAcercaDe.add(Box.createVerticalStrut(8));
 
-        JLabel lblDesc = new JLabel("<html><div style='width: 600px; color:#475569;'>"
+        txtAcercaDesc = new JTextPane();
+        txtAcercaDesc.setContentType("text/html");
+        txtAcercaDesc.setText("<html><body style='font-family:sans-serif; font-size:12px; color:#475569; margin:0;'>"
             + "<b>Happy Paws</b> — Sistema de Gestión Veterinaria.<br>"
             + "Trabajo Integrador de Programación Orientada a Objetos.<br>"
             + "Tecnicatura Universitaria en Desarrollo de Software.<br><br>"
             + "Implementa una jerarquía de herencia con clases abstractas, polimorfismo, "
             + "composición, agregación, colecciones y una clase de reporte (ComprobanteTurno) "
             + "que delega en los objetos del modelo."
-            + "</div></html>");
-        lblDesc.setFont(CargadorFuentes.cargar(12f));
-        lblDesc.setAlignmentX(Component.LEFT_ALIGNMENT);
-        card.add(lblDesc);
-        return card;
+            + "</body></html>");
+        txtAcercaDesc.setEditable(false);
+        txtAcercaDesc.setOpaque(false);
+        txtAcercaDesc.setFocusable(false);
+        txtAcercaDesc.setBorder(null);
+        txtAcercaDesc.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        panelAcercaDe.add(txtAcercaDesc);
+        return panelAcercaDe;
+    }
+
+    private void reajustarLayout() {
+        if (scroll == null) return;
+        int width = scroll.getViewport().getWidth();
+        if (width <= 0) {
+            width = getWidth() - 50;
+        }
+        if (width <= 0) {
+            width = 1000; // Default wide mode
+        }
+
+        // 1. Estadísticas
+        if (width < 650) {
+            panelEstadisticas.setLayout(new GridLayout(3, 2, 10, 10));
+            panelEstadisticas.setMaximumSize(new Dimension(Integer.MAX_VALUE, 260));
+        } else {
+            panelEstadisticas.setLayout(new GridLayout(2, 3, 12, 12));
+            panelEstadisticas.setMaximumSize(new Dimension(Integer.MAX_VALUE, 180));
+        }
+
+        // 2. Exportación
+        panelExportar.remove(panelTextoExportar);
+        panelExportar.remove(panelBotonesExportar);
+        if (width < 650) {
+            panelExportar.add(panelTextoExportar, BorderLayout.CENTER);
+            panelExportar.add(panelBotonesExportar, BorderLayout.SOUTH);
+            panelExportar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 145));
+        } else {
+            panelExportar.add(panelTextoExportar, BorderLayout.CENTER);
+            panelExportar.add(panelBotonesExportar, BorderLayout.EAST);
+            panelExportar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
+        }
+
+        // 3. Acerca De
+        if (txtAcercaDesc != null && lblAcercaTitulo != null) {
+            int paddingX = 22 * 2;
+            int borderX = 1 * 2;
+            int txtWidth = width - paddingX - borderX - 10;
+            if (txtWidth > 0) {
+                txtAcercaDesc.setSize(new Dimension(txtWidth, Integer.MAX_VALUE));
+            }
+            int prefHeight = txtAcercaDesc.getPreferredSize().height;
+            int titleHeight = lblAcercaTitulo.getPreferredSize().height;
+            int strutHeight = 8;
+            int paddingY = 18 * 2;
+            int totalHeight = titleHeight + strutHeight + prefHeight + paddingY + 12; // 12px extra margin for safety
+            panelAcercaDe.setPreferredSize(new Dimension(Integer.MAX_VALUE, totalHeight));
+            panelAcercaDe.setMaximumSize(new Dimension(Integer.MAX_VALUE, totalHeight));
+        } else {
+            panelAcercaDe.setMaximumSize(new Dimension(Integer.MAX_VALUE, width < 650 ? 320 : 240));
+        }
+
+        panelEstadisticas.revalidate();
+        panelExportar.revalidate();
+        panelAcercaDe.revalidate();
+        panelCuerpo.revalidate();
+        panelCuerpo.repaint();
     }
 
     public void actualizar() {
@@ -204,6 +339,8 @@ public class PanelMas extends JPanel {
         lblTurnos.setText(String.valueOf(controlador.getVeterinaria().getListaTurnos().size()));
         lblEnAdopcion.setText(String.valueOf(controlador.obtenerAnimalesEnAdopcion().size()));
         lblNotas.setText(String.valueOf(controlador.getNotas().size()));
+
+        reajustarLayout();
     }
 
     private Turno seleccionarTurno() {
@@ -211,17 +348,11 @@ public class PanelMas extends JPanel {
             JOptionPane.showMessageDialog(this, "No hay turnos registrados.");
             return null;
         }
-        Turno[] arr = controlador.getVeterinaria().getListaTurnos().toArray(Turno[]::new);
-        Turno sel = (Turno) JOptionPane.showInputDialog(
-            SwingUtilities.getWindowAncestor(this),
-            "Seleccioná un turno para generar el comprobante:",
-            "Seleccionar turno",
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            arr,
-            arr[0]
-        );
-        return sel;
+        java.util.List<Turno> list = controlador.getVeterinaria().getListaTurnos();
+        Window owner = SwingUtilities.getWindowAncestor(this);
+        DialogoSeleccionarTurno dialogo = new DialogoSeleccionarTurno(owner, list);
+        dialogo.setVisible(true);
+        return dialogo.getTurnoSeleccionado();
     }
 
     private void verComprobante() {
@@ -249,6 +380,29 @@ public class PanelMas extends JPanel {
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error al guardar: " + ex.getMessage());
             }
+        }
+    }
+
+    private static class ScrollablePanel extends JPanel implements Scrollable {
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+        @Override
+        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return 16;
+        }
+        @Override
+        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return 64;
+        }
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
         }
     }
 }
