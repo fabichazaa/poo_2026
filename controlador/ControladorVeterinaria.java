@@ -71,6 +71,57 @@ public class ControladorVeterinaria {
         return t;
     }
 
+    public List<Veterinario> getVeterinarios() {
+        return veterinaria.getListaVeterinarios();
+    }
+
+    public List<Responsable> getResponsables() {
+        return veterinaria.getListaClientes();
+    }
+
+    public Veterinario registrarVeterinario(String dni, String nombre, String apellido, String celular,
+            Direccion direccion, String matricula) {
+        if (dni == null || dni.isBlank() || nombre == null || nombre.isBlank()
+                || apellido == null || apellido.isBlank() || matricula == null || matricula.isBlank()) {
+            throw new IllegalArgumentException("Faltan campos obligatorios.");
+        }
+        if (veterinaria.buscarVeterinarioPorDni(dni.trim()) != null) {
+            throw new IllegalStateException("Ya existe un veterinario con ese DNI.");
+        }
+        if (veterinaria.buscarVeterinarioPorMatricula(matricula.trim()) != null) {
+            throw new IllegalStateException("Ya existe un veterinario con esa matrícula.");
+        }
+        Veterinario v = new Veterinario(dni.trim(), nombre.trim(), apellido.trim(), celular, direccion, matricula.trim());
+        veterinaria.registrarVeterinario(v);
+        return v;
+    }
+
+    public Responsable registrarResponsable(String dni, String nombre, String apellido, String celular,
+            Direccion direccion) {
+        if (dni == null || dni.isBlank() || nombre == null || nombre.isBlank() || apellido == null || apellido.isBlank()) {
+            throw new IllegalArgumentException("Faltan campos obligatorios.");
+        }
+        if (veterinaria.buscarClientePorDni(dni.trim()) != null) {
+            throw new IllegalStateException("Ya existe un dueño con ese DNI.");
+        }
+        Responsable r = new Responsable(dni.trim(), nombre.trim(), apellido.trim(), celular, direccion);
+        veterinaria.registrarCliente(r);
+        return r;
+    }
+
+    public void eliminarVeterinario(Veterinario v) {
+        if (v != null) veterinaria.getListaVeterinarios().remove(v);
+    }
+
+    public void eliminarResponsable(Responsable r) {
+        if (r == null) return;
+        // Quitamos también sus mascotas del registro de pacientes para no dejarlas huérfanas.
+        for (Animal a : new ArrayList<>(r.getMascotas())) {
+            veterinaria.getPacientesRegistrados().remove(a);
+        }
+        veterinaria.getListaClientes().remove(r);
+    }
+
     public void recetarMedicamento(Animal animal, Medicamento med) {
         if (animal != null && med != null) {
             animal.getHistorial().recetarMedicamento(med);
@@ -160,22 +211,27 @@ public class ControladorVeterinaria {
         // 🔥 MODIFICADO: Agregamos el parámetro celular intermedio que hereda de Persona
         Veterinario vet1 = new Veterinario("22333444", "Carlos", "Páez", "+54 11 9999-8888", null, "MP-9854");
         vet1.setEspecialidad("Cirugía");
-        vet1.setTurnoTrabajo("Mañana");
+        vet1.setTurnoTrabajo("Lun–Vie 08–17hs");
+        vet1.setEmail("cpaez@happypaws.vet");
         veterinaria.registrarVeterinario(vet1);
 
         Veterinario vet2 = new Veterinario("55555555", "Laura", "Gómez", "+54 11 9999-7777", null, "MP-1024");
         vet2.setEspecialidad("Clínica médica");
-        vet2.setTurnoTrabajo("Tarde");
+        vet2.setTurnoTrabajo("Mar–Sáb 09–18hs");
+        vet2.setEmail("lgomez@happypaws.vet");
         veterinaria.registrarVeterinario(vet2);
 
         Veterinario vet3 = new Veterinario("38765432", "Ana", "Ruiz", "+54 11 9999-6666", null, "MP-2050");
         vet3.setEspecialidad("Dermatología");
-        vet3.setTurnoTrabajo("Mañana");
+        vet3.setTurnoTrabajo("Lun Mié Vie");
+        vet3.setEmail("aruiz@happypaws.vet");
         veterinaria.registrarVeterinario(vet3);
 
         Veterinario vet4 = new Veterinario("42987654", "Miguel", "Torres", "+54 11 9999-5555", null, "MP-3080");
         vet4.setEspecialidad("Cardiología");
-        vet4.setTurnoTrabajo("Tarde");
+        vet4.setTurnoTrabajo("Lun–Jue 08–16hs");
+        vet4.setEmail("mtorres@happypaws.vet");
+        vet4.setActivo(false);
         veterinaria.registrarVeterinario(vet4);
     }
 
@@ -186,9 +242,13 @@ public class ControladorVeterinaria {
         Direccion dir4 = new Direccion("Pasaje San Roque", 89, "San Telmo");
 
         Responsable c1 = new Responsable("12345678", "Claudio", "Chiqui", "+54 11 3476 3465", dir1);
+        c1.setEmail("claudio.chiqui@email.com");
         Responsable c2 = new Responsable("24678901", "Marta", "Sánchez","+54 11 3476 3465", dir2);
+        c2.setEmail("marta.sanchez@gmail.com");
         Responsable c3 = new Responsable("31456789", "Ricardo", "López","+54 11 3476 3465", dir3);
+        c3.setEmail("ricardo.lopez@hotmail.com");
         Responsable c4 = new Responsable("40876543", "Patricia", "Fernández", "+54 11 3476 3465",dir4);
+        c4.setEmail("pati.fernandez@outlook.com");
         veterinaria.registrarCliente(c1);
         veterinaria.registrarCliente(c2);
         veterinaria.registrarCliente(c3);

@@ -20,6 +20,7 @@ public class PanelMas extends JPanel {
     private JLabel lblTurnos;
     private JLabel lblEnAdopcion;
     private JLabel lblNotas;
+    private PanelGestionPersonas panelGestion;
 
     private static final Color COLOR_TOPE = recursos.Color.SLATE_600;
 
@@ -56,6 +57,9 @@ public class PanelMas extends JPanel {
         panelCuerpo.setOpaque(false);
         panelCuerpo.setLayout(new BoxLayout(panelCuerpo, BoxLayout.Y_AXIS));
 
+        panelGestion = new PanelGestionPersonas(controlador);
+        panelCuerpo.add(panelGestion);
+        panelCuerpo.add(Box.createVerticalStrut(15));
         panelCuerpo.add(crearPanelEstadisticas());
         panelCuerpo.add(Box.createVerticalStrut(15));
         panelCuerpo.add(crearPanelExportar());
@@ -64,6 +68,7 @@ public class PanelMas extends JPanel {
 
         JScrollPane scroll = new JScrollPane(panelCuerpo);
         scroll.setBorder(null);
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.getViewport().setBackground(recursos.Color.BG);
         add(scroll, BorderLayout.CENTER);
     }
@@ -204,6 +209,7 @@ public class PanelMas extends JPanel {
         lblTurnos.setText(String.valueOf(controlador.getVeterinaria().getListaTurnos().size()));
         lblEnAdopcion.setText(String.valueOf(controlador.obtenerAnimalesEnAdopcion().size()));
         lblNotas.setText(String.valueOf(controlador.getNotas().size()));
+        if (panelGestion != null) panelGestion.refrescar();
     }
 
     private Turno seleccionarTurno() {

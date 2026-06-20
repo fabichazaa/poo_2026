@@ -6,6 +6,8 @@ public abstract class Persona {
     private String apellido;
     private String celular;
     private Direccion direccion;
+    private String email = "";
+    private String notasInternas = "";
 
     public Persona(String DNI, String nombre, String apellido, String celular, Direccion direccion) {
         this.DNI = DNI;
@@ -57,6 +59,22 @@ public abstract class Persona {
 
     public void setCelular(String celular) {
         this.celular = celular;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email != null ? email : "";
+    }
+
+    public String getNotasInternas() {
+        return notasInternas;
+    }
+
+    public void setNotasInternas(String notasInternas) {
+        this.notasInternas = notasInternas != null ? notasInternas : "";
     }
 
     @Override
