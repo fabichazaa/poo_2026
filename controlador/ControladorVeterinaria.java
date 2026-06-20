@@ -312,16 +312,16 @@ public class ControladorVeterinaria {
 
         if (hulk != null) {
             hulk.getHistorial().recetarMedicamento(veterinaria.getCatalogoMedicamentos().get(0));
-            Vacuna v1 = new Vacuna("SEN-VAC-001", "Antirrábica", 365);
+            Vacuna v1 = (Vacuna) veterinaria.getCatalogoMedicamentos().get(8);
             hulk.getHistorial().registrarVacuna(new RegistroVacunacion(v1, LocalDate.of(2025, 6, 1)));
             hulk.setEnAdopcion(false);
         }
         if (luna != null) {
-            Vacuna v2 = new Vacuna("SEN-VAC-002", "Triple Felina", 365);
+            Vacuna v2 = (Vacuna) veterinaria.getCatalogoMedicamentos().get(9);
             luna.getHistorial().registrarVacuna(new RegistroVacunacion(v2, LocalDate.of(2025, 2, 10)));
         }
         if (cheese != null) {
-            Vacuna v3 = new Vacuna("SEN-VAC-003", "Parvovirus (vencida)", 365);
+            Vacuna v3 = (Vacuna) veterinaria.getCatalogoMedicamentos().get(10);
             cheese.getHistorial().registrarVacuna(new RegistroVacunacion(v3, LocalDate.of(2023, 1, 15)));
         }
         if (mishi != null) {

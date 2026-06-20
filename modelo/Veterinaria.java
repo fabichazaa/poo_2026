@@ -153,5 +153,9 @@ public class Veterinaria {
         agregarMedicamentoAlCatalogo(new Medicamento("SEN-006", "Metronidazol 250mg", "Antiparasitario / Antibacteriano"));
         agregarMedicamentoAlCatalogo(new Medicamento("SEN-007", "Enalapril 10mg", "Cardiovascular / Antihipertensivo"));
         agregarMedicamentoAlCatalogo(new Medicamento("SEN-008", "Omeprazol 20mg", "Protector Gástrico"));
+        agregarMedicamentoAlCatalogo(new Vacuna("SEN-VAC-001", "Antirrábica", 365));
+        agregarMedicamentoAlCatalogo(new Vacuna("SEN-VAC-002", "Triple Felina", 365));
+        agregarMedicamentoAlCatalogo(new Vacuna("SEN-VAC-003", "Parvovirus (vencida)", 365));
+
     }
 }

@@ -339,10 +339,10 @@ public class DialogoNuevoTurno extends JDialog {
         JPanel panelTipoGrid = new JPanel(new GridLayout(3, 2, 2, 4));
         panelTipoGrid.setOpaque(false);
 
-        // Creamos los 8 botones de tipo
+        // Creamos los 6 botones de tipo
         TipoTurnoButton btnConsulta = new TipoTurnoButton("Consulta", TipoTurno.CONSULTA_GENERAL);
         TipoTurnoButton btnAnalisis = new TipoTurnoButton("Análisis", TipoTurno.ANALISIS);
-        TipoTurnoButton btnCirugia = new TipoTurnoButton("Cirugía",  TipoTurno.CIRUGIA);
+        TipoTurnoButton btnCirugia = new TipoTurnoButton("Cirugía", TipoTurno.CIRUGIA);
         TipoTurnoButton btnSeguimiento = new TipoTurnoButton("Seguimiento", TipoTurno.SEGUIMIENTO);
         TipoTurnoButton btnVacunacion = new TipoTurnoButton("Vacunación", TipoTurno.VACUNACION);
         TipoTurnoButton btnEstetica = new TipoTurnoButton("Estética", TipoTurno.BANIO);
@@ -920,13 +920,13 @@ public class DialogoNuevoTurno extends JDialog {
             JLabel lblIcon = new JLabel();
             lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
             try {
-                    ImageIcon icon = new ImageIcon(tipo.getRutaEmoji());
-                    Image scaled = icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
-                    lblIcon.setIcon(new ImageIcon(scaled));
-                } catch (Exception e) {
-                    lblIcon.setText(tipo.getEmojiRespaldo());
-                    lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
-                }
+                ImageIcon icon = new ImageIcon(tipo.getRutaEmoji());
+                Image scaled = icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+                lblIcon.setIcon(new ImageIcon(scaled));
+            } catch (Exception e) {
+                lblIcon.setText(tipo.getEmojiRespaldo());
+                lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
+            }
 
             JLabel lblText = new JLabel(texto);
             lblText.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
@@ -980,16 +980,12 @@ public class DialogoNuevoTurno extends JDialog {
 
             Color bg;
             Color border;
-            Color textCol;
-
             if (seleccionado) {
                 bg = tipo.getBadgeBgColor();
                 border = tipo.getAccentColor();
-                textCol = tipo.getBadgeFgColor();
             } else {
                 bg = getBackground() != null ? getBackground() : colorNormalBg;
                 border = colorNormalBorder;
-                textCol = recursos.Color.SLATE_600;
             }
 
             g2.setColor(bg);
@@ -1035,10 +1031,6 @@ public class DialogoNuevoTurno extends JDialog {
                     repaint();
                 }
             });
-        }
-
-        public String getTexto() {
-            return texto;
         }
 
         public void setSeleccionado(boolean s) {

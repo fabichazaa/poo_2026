@@ -10,7 +10,6 @@ public enum TipoTurno {
 
     private final String descripcion;
     private final int duracionMinutos;
-    
     private final String rutaEmoji;
     private final String emojiRespaldo;
 
@@ -39,34 +38,52 @@ public enum TipoTurno {
 
     public java.awt.Color getAccentColor() {
         return switch (this) {
-            case CONSULTA_GENERAL -> recursos.Color.CAT_CONSULTA;
-            case VACUNACION -> recursos.Color.CAT_VACUNA;
-            case CIRUGIA -> recursos.Color.CAT_CIRUGIA;
-            case BANIO -> recursos.Color.CAT_BANIO;
-            case ANALISIS -> recursos.Color.CAT_ANALISIS;
-            case SEGUIMIENTO -> recursos.Color.CAT_SEGUIMIENTO;
+            case CONSULTA_GENERAL ->
+                recursos.Color.CAT_CONSULTA;
+            case VACUNACION ->
+                recursos.Color.CAT_VACUNA;
+            case CIRUGIA ->
+                recursos.Color.CAT_CIRUGIA;
+            case BANIO ->
+                recursos.Color.CAT_BANIO;
+            case ANALISIS ->
+                recursos.Color.CAT_ANALISIS;
+            case SEGUIMIENTO ->
+                recursos.Color.CAT_SEGUIMIENTO;
         };
     }
 
     public java.awt.Color getBadgeBgColor() {
         return switch (this) {
-            case CONSULTA_GENERAL -> recursos.Color.BLUE_LIGHT;
-            case VACUNACION -> recursos.Color.PINK_LIGHT;
-            case CIRUGIA -> recursos.Color.ORANGE_CAT_LIGHT;
-            case BANIO -> recursos.Color.CYAN_LIGHT;
-            case ANALISIS -> recursos.Color.PURPLE_LIGHT;
-            case SEGUIMIENTO -> recursos.Color.YELLOW_CAT_LIGHT;
+            case CONSULTA_GENERAL ->
+                recursos.Color.BLUE_LIGHT;
+            case VACUNACION ->
+                recursos.Color.PINK_LIGHT;
+            case CIRUGIA ->
+                recursos.Color.ORANGE_CAT_LIGHT;
+            case BANIO ->
+                recursos.Color.CYAN_LIGHT;
+            case ANALISIS ->
+                recursos.Color.PURPLE_LIGHT;
+            case SEGUIMIENTO ->
+                recursos.Color.YELLOW_CAT_LIGHT;
         };
     }
 
     public java.awt.Color getBadgeFgColor() {
         return switch (this) {
-            case CONSULTA_GENERAL -> recursos.Color.BLUE_DARK;
-            case VACUNACION -> recursos.Color.PINK_DARK;
-            case CIRUGIA -> recursos.Color.ORANGE_CAT_DARK;
-            case BANIO -> recursos.Color.CYAN_DARK;
-            case ANALISIS -> recursos.Color.PURPLE_DARK;
-            case SEGUIMIENTO -> recursos.Color.YELLOW_CAT_DARK;
+            case CONSULTA_GENERAL ->
+                recursos.Color.BLUE_DARK;
+            case VACUNACION ->
+                recursos.Color.PINK_DARK;
+            case CIRUGIA ->
+                recursos.Color.ORANGE_CAT_DARK;
+            case BANIO ->
+                recursos.Color.CYAN_DARK;
+            case ANALISIS ->
+                recursos.Color.PURPLE_DARK;
+            case SEGUIMIENTO ->
+                recursos.Color.YELLOW_CAT_DARK;
         };
     }
 }
