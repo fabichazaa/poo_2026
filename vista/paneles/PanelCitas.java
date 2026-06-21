@@ -15,6 +15,7 @@ import modelo.*;
 import recursos.CargadorFuentes;
 import recursos.Color;
 import recursos.ImageLoader;
+import vista.componentes.BotonPrimario;
 
 public class PanelCitas extends JPanel {
 
@@ -95,26 +96,7 @@ public class PanelCitas extends JPanel {
         panelHeader.add(panelHeaderIzq, BorderLayout.WEST);
 
         // Header Derecho (+ Nuevo turno)
-        JButton btnNuevoTurno = new JButton("+ Nuevo turno") {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g2.setColor(getBackground());
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        btnNuevoTurno.setBackground(colorTeal);
-        btnNuevoTurno.setFont(CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
-        btnNuevoTurno.setForeground(Color.SURFACE);
-        btnNuevoTurno.setContentAreaFilled(false);
-        btnNuevoTurno.setBorderPainted(false);
-        btnNuevoTurno.setFocusPainted(false);
-        btnNuevoTurno.setPreferredSize(new Dimension(130, 36));
-        btnNuevoTurno.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        JButton btnNuevoTurno = new BotonPrimario("+ Nuevo Turno", 130, 36);
         btnNuevoTurno.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
