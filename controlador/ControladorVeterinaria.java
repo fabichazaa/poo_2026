@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import modelo.*;
+import fabrica.ConstructorAnimal;
 
 public class ControladorVeterinaria {
 
@@ -194,30 +195,30 @@ public class ControladorVeterinaria {
         veterinaria.registrarCliente(c4);
 
         // Claudio (c1)
-        c1.agregarMascota(new Perro("Hulk",     LocalDate.of(2023, 4, 15), true,  28.0f, c1, "Dogo de Burdeos"));
-        c1.agregarMascota(new Gato ("Luna",     LocalDate.of(2025, 8, 20), false, 4.2f,  c1, "Siamés"));
-        c1.agregarMascota(new Perro("Cheese",   LocalDate.of(2018, 1, 10), true,  11.5f, c1, "Beagle"));
-        c1.agregarMascota(new Gato ("Mochi",    LocalDate.of(2024, 2, 14), false, 3.8f,  c1, "Siamés"));
-        c1.agregarMascota(new Loro ("Pepe",     LocalDate.of(2021, 5, 10), true,  0.4f,  c1, "Amazonas"));
-        c1.agregarMascota(new Conejo("Copito",  LocalDate.of(2025, 1, 12), false, 1.8f,  c1, "Cabeza de León"));
+        registrarNuevaMascota("perro", "Hulk",     LocalDate.of(2023, 4, 15), true,  28.0f, c1, "Dogo de Burdeos");
+        registrarNuevaMascota("gato",  "Luna",     LocalDate.of(2025, 8, 20), false, 4.2f,  c1, "Siamés");
+        registrarNuevaMascota("perro", "Cheese",   LocalDate.of(2018, 1, 10), true,  11.5f, c1, "Beagle");
+        registrarNuevaMascota("gato",  "Mochi",    LocalDate.of(2024, 2, 14), false, 3.8f,  c1, "Siamés");
+        registrarNuevaMascota("loro",  "Pepe",     LocalDate.of(2021, 5, 10), true,  0.4f,  c1, "Amazonas");
+        registrarNuevaMascota("conejo","Copito",   LocalDate.of(2025, 1, 12), false, 1.8f,  c1, "Cabeza de León");
 
         // Marta (c2)
-        c2.agregarMascota(new Gato ("Mishi",     LocalDate.of(2022, 11, 5), false, 4.0f,  c2, "Persa"));
-        c2.agregarMascota(new Gato ("Bigotes",   LocalDate.of(2020, 6, 18), true,  6.5f,  c2, "Maine Coon"));
-        c2.agregarMascota(new Perro("Toby",      LocalDate.of(2019, 9, 22), true,  5.2f,  c2, "Caniche"));
-        c2.agregarMascota(new Tortuga("Manuelita", LocalDate.of(1996, 1, 1), true, 2.1f,  c2, "Terrestre"));
-        c2.agregarMascota(new Loro ("Paquito",   LocalDate.of(2015, 3, 22), false, 0.5f,  c2, "Gris Africano"));
+        registrarNuevaMascota("gato",  "Mishi",    LocalDate.of(2022, 11, 5), false, 4.0f,  c2, "Persa");
+        registrarNuevaMascota("gato",  "Bigotes",  LocalDate.of(2020, 6, 18), true,  6.5f,  c2, "Maine Coon");
+        registrarNuevaMascota("perro", "Toby",     LocalDate.of(2019, 9, 22), true,  5.2f,  c2, "Caniche");
+        registrarNuevaMascota("tortuga","Manuelita",LocalDate.of(1996, 1, 1),  true,  2.1f,  c2, "Terrestre");
+        registrarNuevaMascota("loro",  "Paquito",  LocalDate.of(2015, 3, 22), false, 0.5f,  c2, "Gris Africano");
 
         // Ricardo (c3)
-        c3.agregarMascota(new Perro("Bobby", LocalDate.of(2021, 3, 11), true,  24.3f, c3, "Golden Retriever"));
-        c3.agregarMascota(new Perro("Rocky", LocalDate.of(2017, 7, 4),  true,  13.1f, c3, "Bulldog Francés"));
-        c3.agregarMascota(new Conejo("Tambor", LocalDate.of(2025, 3, 15), false, 2.0f,  c3, "Mini Lop"));
-        c3.agregarMascota(new Tortuga("Rafaela", LocalDate.of(2005, 10, 8), false, 1.9f,  c3, "Caja"));
+        registrarNuevaMascota("perro", "Bobby",    LocalDate.of(2021, 3, 11), true,  24.3f, c3, "Golden Retriever");
+        registrarNuevaMascota("perro", "Rocky",    LocalDate.of(2017, 7, 4),  true,  13.1f, c3, "Bulldog Francés");
+        registrarNuevaMascota("conejo","Tambor",   LocalDate.of(2025, 3, 15), false, 2.0f,  c3, "Mini Lop");
+        registrarNuevaMascota("tortuga","Rafaela",  LocalDate.of(2005, 10, 8), false, 1.9f,  c3, "Caja");
 
         // Patricia (c4)
-        c4.agregarMascota(new Gato ("Pelusa",    LocalDate.of(2024, 5, 30), false, 3.5f,  c4, "Angora Turco"));
-        c4.agregarMascota(new Conejo("Orejas",   LocalDate.of(2024, 8, 4),  true,  2.2f,  c4, "Angora"));
-
+        registrarNuevaMascota("gato",  "Pelusa",   LocalDate.of(2024, 5, 30), false, 3.5f,  c4, "Angora Turco");
+        registrarNuevaMascota("conejo","Orejas",   LocalDate.of(2024, 8, 4),  true,  2.2f,  c4, "Angora");
+        
         // Bucle automatizado de registro
         for (Animal a : c1.getMascotas()) veterinaria.registrarPaciente(a);
         for (Animal a : c2.getMascotas()) veterinaria.registrarPaciente(a);
@@ -399,5 +400,28 @@ public class ControladorVeterinaria {
             }
         }
         return null;
+    }
+
+    public Animal registrarNuevaMascota(String tipo, String nombre, LocalDate fecha, boolean sexo, float peso, Responsable dueño, String raza) {
+        try {
+            Animal nuevoAnimal = new ConstructorAnimal(tipo)
+                                    .conNombre(nombre)
+                                    .nacidoEl(fecha)
+                                    .esMacho(sexo)
+                                    .conPeso(peso)
+                                    .conDueño(dueño)
+                                    .deRaza(raza)
+                                    .construir();
+            
+            if (dueño != null && nuevoAnimal != null) {
+                dueño.agregarMascota(nuevoAnimal);
+            }
+            
+            return nuevoAnimal;
+            
+        } catch (Exception e) {
+            System.out.println("Error al registrar: " + e.getMessage());
+            return null;
+        }
     }
 }
