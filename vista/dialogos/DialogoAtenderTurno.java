@@ -34,10 +34,16 @@ public class DialogoAtenderTurno extends JDialog {
     private JLabel lblCharCount;
 
     public DialogoAtenderTurno(Frame owner, ControladorVeterinaria controlador, Turno turno) {
-        super(owner, "Atender turno — " + turno.getAnimal().getNombre(), true);
+        super(owner, "Atender Turno — " + turno.getAnimal().getNombre(), true);
         this.controlador = controlador;
         this.turno = turno;
         this.animal = turno.getAnimal();
+        try {
+            ImageIcon iconoApp = new ImageIcon("imagenes/logo.png");
+            setIconImage(iconoApp.getImage());
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar el icono del diálogo: " + e.getMessage());
+        }
         construir();
         iniciarTimer();
     }
@@ -71,108 +77,16 @@ public class DialogoAtenderTurno extends JDialog {
     }
 
     private void construir() {
-        setSize(580, 780);
-        setUndecorated(true);
-        setShape(new java.awt.geom.RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 24, 24));
+        setSize(580, 700);
         setResizable(false);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
 
-        // ==========================================
-        //  HEADER BANNER (Teal)
-        // ==========================================
-        JPanel headerPanel = new JPanel(new BorderLayout(12, 0));
-        headerPanel.setOpaque(false);
-        headerPanel.setBorder(new EmptyBorder(16, 24, 16, 24));
-
-        JPanel headerTextPanel = new JPanel();
-        headerTextPanel.setOpaque(false);
-        headerTextPanel.setLayout(new BoxLayout(headerTextPanel, BoxLayout.Y_AXIS));
-
-        JLabel lblHeaderTitle = new JLabel("Finalizar Turno");
-        lblHeaderTitle.setFont(CargadorFuentes.cargar(18f).deriveFont(Font.BOLD));
-        lblHeaderTitle.setForeground(Color.WHITE);
-
-        JLabel lblHeaderSub = new JLabel("Complete el registro médico para cerrar la atención.");
-        lblHeaderSub.setFont(CargadorFuentes.cargar(12f));
-        lblHeaderSub.setForeground(recursos.Color.PRIMARY_LIGHT);
-
-        headerTextPanel.add(lblHeaderTitle);
-        headerTextPanel.add(Box.createVerticalStrut(2));
-        headerTextPanel.add(lblHeaderSub);
-
-        // Timer de cabecera
-        JPanel headerRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 16, 0));
-        headerRightPanel.setOpaque(false);
-
-        lblHeaderTimer = new JLabel("⏱ " + formatTime(timerSeconds));
-        lblHeaderTimer.setFont(CargadorFuentes.cargar(13f).deriveFont(Font.BOLD));
-        lblHeaderTimer.setForeground(Color.WHITE);
-        lblHeaderTimer.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(255, 255, 255, 80), 1, true),
-                new EmptyBorder(6, 12, 6, 12)
-        ));
-
-        JButton btnClose = new JButton() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                if (getModel().isRollover()) {
-                    g2.setColor(new Color(255, 255, 255, 40));
-                    g2.fillOval(0, 0, getWidth(), getHeight());
-                }
-                g2.setColor(Color.WHITE);
-                g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                int size = 12;
-                int x = (getWidth() - size) / 2;
-                int y = (getHeight() - size) / 2;
-                g2.drawLine(x, y, x + size, y + size);
-                g2.drawLine(x + size, y, x, y + size);
-                g2.dispose();
-            }
-        };
-        btnClose.setPreferredSize(new Dimension(28, 28));
-        btnClose.setOpaque(false);
-        btnClose.setContentAreaFilled(false);
-        btnClose.setBorderPainted(false);
-        btnClose.setFocusPainted(false);
-        btnClose.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnClose.addActionListener(e -> dispose());
-
-        headerRightPanel.add(lblHeaderTimer);
-        headerRightPanel.add(btnClose);
-
-        headerPanel.add(headerTextPanel, BorderLayout.CENTER);
-        headerPanel.add(headerRightPanel, BorderLayout.EAST);
-
-        // Panel principal de fondo con esquinas redondeadas simuladas
-        JPanel panelFondo = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-                g2.setColor(recursos.Color.BG);
-                g2.fillRect(0, 0, getWidth(), getHeight());
-
-                int headerHeight = headerPanel.getHeight() > 0 ? headerPanel.getHeight() : 70;
-                g2.setColor(recursos.Color.PRIMARY);
-                g2.fillRect(0, 0, getWidth(), headerHeight + 1);
-                g2.dispose();
-
-                Graphics2D gBorder = (Graphics2D) g.create();
-                gBorder.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                gBorder.setColor(recursos.Color.BORDER);
-                gBorder.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
-                gBorder.dispose();
-            }
-        };
+        // Panel principal de fondo
+        JPanel panelFondo = new JPanel(new BorderLayout());
+        panelFondo.setBackground(recursos.Color.BG);
         panelFondo.setOpaque(true);
         panelFondo.setBorder(new EmptyBorder(1, 1, 1, 1));
-
-        panelFondo.add(headerPanel, BorderLayout.NORTH);
 
         // ==========================================
         //  SCROLLABLE BODY (Cards in Single Column)

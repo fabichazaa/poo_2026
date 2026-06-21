@@ -27,7 +27,7 @@ public class Conejo extends Animal {
 
     @Override
     public TipoAlimentacion getTipoAlimentacion() {
-        return TipoAlimentacion.CARNIVORO_ESTRICTO;
+        return TipoAlimentacion.HERBIBORO;
     }
 
     @Override

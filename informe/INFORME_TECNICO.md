@@ -14,7 +14,7 @@ delivery_date: "22 de julio de 2026"
 
 # Resumen
 
-El presente trabajo describe el diseño y la implementación de **Happy Paws**, un sistema de gestión veterinaria desarrollado en Java con interfaz gráfica Swing como Trabajo Integrador de la materia Programación Orientada a Objetos. El sistema permite administrar clientes, mascotas, veterinarios, turnos, historias clínicas, medicamentos, vacunas y un portal de adopciones. La aplicación se construyó aplicando los pilares del paradigma orientado a objetos: abstracción, encapsulamiento, herencia, polimorfismo y composición, complementados con el patrón arquitectónico Modelo–Vista–Controlador (MVC). Se incorpora además un *seed* de datos realistas (4 veterinarios, 4 clientes, 17 mascotas, 27 turnos, 8 medicamentos y un portal de adopciones activo) y una batería de **62 pruebas integrales automatizadas** que validan todos los flujos funcionales del sistema con un 100 % de éxito.
+El presente trabajo describe el diseño y la implementación de **Happy Paws**, un sistema de gestión veterinaria desarrollado en Java con interfaz gráfica Swing como Trabajo Integrador de la materia Programación Orientada a Objetos. El sistema permite administrar clientes, mascotas, veterinarios, turnos, historias clínicas, medicamentos, vacunas y un portal de adopciones. La aplicación se construyó aplicando los pilares del paradigma orientado a objetos: abstracción, encapsulamiento, herencia, polimorfismo y composición, complementados con el patrón arquitectónico Modelo–Vista–Controlador (MVC). Se incorpora además un *seed* de datos realistas (4 veterinarios, 4 clientes, 17 mascotas, 27 turnos, 11 medicamentos/vacunas en catálogo y un portal de adopciones activo) y una batería de **62 pruebas integrales automatizadas** que validan todos los flujos funcionales del sistema con un 100 % de éxito.
 
 **Palabras clave:** Java, Swing, POO, MVC, UML, herencia, polimorfismo, composición, agregación, colecciones.
 
@@ -80,7 +80,7 @@ La POO modela un sistema como un conjunto de **objetos** que colaboran entre sí
 | **Abstracción** | Identificar las características esenciales de una entidad, ignorando los detalles accidentales. | Clases `Animal` y `Persona` modelan lo común a todas las mascotas y a todas las personas del dominio. |
 | **Encapsulamiento** | Ocultar el estado interno y exponer solo lo necesario mediante una interfaz controlada. | Todos los atributos son `private`; el acceso se realiza por *getters* y *setters* con validaciones. |
 | **Herencia** | Mecanismo para crear jerarquías donde las subclases reutilizan y especializan el comportamiento de la superclase. | `Perro` y `Gato` heredan de `Animal`; `Responsable` y `Veterinario` heredan de `Persona`; `Vacuna` hereda de `Medicamento`. |
-| **Polimorfismo** | Capacidad de un mismo mensaje de producir comportamientos distintos según el tipo concreto del receptor. | `Animal.getTipoAlimentacion()` retorna `OMNIVORO` en `Perro` y `CARNIVORO_ESTRICTO` en `Gato`. |
+| **Polimorfismo** | Capacidad de un mismo mensaje de producir comportamientos distintos según el tipo concreto del receptor. | `Animal.getTipoAlimentacion()` retorna `OMNIVORO` en `Perro`, `CARNIVORO_ESTRICTO` en `Gato` y `HERBIBORO` en `Conejo`. |
 
 ## 2.3 Composición vs. agregación
 
@@ -176,7 +176,7 @@ Medicamento ─── Vacuna
 
 Se seleccionó `getTipoAlimentacion()` como método polimórfico obligatorio (retornando un `enum` `TipoAlimentacion` con `OMNIVORO`, `CARNIVORO_ESTRICTO` y `HERBIBORO`) por dos razones:
 
-1. **Demostrabilidad**: en cualquier punto del sistema se puede preguntar a un `Animal` su tipo de alimentación y la respuesta depende del tipo concreto (por ejemplo, `OMNIVORO` en `Perro`, `CARNIVORO_ESTRICTO` en `Gato` y `Conejo`), sin necesidad de `instanceof`.
+1. **Demostrabilidad**: en cualquier punto del sistema se puede preguntar a un `Animal` su tipo de alimentación y la respuesta depende del tipo concreto (por ejemplo, `OMNIVORO` en `Perro`, `CARNIVORO_ESTRICTO` en `Gato` y `HERBIBORO` en `Conejo`), sin necesidad de `instanceof`.
 2. **Extensibilidad**: al incorporar nuevas subclases como `Conejo`, `Loro` y `Tortuga`, basta sobrescribir el método. El código cliente no sufre modificaciones.
 
 Adicionalmente, `getEspecie()` también es polimórfico y retorna `"Perro"`, `"Gato"`, `"Conejo"`, `"Loro"` o `"Tortuga"`. También se definen como abstractos los métodos `getColorInicioHexActivo()` and `getColorFinHexActivo()`, implementados polimórficamente por cada subclase de `Animal` para definir de manera particular el color de su tarjeta en la interfaz Swing.
@@ -201,13 +201,11 @@ Adicionalmente, `getEspecie()` también es polimórfico y retorna `"Perro"`, `"G
 
 ```java
 public String generarTextoCompleto() {
-    Turno t = this.turno;
-    return "Comprobante — " + t.getVeterinaria().getNombreNegocio()
-         + "\nPaciente: "   + t.getAnimal().getNombre()
-         + "\nResponsable: "+ t.getAnimal().getResponsable().getNombreCompleto()
-         + "\nVeterinario: "+ t.getVeterinario().getNombreCompleto()
-         + "\nTipo: "       + t.getTipo().getDescripcion()
-         + "\nFecha: "      + t.getFecha() + " " + t.getHora();
+    return generarEncabezado()
+         + generarDetallePaciente()
+         + generarDetalleAtencion()
+         + generarDetalleTratamiento()
+         + "=========================================\n";
 }
 ```
 
@@ -241,7 +239,22 @@ public static void reiniciar() { instancia = null; }  // útil para tests
 
 Las vistas (`PortalVeterinario` y los diálogos) operan exclusivamente a través del controlador; nunca instancian clases del modelo directamente. Esta decisión facilita la trazabilidad, el testing y un eventual reemplazo de la vista (por ejemplo, una versión web).
 
-## 4.7 Estructura de paquetes
+## 4.7 Patrones creacionales opcionales: Factory y Builder
+
+Para flexibilizar y desacoplar la creación de objetos del dominio (particularmente la jerarquía de `Animal`), se implementaron dos patrones creacionales en el paquete `fabrica/`:
+
+### 4.7.1 Factory Dinámico con Registro (`FabricaAnimalMap`)
+El patrón **Factory** centraliza la instanciación de las subclases de `Animal`. A fin de evitar un bloque rígido de `switch-case` (que requeriría modificar la fábrica cada vez que se añada una especie, violando el principio Open/Closed de SOLID), se implementó un registro dinámico (`Map<String, Class<? extends Animal>>`):
+- **Registro**: Asocia un identificador en texto (`"perro"`, `"gato"`, `"conejo"`, etc.) con la clase correspondiente mediante reflexión de Java.
+- **Creación**: El método estático `crear()` busca la clase registrada y hace un llamado dinámico a su constructor, retornando una instancia polimórfica de tipo `Animal`.
+- **Extensibilidad**: Permite registrar nuevos tipos de animales dinámicamente en tiempo de ejecución a través del método `registrar()`.
+
+### 4.7.2 Builder Fluido (`ConstructorAnimal`)
+El patrón **Builder** provee una interfaz fluida (*Fluent API*) para construir de forma clara y paso a paso instancias de animales sin lidiar con constructores gigantescos:
+- Permite encadenar llamadas de configuración (ej. `new ConstructorAnimal("perro").conNombre("Bobby").conPeso(12.5f).construir()`).
+- Encapsula la complejidad del orden de parámetros y delega la instanciación física al Factory dinámico `FabricaAnimalMap`.
+
+## 4.8 Estructura de paquetes
 
 ```
 poo_2026/
@@ -249,6 +262,7 @@ poo_2026/
 │                   Persona, Responsable, Veterinario, Direccion, HistoriaClinica,
 │                   Medicamento, Prescripcion, Vacuna, RegistroVacunacion, Turno,
 │                   TipoTurno, TipoAlimentacion, Veterinaria, ComprobanteTurno)
+├── fabrica/      → Creación desacoplada (FabricaAnimalMap, ConstructorAnimal)
 ├── vista/        → PortalVeterinario + subpaquetes paneles/ y dialogos/
 ├── controlador/  → ControladorVeterinaria (Singleton)
 ├── recursos/     → GoogleSans.ttf + CargadorFuentes

@@ -80,6 +80,24 @@ class Gato {
     +TipoAlimentacion getTipoAlimentacion()
     +String getEspecie()
 }
+class Conejo {
+    -String raza
+    -boolean esEsterilizado
+    +TipoAlimentacion getTipoAlimentacion()
+    +String getEspecie()
+}
+class Loro {
+    -String raza
+    -boolean necesitaPaseo
+    +TipoAlimentacion getTipoAlimentacion()
+    +String getEspecie()
+}
+class Tortuga {
+    -String raza
+    -boolean necesitaPaseo
+    +TipoAlimentacion getTipoAlimentacion()
+    +String getEspecie()
+}
 class HistoriaClinica {
     -List medicamentosRecetados
     -List registroVacunas
@@ -188,6 +206,9 @@ Persona <|-- Responsable
 Persona <|-- Veterinario
 Animal <|-- Perro
 Animal <|-- Gato
+Animal <|-- Conejo
+Animal <|-- Loro
+Animal <|-- Tortuga
 Medicamento <|-- Vacuna
 Animal "1" *-- "1" HistoriaClinica
 Veterinaria "1" *-- "*" Veterinario

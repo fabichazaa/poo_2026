@@ -23,7 +23,7 @@ java -jar plantuml.jar -tsvg VeterinariaUML.puml
 **15 clases + 2 enums** organizados en 3 jerarquías de herencia:
 
 1. `Persona` (abstract) → `Responsable` y `Veterinario`
-2. `Animal` (abstract) → `Perro` y `Gato`
+2. `Animal` (abstract) → `Perro`, `Gato`, `Conejo`, `Loro` y `Tortuga`
 3. `Medicamento` → `Vacuna`
 
 **Relaciones principales con multiplicidades:**
@@ -43,7 +43,7 @@ java -jar plantuml.jar -tsvg VeterinariaUML.puml
 
 - ✅ a. Herencia con clase abstracta + 2+ subclases concretas
 - ✅ b. Encapsulamiento (todos los atributos `private`)
-- ✅ c. Polimorfismo: `Animal.getTipoAlimentacion()` y `Animal.getEspecie()` sobrescritos en `Perro` y `Gato`
+- ✅ c. Polimorfismo: `Animal.getTipoAlimentacion()` y `Animal.getEspecie()` sobrescritos en `Perro`, `Gato`, `Conejo`, `Loro` y `Tortuga`
 - ✅ d. Composición (Animal↔HistoriaClinica, Veterinaria↔*) y agregación (Responsable↔Animal, HistoriaClinica↔Medicamento)
 - ✅ e. Colecciones: múltiples `ArrayList` con alta (`registrar*`, `agregar*`), búsqueda (`buscar*`, `obtener*`) y recorrido
 - ✅ f. Clase de reporte: `ComprobanteTurno`

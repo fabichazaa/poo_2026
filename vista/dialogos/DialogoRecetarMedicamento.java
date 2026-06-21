@@ -41,9 +41,15 @@ public class DialogoRecetarMedicamento extends JDialog {
     private JLabel lblError;
 
     public DialogoRecetarMedicamento(Window owner, ControladorVeterinaria controlador, Animal animal) {
-        super(owner, "Recetar medicamento — " + animal.getNombre(), Dialog.ModalityType.APPLICATION_MODAL);
+        super(owner, "Recetar Medicamento — " + animal.getNombre(), Dialog.ModalityType.APPLICATION_MODAL);
         this.controlador = controlador;
         this.animal = animal;
+        try {
+            ImageIcon iconoApp = new ImageIcon("imagenes/logo.png");
+            setIconImage(iconoApp.getImage());
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar el icono del diálogo: " + e.getMessage());
+        }
         construir();
     }
 
@@ -52,94 +58,16 @@ public class DialogoRecetarMedicamento extends JDialog {
     }
 
     private void construir() {
-        setSize(540, 640);
-        setUndecorated(true);
-        setShape(new java.awt.geom.RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 24, 24));
+        setSize(540, 560);
         setResizable(false);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
 
-        // ==========================================
-        //  HEADER BANNER (Green/Teal)
-        // ==========================================
-        JPanel headerPanel = new JPanel(new BorderLayout(12, 0));
-        headerPanel.setOpaque(false);
-        headerPanel.setBorder(new EmptyBorder(16, 24, 16, 24));
-
-        JPanel textHeader = new JPanel();
-        textHeader.setOpaque(false);
-        textHeader.setLayout(new BoxLayout(textHeader, BoxLayout.Y_AXIS));
-
-        JLabel lblTitulo = new JLabel("Recetar Medicamento");
-        lblTitulo.setFont(CargadorFuentes.cargar(16f).deriveFont(Font.BOLD));
-        lblTitulo.setForeground(Color.WHITE);
-
-        String raza = animal.getRaza();
-        JLabel lblSub = new JLabel("Para: " + animal.getNombre() + " (" + raza + " · " + animal.getEspecie() + ")");
-        lblSub.setFont(CargadorFuentes.cargar(12f));
-        lblSub.setForeground(recursos.Color.PRIMARY_LIGHT);
-
-        textHeader.add(lblTitulo);
-        textHeader.add(Box.createVerticalStrut(2));
-        textHeader.add(lblSub);
-
-        JButton btnClose = new JButton() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                if (getModel().isRollover()) {
-                    g2.setColor(new Color(255, 255, 255, 40));
-                    g2.fillOval(0, 0, getWidth(), getHeight());
-                }
-                g2.setColor(Color.WHITE);
-                g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                int size = 12;
-                int x = (getWidth() - size) / 2;
-                int y = (getHeight() - size) / 2;
-                g2.drawLine(x, y, x + size, y + size);
-                g2.drawLine(x + size, y, x, y + size);
-                g2.dispose();
-            }
-        };
-        btnClose.setPreferredSize(new Dimension(28, 28));
-        btnClose.setOpaque(false);
-        btnClose.setContentAreaFilled(false);
-        btnClose.setBorderPainted(false);
-        btnClose.setFocusPainted(false);
-        btnClose.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnClose.addActionListener(e -> dispose());
-
-        headerPanel.add(textHeader, BorderLayout.CENTER);
-        headerPanel.add(btnClose, BorderLayout.EAST);
-
-        // Borde redondeado simulado para toda la ventana usando un panel principal con borde
-        JPanel panelFondo = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-                g2.setColor(recursos.Color.SURFACE);
-                g2.fillRect(0, 0, getWidth(), getHeight());
-
-                int headerHeight = headerPanel.getHeight() > 0 ? headerPanel.getHeight() : 70;
-                g2.setColor(recursos.Color.PRIMARY);
-                g2.fillRect(0, 0, getWidth(), headerHeight + 1);
-                g2.dispose();
-
-                Graphics2D gBorder = (Graphics2D) g.create();
-                gBorder.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                gBorder.setColor(recursos.Color.BORDER);
-                gBorder.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
-                gBorder.dispose();
-            }
-        };
+        // Panel principal de fondo
+        JPanel panelFondo = new JPanel(new BorderLayout());
+        panelFondo.setBackground(recursos.Color.SURFACE);
         panelFondo.setOpaque(true);
         panelFondo.setBorder(new EmptyBorder(1, 1, 1, 1));
-
-        panelFondo.add(headerPanel, BorderLayout.NORTH);
 
         // ==========================================
         //  FORM BODY (White background)

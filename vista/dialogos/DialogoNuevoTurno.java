@@ -32,13 +32,19 @@ public class DialogoNuevoTurno extends JDialog {
     private JLabel lblResumenHoraVal;
 
     private final List<TipoTurnoButton> botonesTipo = new ArrayList<>();
-    private final List<PrioridadButton> botonesPrioridad = new ArrayList<>();
+
     private final List<TimeSlotButton> botonesHora = new ArrayList<>();
 
     public DialogoNuevoTurno(Frame owner, ControladorVeterinaria controlador) {
-        super(owner, "Registrar nuevo turno", true);
+        super(owner, "Nuevo Turno", true);
         this.controlador = controlador;
         this.turnoCreado = null;
+        try {
+            ImageIcon iconoApp = new ImageIcon("imagenes/logo.png");
+            setIconImage(iconoApp.getImage());
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar el icono del diálogo: " + e.getMessage());
+        }
         construir();
     }
 
@@ -47,130 +53,17 @@ public class DialogoNuevoTurno extends JDialog {
     }
 
     private void construir() {
-        setSize(980, 640);
+        setSize(980, 600);
+
         setResizable(false);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
         getContentPane().setBackground(recursos.Color.BG); // #F1F5F9
 
-        // ----------------- HEADER PANEL -----------------
-        JPanel panelHeader = new JPanel(new BorderLayout());
-        panelHeader.setOpaque(false);
-        panelHeader.setBorder(new EmptyBorder(16, 24, 8, 24));
-
-        // Header Izquierdo (Botón Volver + Logo + Títulos)
-        JPanel panelHeaderIzq = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
-        panelHeaderIzq.setOpaque(false);
-
-        // Botón volver circular
-        JButton btnVolver = new JButton() {
-            private boolean hovered = false;
-
-            {
-                addMouseListener(new java.awt.event.MouseAdapter() {
-                    @Override
-                    public void mouseEntered(java.awt.event.MouseEvent e) {
-                        hovered = true;
-                        repaint();
-                    }
-
-                    @Override
-                    public void mouseExited(java.awt.event.MouseEvent e) {
-                        hovered = false;
-                        repaint();
-                    }
-                });
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(hovered ? recursos.Color.BG : Color.WHITE);
-                g2.fillOval(0, 0, getWidth(), getHeight());
-                g2.setColor(hovered ? recursos.Color.CAT_INACTIVO : recursos.Color.BORDER);
-                g2.drawOval(0, 0, getWidth() - 1, getHeight() - 1);
-
-                g2.setColor(recursos.Color.INK);
-                g2.setFont(new Font("Segoe UI", Font.BOLD, 14));
-                FontMetrics fm = g2.getFontMetrics();
-                String txt = "<";
-                int x = (getWidth() - fm.stringWidth(txt)) / 2;
-                int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
-                g2.drawString(txt, x, y - 1);
-                g2.dispose();
-            }
-        };
-        btnVolver.setPreferredSize(new Dimension(36, 36));
-        btnVolver.setContentAreaFilled(false);
-        btnVolver.setBorderPainted(false);
-        btnVolver.setFocusPainted(false);
-        btnVolver.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnVolver.addActionListener(e -> dispose());
-        panelHeaderIzq.add(btnVolver);
-
-        // Logo
-        JPanel panelLogo = new JPanel(new GridBagLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-                g2.setColor(recursos.Color.PRIMARY); // Teal-600
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-                g2.dispose();
-            }
-        };
-        panelLogo.setPreferredSize(new Dimension(36, 36));
-        panelLogo.setOpaque(false);
-        JLabel lblLogoIcon = new JLabel("🐾");
-        lblLogoIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 36));
-        ImageIcon icon = ImageLoader.loadScaled("imagenes/logo.png", 36, 36);
-        if (icon.getImage() != null && icon.getIconWidth() > 0) {
-            lblLogoIcon.setIcon(icon);
-            lblLogoIcon.setText("");
-        }
-
-        panelLogo.add(lblLogoIcon);
-        panelHeaderIzq.add(panelLogo);
-
-        // Títulos
-        JPanel panelTitulos = new JPanel();
-        panelTitulos.setOpaque(false);
-        panelTitulos.setLayout(new BoxLayout(panelTitulos, BoxLayout.Y_AXIS));
-
-        JLabel lblTitulo = new JLabel("Nuevo Turno");
-        lblTitulo.setFont(CargadorFuentes.cargar(18f).deriveFont(Font.BOLD));
-        lblTitulo.setForeground(recursos.Color.INK);
-
-        Veterinario vetLogueado = controlador.getVeterinarioLogueado();
-        String vetStr = (vetLogueado != null)
-                ? "Dr/a. " + vetLogueado.getNombre() + " " + vetLogueado.getApellido() + " · " + vetLogueado.getMatricula()
-                : "Veterinario no identificado";
-        JLabel lblSubtitle = new JLabel(vetStr);
-        lblSubtitle.setFont(CargadorFuentes.cargar(11f));
-        lblSubtitle.setForeground(recursos.Color.MUTED);
-
-        panelTitulos.add(lblTitulo);
-        panelTitulos.add(lblSubtitle);
-        panelHeaderIzq.add(panelTitulos);
-
-        panelHeader.add(panelHeaderIzq, BorderLayout.WEST);
-
-        // Header Derecho (* campos obligatorios)
-        JLabel lblObligatorio = new JLabel("* campos obligatorios");
-        lblObligatorio.setFont(CargadorFuentes.cargar(11f));
-        lblObligatorio.setForeground(recursos.Color.CAT_INACTIVO);
-        lblObligatorio.setBorder(new EmptyBorder(10, 0, 0, 0));
-        panelHeader.add(lblObligatorio, BorderLayout.EAST);
-
-        add(panelHeader, BorderLayout.NORTH);
-
         // ----------------- CENTRAL PANEL (TWO COLUMNS) -----------------
         JPanel panelCentral = new JPanel(new GridBagLayout());
         panelCentral.setOpaque(false);
-        panelCentral.setBorder(new EmptyBorder(8, 24, 16, 24));
+        panelCentral.setBorder(new EmptyBorder(24, 24, 16, 24));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
@@ -336,7 +229,7 @@ public class DialogoNuevoTurno extends JDialog {
         lblTipoTit.setForeground(recursos.Color.MUTED);
         cardTipo.add(lblTipoTit, BorderLayout.NORTH);
 
-        JPanel panelTipoGrid = new JPanel(new GridLayout(3, 2, 2, 4));
+        JPanel panelTipoGrid = new JPanel(new GridLayout(3, 2, 12, 12));
         panelTipoGrid.setOpaque(false);
 
         // Creamos los 6 botones de tipo
@@ -362,37 +255,7 @@ public class DialogoNuevoTurno extends JDialog {
         cardTipo.add(panelTipoGrid, BorderLayout.CENTER);
         panelColIzq.add(cardTipo);
 
-        panelColIzq.add(Box.createVerticalStrut(12));
-
-        // 3. Card Prioridad
-        CardPanel cardPrioridad = new CardPanel(recursos.Color.CAT_CONTROL, orangeGlow());
-        cardPrioridad.setLayout(new BorderLayout(0, 8));
-
-        JLabel lblPrioridadTit = new JLabel("PRIORIDAD");
-        lblPrioridadTit.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-        lblPrioridadTit.setForeground(recursos.Color.MUTED);
-        cardPrioridad.add(lblPrioridadTit, BorderLayout.NORTH);
-
-        JPanel panelPills = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
-        panelPills.setOpaque(false);
-
-        PrioridadButton pillNormal = new PrioridadButton("Normal", recursos.Color.MUTED);
-        PrioridadButton pillMedia = new PrioridadButton("Media", new Color(234, 179, 8));
-        PrioridadButton pillAlta = new PrioridadButton("Alta", recursos.Color.BADGE_ALERT);
-
-        botonesPrioridad.add(pillNormal);
-        botonesPrioridad.add(pillMedia);
-        botonesPrioridad.add(pillAlta);
-
-        pillNormal.setSeleccionado(true);
-
-        for (PrioridadButton p : botonesPrioridad) {
-            panelPills.add(p);
-            p.addActionListener(e -> seleccionarPrioridad(p));
-        }
-
-        cardPrioridad.add(panelPills, BorderLayout.CENTER);
-        panelColIzq.add(cardPrioridad);
+        panelColIzq.add(Box.createVerticalGlue());
 
         gbc.gridx = 0;
         gbc.weightx = 0.35;
@@ -478,7 +341,7 @@ public class DialogoNuevoTurno extends JDialog {
         panelSubFecha.add(Box.createVerticalStrut(40)); // spacing
 
         gbcFH.gridx = 0;
-        gbcFH.weightx = 0.4;
+        gbcFH.weightx = 0.15;
         cardFechaHora.add(panelSubFecha, gbcFH);
 
         // Subcolumna Hora
@@ -493,7 +356,7 @@ public class DialogoNuevoTurno extends JDialog {
         panelSubHora.add(lblHoraTit);
         panelSubHora.add(Box.createVerticalStrut(6));
 
-        JPanel panelHoraGrid = new JPanel(new GridLayout(0, 4, 8, 8));
+        JPanel panelHoraGrid = new JPanel(new GridLayout(0, 4, 4, 4));
         panelHoraGrid.setBackground(Color.WHITE);
 
         String[][] slots = {
@@ -516,8 +379,8 @@ public class DialogoNuevoTurno extends JDialog {
         scrollHora.setBorder(null);
         scrollHora.setOpaque(false);
         scrollHora.getViewport().setOpaque(false);
-        scrollHora.setPreferredSize(new Dimension(380, 160));
-        scrollHora.setMaximumSize(new Dimension(380, 160));
+        scrollHora.setPreferredSize(new Dimension(440, 180));
+        scrollHora.setMaximumSize(new Dimension(440, 180));
         scrollHora.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Aplicamos el scrollbar personalizado
@@ -596,7 +459,7 @@ public class DialogoNuevoTurno extends JDialog {
 
         panelColDer.add(Box.createVerticalStrut(12));
 
-        final JPanel panelResumen = new JPanel(new BorderLayout(15, 0)) {
+        final JPanel panelResumen = new JPanel(new BorderLayout(12, 6)) {
             @Override
             protected void paintComponent(final Graphics g) {
                 final Graphics2D g2 = (Graphics2D) g.create();
@@ -748,10 +611,6 @@ public class DialogoNuevoTurno extends JDialog {
         actualizarSlotsDisponibles();
     }
 
-    private Color orangeGlow() {
-        return recursos.Color.CAT_VACUNA;
-    }
-
     private JPanel crearFilaResumen(String label, JLabel lblValue) {
         JPanel row = new JPanel(new BorderLayout(16, 0));
         row.setOpaque(false);
@@ -776,12 +635,6 @@ public class DialogoNuevoTurno extends JDialog {
         tipoSeleccionado = selected.getTipo();
         lblResumenTipoVal.setText(selected.getTexto());
         lblResumenTipoVal.setForeground(selected.getTipo().getBadgeFgColor());
-    }
-
-    private void seleccionarPrioridad(PrioridadButton selected) {
-        for (PrioridadButton p : botonesPrioridad) {
-            p.setSeleccionado(p == selected);
-        }
     }
 
     private void seleccionarHora(TimeSlotButton selected) {
@@ -997,84 +850,6 @@ public class DialogoNuevoTurno extends JDialog {
 
             g2.dispose();
             super.paintComponent(g);
-        }
-    }
-
-    // Helper PrioridadButton class
-    private static class PrioridadButton extends JButton {
-
-        private final String texto;
-        private final Color dotColor;
-        private boolean seleccionado = false;
-        private boolean hovered = false;
-
-        public PrioridadButton(String texto, Color dotColor) {
-            this.texto = texto;
-            this.dotColor = dotColor;
-
-            setContentAreaFilled(false);
-            setFocusPainted(false);
-            setBorderPainted(false);
-            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            setPreferredSize(new Dimension(85, 28));
-
-            addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseEntered(java.awt.event.MouseEvent e) {
-                    hovered = true;
-                    repaint();
-                }
-
-                @Override
-                public void mouseExited(java.awt.event.MouseEvent e) {
-                    hovered = false;
-                    repaint();
-                }
-            });
-        }
-
-        public void setSeleccionado(boolean s) {
-            this.seleccionado = s;
-            repaint();
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            Color bg;
-            if (seleccionado) {
-                bg = recursos.Color.BG;
-            } else {
-                bg = hovered ? recursos.Color.CANVAS_GENERAL : Color.WHITE;
-            }
-            g2.setColor(bg);
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), getHeight(), getHeight());
-
-            Color border;
-            if (seleccionado) {
-                border = recursos.Color.INK;
-            } else {
-                border = hovered ? recursos.Color.CAT_INACTIVO : recursos.Color.BORDER;
-            }
-            g2.setColor(border);
-            g2.setStroke(new BasicStroke(seleccionado ? 1.5f : 1f));
-            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, getHeight(), getHeight());
-
-            // Draw dot
-            g2.setColor(dotColor);
-            g2.fillOval(12, getHeight() / 2 - 4, 8, 8);
-
-            // Draw text
-            g2.setColor(recursos.Color.SLATE_600);
-            g2.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
-            FontMetrics fm = g2.getFontMetrics();
-            int textX = 26;
-            int textY = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
-            g2.drawString(texto, textX, textY);
-
-            g2.dispose();
         }
     }
 
