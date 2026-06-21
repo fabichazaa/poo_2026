@@ -274,6 +274,10 @@ public class PanelMas extends JPanel {
         txtAcercaDesc.setBorder(null);
         txtAcercaDesc.setAlignmentX(Component.LEFT_ALIGNMENT);
         
+        if (txtAcercaDesc.getCaret() instanceof javax.swing.text.DefaultCaret caret) {
+            caret.setUpdatePolicy(javax.swing.text.DefaultCaret.NEVER_UPDATE);
+        }
+        
         panelAcercaDe.add(txtAcercaDesc);
         return panelAcercaDe;
     }
@@ -345,6 +349,12 @@ public class PanelMas extends JPanel {
         lblNotas.setText(String.valueOf(controlador.getNotas().size()));
         if (panelGestion != null) panelGestion.refrescar();
         reajustarLayout();
+        
+        SwingUtilities.invokeLater(() -> {
+            if (scroll != null) {
+                scroll.getVerticalScrollBar().setValue(0);
+            }
+        });
     }
 
     private Turno seleccionarTurno() {
