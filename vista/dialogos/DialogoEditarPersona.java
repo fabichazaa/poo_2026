@@ -11,13 +11,6 @@ import modelo.Veterinario;
 import recursos.CargadorFuentes;
 import recursos.ImageLoader;
 
-/**
- * Diálogo modal para dar de alta o editar una Persona (Veterinario o Dueño).
- * Estilo alineado al resto de la app: header con el logo de la veterinaria,
- * borde en degradé que lo distingue, y botones verdes (recursos.Color.PRIMARY).
- * Campos como la pestaña "Responsable" de Registrar paciente; el veterinario
- * suma un campo: Matrícula.
- */
 public class DialogoEditarPersona extends JDialog {
 
     private final ControladorVeterinaria controlador;
@@ -58,7 +51,6 @@ public class DialogoEditarPersona extends JDialog {
     }
 
     private void initComponentes() {
-        // --- Borde en degradé que distingue el diálogo del resto de la app ---
         JPanel root = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -93,8 +85,6 @@ public class DialogoEditarPersona extends JDialog {
         root.add(card, BorderLayout.CENTER);
         setContentPane(root);
     }
-
-    // ---------- Header con logo de la veterinaria ----------
 
     private JPanel crearHeader() {
         JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
@@ -139,8 +129,6 @@ public class DialogoEditarPersona extends JDialog {
         return header;
     }
 
-    // ---------- Formulario ----------
-
     private JPanel crearFormulario() {
         JPanel form = new JPanel();
         form.setOpaque(false);
@@ -160,7 +148,6 @@ public class DialogoEditarPersona extends JDialog {
                 "APELLIDO *", txtApellido = crearTextField(persona != null ? persona.getApellido() : "")));
         form.add(Box.createVerticalStrut(12));
 
-        // Dirección: Calle / N° / Localidad
         form.add(crearLabel("DIRECCIÓN *"));
         JPanel filaDir = new JPanel(new GridBagLayout());
         filaDir.setOpaque(false);
@@ -191,8 +178,6 @@ public class DialogoEditarPersona extends JDialog {
         form.add(Box.createVerticalGlue());
         return form;
     }
-
-    // ---------- Botonera ----------
 
     private JPanel crearBotonera() {
         JPanel botonera = new JPanel(new GridLayout(1, esModoEdicion ? 3 : 2, 12, 0));
@@ -275,8 +260,6 @@ public class DialogoEditarPersona extends JDialog {
         else controlador.eliminarResponsable((Responsable) persona);
         dispose();
     }
-
-    // ---------- Helpers de UI ----------
 
     private JPanel filaDoble(String label1, JComponent campo1, String label2, JComponent campo2) {
         JPanel fila = new JPanel(new GridLayout(1, 2, 12, 0));

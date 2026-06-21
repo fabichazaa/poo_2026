@@ -115,7 +115,7 @@ public class ControladorVeterinaria {
 
     public void eliminarResponsable(Responsable r) {
         if (r == null) return;
-        // Quitamos también sus mascotas del registro de pacientes para no dejarlas huérfanas.
+        // También se quitan sus mascotas del registro de pacientes.
         for (Animal a : new ArrayList<>(r.getMascotas())) {
             veterinaria.getPacientesRegistrados().remove(a);
         }

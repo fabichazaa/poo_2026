@@ -10,10 +10,6 @@ import modelo.Responsable;
 import modelo.Veterinario;
 import vista.dialogos.DialogoEditarPersona;
 
-/**
- * Gestor de personas embebido en la sección "Registros": lista veterinarios o
- * dueños (toggle), permite buscar, dar de alta y editar.
- */
 public final class PanelGestionPersonas extends JPanel {
 
     private final ControladorVeterinaria controlador;
@@ -37,7 +33,6 @@ public final class PanelGestionPersonas extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // --- Fila título + botón Agregar ---
         JPanel filaTitulo = new JPanel(new BorderLayout());
         filaTitulo.setOpaque(false);
         filaTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -55,7 +50,6 @@ public final class PanelGestionPersonas extends JPanel {
         add(filaTitulo);
         add(Box.createVerticalStrut(12));
 
-        // --- Fila toggle + buscador ---
         JPanel filaControles = new JPanel(new BorderLayout(12, 0));
         filaControles.setOpaque(false);
         filaControles.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -84,7 +78,6 @@ public final class PanelGestionPersonas extends JPanel {
         add(filaControles);
         add(Box.createVerticalStrut(14));
 
-        // --- Lista ---
         panelLista = new JPanel();
         panelLista.setOpaque(false);
         panelLista.setLayout(new BoxLayout(panelLista, BoxLayout.Y_AXIS));
@@ -92,7 +85,6 @@ public final class PanelGestionPersonas extends JPanel {
         add(panelLista);
         add(Box.createVerticalStrut(10));
 
-        // --- Footer ---
         lblFooter = new JLabel();
         lblFooter.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         lblFooter.setForeground(recursos.Color.MUTED);
@@ -104,7 +96,6 @@ public final class PanelGestionPersonas extends JPanel {
 
     @Override
     public Dimension getMaximumSize() {
-        // Ocupa todo el ancho disponible (como las demás tarjetas) sin estirarse en alto.
         return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
     }
 
@@ -160,8 +151,6 @@ public final class PanelGestionPersonas extends JPanel {
         }
         return false;
     }
-
-    // ---------- Cards ----------
 
     private JPanel crearCardVeterinario(Veterinario v) {
         String subtitulo = (v.getEspecialidad() != null ? v.getEspecialidad() : "General") + " · MP " + v.getMatricula();
@@ -297,8 +286,6 @@ public final class PanelGestionPersonas extends JPanel {
         return r.isEmpty() ? "?" : r;
     }
 
-    // ---------- Acciones ----------
-
     private void abrirAlta() {
         Frame padre = (Frame) SwingUtilities.getWindowAncestor(this);
         new DialogoEditarPersona(padre, mostrandoVeterinarios, null).setVisible(true);
@@ -310,8 +297,6 @@ public final class PanelGestionPersonas extends JPanel {
         new DialogoEditarPersona(padre, p instanceof Veterinario, p).setVisible(true);
         refrescar();
     }
-
-    // ---------- Botones ----------
 
     private JButton crearBotonAgregar() {
         JButton btn = new JButton("Agregar") {
@@ -386,7 +371,6 @@ public final class PanelGestionPersonas extends JPanel {
         return lbl;
     }
 
-    /** Hace clickeable toda la card (y sus hijos) para abrir la edición, como en el mockup. */
     private void hacerClickeable(Component c, Runnable onClick) {
         c.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         c.addMouseListener(new java.awt.event.MouseAdapter() {
