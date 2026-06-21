@@ -485,24 +485,38 @@ public class FichaPaciente extends JPanel {
         tabs.addTab("Turnos", contenedorTurnosInmovil);
         
         configurarEstiloPestanas(tabs);
-        panelDerecho.add(tabs, BorderLayout.CENTER);
-
-        panelColumnasUnificadas.add(panelIzquierdo, BorderLayout.WEST); 
-        panelColumnasUnificadas.add(panelDerecho, BorderLayout.CENTER);  
-
-        JScrollPane scrollGlobalFicha = new JScrollPane(panelColumnasUnificadas);
-        scrollGlobalFicha.setBorder(null);
-        scrollGlobalFicha.setOpaque(false);
-        scrollGlobalFicha.getViewport().setOpaque(false);
-        scrollGlobalFicha.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         
-        JScrollBar barraVerticalGlobal = scrollGlobalFicha.getVerticalScrollBar();
-        barraVerticalGlobal.setUI(new vista.componentes.ModernScrollBarUI()); 
-        barraVerticalGlobal.setPreferredSize(new Dimension(8, 0));
-        barraVerticalGlobal.setOpaque(false);
-        barraVerticalGlobal.setUnitIncrement(16); 
+        // =========================================================================
+        // 1. EL CAMBIO CLAVE: Envolvemos el panelDerecho (las pestañas) en su propio Scroll
+        // =========================================================================
+        JScrollPane scrollColumnaDerecha = new JScrollPane(tabs); // Metemos los tabs adentro del scroll
+        scrollColumnaDerecha.setBorder(null);
+        scrollColumnaDerecha.setOpaque(false);
+        scrollColumnaDerecha.getViewport().setOpaque(false);
+        scrollColumnaDerecha.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        // Personalizamos la barrita de scroll para esta columna
+        JScrollBar barraVerticalDerecha = scrollColumnaDerecha.getVerticalScrollBar();
+        barraVerticalDerecha.setUI(new vista.componentes.ModernScrollBarUI()); 
+        barraVerticalDerecha.setPreferredSize(new Dimension(8, 0));
+        barraVerticalDerecha.setOpaque(false);
+        barraVerticalDerecha.setUnitIncrement(16); 
 
-        add(scrollGlobalFicha, BorderLayout.CENTER);
+        // Agregamos los tabs scrolleables al panelDerecho en el centro
+        panelDerecho.add(scrollColumnaDerecha, BorderLayout.CENTER);
+
+        // =========================================================================
+        // 2. UNIFICACIÓN DE COLUMNAS: Ahora el contenedor general NO usa scroll
+        // =========================================================================
+        panelColumnasUnificadas.add(panelIzquierdo, BorderLayout.WEST);  // Queda fijo
+        panelColumnasUnificadas.add(panelDerecho, BorderLayout.CENTER);  // Tiene el scroll interno
+        
+        // Un pequeño margen estético abajo para que respire la app al scrollear al fondo
+        panelColumnasUnificadas.setBorder(new EmptyBorder(0, 0, 8, 0)); 
+
+        // Agregamos el contenedor de columnas directo al JPanel de la Ficha
+        add(panelColumnasUnificadas, BorderLayout.CENTER);
+    
     }
 
     private void configurarEstiloPestanas(JTabbedPane tabs) {
