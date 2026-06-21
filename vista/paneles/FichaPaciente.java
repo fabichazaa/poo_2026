@@ -37,16 +37,17 @@ public class FichaPaciente extends JPanel {
 
     private void initHeader() {
         JPanel panelHeader = new JPanel(new BorderLayout());
-        panelHeader.setOpaque(false); // enables transparency
+        panelHeader.setOpaque(false); // habilita transparencia
 
+        // --- BOTÓN DE VOLVER (Lado Izquierdo) ---
         JButton btnVolver = new JButton("‹") {
             private boolean hover = false;
             {
-                setFocusPainted(false); // no outline
-                setContentAreaFilled(false); // no background color
-                setBorderPainted(false); // no border
+                setFocusPainted(false);
+                setContentAreaFilled(false);
+                setBorderPainted(false);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                addMouseListener(new java.awt.event.MouseAdapter() { // repaint() triggers paintComponent()
+                addMouseListener(new java.awt.event.MouseAdapter() {
                     public void mouseEntered(java.awt.event.MouseEvent e) { hover = true; repaint(); }
                     public void mouseExited(java.awt.event.MouseEvent e) { hover = false; repaint(); }
                 });
@@ -55,12 +56,12 @@ public class FichaPaciente extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // smoothe edges (supposedly)
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(hover ? recursos.Color.BORDER : Color.WHITE);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16); // dimensions and border-radius
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 g2.setColor(recursos.Color.BORDER);
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16); // border
-                g2.dispose(); // ???
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
+                g2.dispose();
                 super.paintComponent(g);
             }
         };
@@ -69,13 +70,23 @@ public class FichaPaciente extends JPanel {
         btnVolver.setForeground(recursos.Color.INK);
         btnVolver.setPreferredSize(new Dimension(42, 42));
         btnVolver.setBorder(new EmptyBorder(0, 0, 4, 0));
-        btnVolver.addActionListener(e -> accionVolver.run()); // goes back
+        btnVolver.addActionListener(e -> accionVolver.run());
 
         JPanel panelIzquierdo = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         panelIzquierdo.setOpaque(false);
         panelIzquierdo.add(btnVolver);
 
-        panelHeader.add(panelIzquierdo, BorderLayout.WEST);
+        // --- BOTÓN DE EDITAR (Lado Derecho) ---
+        // LLamamos a tu función para generar el botón y lo envolvemos en un FlowLayout derecho
+        JButton btnEditar = crearBtnEditarFicha();
+        JPanel panelDerechoHeader = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        panelDerechoHeader.setOpaque(false);
+        panelDerechoHeader.add(btnEditar);
+
+        // --- ENSAMBLE DE LA CABECERA ---
+        panelHeader.add(panelIzquierdo, BorderLayout.WEST);   // Flecha a la izquierda
+        panelHeader.add(panelDerechoHeader, BorderLayout.EAST); // Tres puntitos a la derecha
+        
         add(panelHeader, BorderLayout.NORTH);
     }
 
@@ -192,21 +203,26 @@ public class FichaPaciente extends JPanel {
         cardPaciente.add(panelContenedorSuperiorMascota, BorderLayout.NORTH);
         cardPaciente.add(panelDatosGrid, BorderLayout.SOUTH);
 
-        // Owner Card
-        JPanel cardDueno = new JPanel(new BorderLayout(0, 14)) {
+        // Owner Card - Completamente compactada y sin título superior
+        // Owner Card - Ajustada con el toquecito justo de aire vertical y el borde azul completo
+        JPanel cardDueno = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Fondo blanco de la tarjeta
                 g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
                 
+                // =========================================================================
+                // CORRECCIÓN: El degradado azul ahora ocupa el 100% del ancho original (8px de alto)
+                // =========================================================================
                 Color blueInicio = new Color(14, 165, 233); 
                 Color blueFin = new Color(37, 99, 235);    
                 g2.setPaint(new GradientPaint(0, 0, blueInicio, getWidth(), 0, blueFin));
-                
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 24, 24));
-                g2.fillRect(0, 0, getWidth(), 8); 
+                g2.fillRect(0, 0, getWidth(), 8); // Recuperamos los 8px de grosor original
                 
                 g2.setClip(null);
                 g2.setColor(recursos.Color.BORDER);
@@ -215,80 +231,111 @@ public class FichaPaciente extends JPanel {
             }
         };
         cardDueno.setOpaque(false);
-        cardDueno.setBorder(new EmptyBorder(18, 15, 18, 15));
+        
+        // AJUSTE DE PADDING: Le damos 12px arriba/abajo para que respire el contenido
+        cardDueno.setBorder(new EmptyBorder(12, 12, 12, 12));
 
-        Dimension dimensionesDueno = new Dimension(260, 180);
+        // DIMENSIONES FINALES BALACEADAS: Pasamos el alto de 64 a 72 para el tamaño justo
+        Dimension dimensionesDueno = new Dimension(260, 72); 
         cardDueno.setPreferredSize(dimensionesDueno);
         cardDueno.setMinimumSize(dimensionesDueno);
         cardDueno.setMaximumSize(dimensionesDueno);
 
-        JLabel lblTagDueno = new JLabel("DUEÑO");
-        lblTagDueno.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        lblTagDueno.setForeground(recursos.Color.CAT_INACTIVO);
-        cardDueno.add(lblTagDueno, BorderLayout.NORTH);
-
         Responsable responsable = animal.getResponsable();
 
         if (responsable != null) {
-            // 1. La grilla con las 3 filas se queda igual, pero ahora DEFINIMOS un gap vertical de 8px
-            JPanel panelContacto = new JPanel(new GridLayout(3, 1, 0, 8));
-            panelContacto.setOpaque(false);
-            // Le damos el ancho total de la tarjeta (230px aprox) para que no se achique de costado
-            panelContacto.setPreferredSize(new Dimension(230, 75)); 
+            JPanel panelContenedorInterno = new JPanel(new BorderLayout(12, 0));
+            panelContenedorInterno.setOpaque(false);
+            panelContenedorInterno.setBorder(new EmptyBorder(8, 0, 4, 0));
+            // ==========================================
+            // 1. AVATAR CUADRADO COMPACTO (Lado Izquierdo)
+            // ==========================================
+            String iniciales = "";
+            if (!responsable.getNombre().isBlank()) iniciales += responsable.getNombre().toUpperCase().charAt(0);
+            if (!responsable.getApellido().isBlank()) iniciales += responsable.getApellido().toUpperCase().charAt(0);
+            
+            final String textoIniciales = iniciales;
 
-            // Fila 1: Nombre
-            JPanel filaNombre = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-            filaNombre.setOpaque(false);
-            JLabel lblIconoUser = new JLabel(cargarIconoHD("imagenes/emojis/usuario.png", 16, 16));
-            JLabel lblTextoNombre = new JLabel(responsable.getNombre() + " " + responsable.getApellido());
-            lblTextoNombre.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-            lblTextoNombre.setForeground(recursos.Color.INK);
-            filaNombre.add(lblIconoUser);
-            filaNombre.add(lblTextoNombre);
+            JPanel panelAvatarDueno = new JPanel(new GridBagLayout()) {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    Color colorInicio = new Color(14, 165, 233); 
+                    Color colorFin = new Color(37, 99, 235);    
+                    g2.setPaint(new GradientPaint(0, 0, colorInicio, 0, getHeight(), colorFin));
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16); // Bordes redondeados perfectos
+                    g2.dispose();
+                }
+            };
+            panelAvatarDueno.setOpaque(false);
+            
+            // Achicamos las dimensiones del avatar a un cuadrado perfecto de 42x42 para que no se estire
+            panelAvatarDueno.setPreferredSize(new Dimension(42, 42));
+            panelAvatarDueno.setMinimumSize(new Dimension(42, 42));
+            panelAvatarDueno.setMaximumSize(new Dimension(42, 42));
 
-            // Fila 2: Celular
-            JPanel filaCelular = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+            JLabel lblIniciales = new JLabel(textoIniciales);
+            lblIniciales.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            lblIniciales.setForeground(Color.WHITE);
+            panelAvatarDueno.add(lblIniciales);
+
+            // ==========================================
+            // 2. TEXTOS: NOMBRE Y TELÉFONO (Centro)
+            // ==========================================
+            JPanel panelTextos = new JPanel(new GridLayout(2, 1, 0, 1));
+            panelTextos.setOpaque(false);
+
+            JLabel lblNombreDueno = new JLabel(responsable.getNombre() + " " + responsable.getApellido());
+            lblNombreDueno.setFont(new Font("Segoe UI", Font.BOLD, 14)); // Modificado a 14 para balancear con el tamaño de la tarjeta
+            lblNombreDueno.setForeground(recursos.Color.INK);
+
+            JPanel filaCelular = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
             filaCelular.setOpaque(false);
-            JLabel lblIconoCel = new JLabel(cargarIconoHD("imagenes/emojis/celular.png", 16, 16));
+            
+            JLabel lblIconoCel = new JLabel();
+            ImageIcon iconoCelRaw = cargarIconoHD("imagenes/emojis/celular.png", 14, 14);
+            if (iconoCelRaw != null) {
+                lblIconoCel.setIcon(iconoCelRaw);
+            } else {
+                lblIconoCel.setText("📱");
+                lblIconoCel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
+            }
+            
             JLabel lblTextoCel = new JLabel(responsable.getCelular());
             lblTextoCel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-            lblTextoCel.setForeground(recursos.Color.INK);
+            lblTextoCel.setForeground(recursos.Color.CAT_INACTIVO);
+            
             filaCelular.add(lblIconoCel);
             filaCelular.add(lblTextoCel);
 
-            // Fila 3: Ubicación
-            JPanel filaUbicacion = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-            filaUbicacion.setOpaque(false);
-            JLabel lblIconoUbi = new JLabel(cargarIconoHD("imagenes/emojis/ubicacion.png", 16, 16));
-            JLabel lblTextoUbi = new JLabel(responsable.getDireccionCompleta());
-            lblTextoUbi.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-            lblTextoUbi.setForeground(recursos.Color.INK);
-            filaUbicacion.add(lblIconoUbi);
-            filaUbicacion.add(lblTextoUbi);
+            panelTextos.add(lblNombreDueno);
+            panelTextos.add(filaCelular);
 
-            panelContacto.add(filaNombre);
-            panelContacto.add(filaCelular);
-            panelContacto.add(filaUbicacion);
+            // ==========================================
+            // 3. INDICADOR / FLECHITA DE DETALLE (Derecha)
+            // ==========================================
+            JLabel lblFlecha = new JLabel("›");
+            lblFlecha.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+            lblFlecha.setForeground(recursos.Color.BORDER);
+            lblFlecha.setBorder(new EmptyBorder(0, 0, 0, 2));
 
-            JPanel wrapperCompacto = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-            wrapperCompacto.setOpaque(false);
-            wrapperCompacto.setBorder(new EmptyBorder(12, 0, 0, 0)); 
-            wrapperCompacto.add(panelContacto); // Guardamos la grilla adentro del escudo
-            cardDueno.add(wrapperCompacto, BorderLayout.CENTER);
+            // Ensamblamos todo adentro del contenedor
+            panelContenedorInterno.add(panelAvatarDueno, BorderLayout.WEST);
+            panelContenedorInterno.add(panelTextos, BorderLayout.CENTER);
+            panelContenedorInterno.add(lblFlecha, BorderLayout.EAST);
+
+            cardDueno.add(panelContenedorInterno, BorderLayout.CENTER);
             
         } else {
             JPanel panelVacio = new JPanel(new GridBagLayout());
             panelVacio.setOpaque(false);
-            
-            JLabel lblMensajeVacio = new JLabel("<html><center>Este animalito no cuenta<br>con un responsable</center></html>");
-            lblMensajeVacio.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+            JLabel lblMensajeVacio = new JLabel("Sin responsable asignado");
+            lblMensajeVacio.setFont(new Font("Segoe UI", Font.ITALIC, 12));
             lblMensajeVacio.setForeground(recursos.Color.CAT_INACTIVO); 
-            lblMensajeVacio.setHorizontalAlignment(SwingConstants.CENTER);
-            
             panelVacio.add(lblMensajeVacio);
             cardDueno.add(panelVacio, BorderLayout.CENTER);
         }
-
         panelIzquierdo.add(cardPaciente);
         panelIzquierdo.add(Box.createVerticalStrut(15));
         panelIzquierdo.add(cardDueno);
@@ -321,16 +368,6 @@ public class FichaPaciente extends JPanel {
         };
         panelDerecho.setOpaque(false);
         panelDerecho.setBorder(new EmptyBorder(18, 15, 12, 15)); 
-        
-        JPanel panelCabeceraDerecha = new JPanel(new BorderLayout());
-        panelCabeceraDerecha.setOpaque(false);
-        panelCabeceraDerecha.setBorder(new EmptyBorder(5, 5, 5, 5));
-        
-        JButton btnEditar = crearBtnEditarFicha();
-        panelCabeceraDerecha.add(btnEditar, BorderLayout.EAST);
-        
-
-        panelDerecho.add(panelCabeceraDerecha, BorderLayout.NORTH);
 
         JTabbedPane tabs = new JTabbedPane();
         tabs.setFont(new Font("Segoe UI", Font.BOLD, 13));
@@ -792,59 +829,64 @@ public class FichaPaciente extends JPanel {
     }
 
     private JButton crearBtnEditarFicha() {
-        JButton btn = new JButton() {
+        JButton btn = new JButton("Editar Mascota") {
             private boolean hover = false;
             {
+                setFont(new Font("Segoe UI", Font.BOLD, 13));
                 setFocusPainted(false);
                 setContentAreaFilled(false);
                 setBorderPainted(false);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                setBorder(new EmptyBorder(0, 20, 0, 20));
+                setPreferredSize(new Dimension(170, 40));
+
                 addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mouseEntered(java.awt.event.MouseEvent e) { hover = true; repaint(); }
-                    public void mouseExited(java.awt.event.MouseEvent e) { hover = false; repaint(); }
+                    @Override public void mouseEntered(java.awt.event.MouseEvent e) { hover = true; repaint(); }
+                    @Override public void mouseExited(java.awt.event.MouseEvent e) { hover = false; repaint(); }
                 });
             }
+
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(hover ? new Color(241, 245, 249) : Color.WHITE);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-                g2.setColor(recursos.Color.BORDER);
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
+                
+                // Transición cromática interactiva (PRIMARY a HOVER VERDE)
+                Color colorFondo = hover ? new Color(15, 118, 110) : recursos.Color.PRIMARY;
+                g2.setColor(colorFondo);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36); // Redondeo perfecto tipo píldora
+                
+                setForeground(Color.WHITE);
                 g2.dispose();
                 super.paintComponent(g);
             }
         };
-        btn.setPreferredSize(new Dimension(36, 36));
+
+        // =========================================================================
+        // ESTILADO DEL TEXTO INTERNO
+        // Modificamos las dimensiones: ahora mide 130px de ancho para que entre el texto completo
+        // =========================================================================
+        btn.setPreferredSize(new Dimension(130, 42)); 
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btn.setForeground(Color.WHITE); // Letra blanca obligatoria siempre
         
-        ImageIcon icono = cargarIconoHD("imagenes/emojis/lapiz.png", 18, 18);
-        if (icono != null) {
-            btn.setIcon(icono);
-        } else {
-            btn.setText("✏️");
-            btn.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
-        }
-        
+        // La lógica del clic para abrir el modal de edición se mantiene exactamente igual
         btn.addActionListener(e -> {
             JFrame ventanaPadre = (JFrame) SwingUtilities.getWindowAncestor(this);
             DialogoEditarPaciente modal = new DialogoEditarPaciente(ventanaPadre, animal);
             modal.setVisible(true);
             
             this.removeAll();
-            
-            // Como el objeto 'animal' y su 'responsable' ya mutaron en RAM,
-            // initCuerpo() va a leer los GETTERS frescos y dibujará los nuevos JLabels perfectos.
             initHeader();
             initCuerpo();
             
-            // Le avisamos al motor de Swing que la estructura cambió y debe repintarse en el acto
             this.revalidate();
             this.repaint();
         });
         
         return btn;
     }
+
     private void actualizarGrillaValoresFicha() {
         panelDatosGrid.removeAll(); 
         
