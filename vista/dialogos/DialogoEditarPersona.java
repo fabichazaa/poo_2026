@@ -25,6 +25,7 @@ public class DialogoEditarPersona extends JDialog {
     private JTextField txtCalle;
     private JTextField txtAltura;
     private JTextField txtLocalidad;
+    private JTextField txtEmail;
     private JTextField txtMatricula; // solo veterinario
 
     public DialogoEditarPersona(Frame padre, boolean esVeterinario, Persona personaExistente) {
@@ -34,7 +35,7 @@ public class DialogoEditarPersona extends JDialog {
         this.persona = personaExistente;
         this.esModoEdicion = (personaExistente != null);
 
-        setSize(500, esVeterinario ? 540 : 480);
+        setSize(500, esVeterinario ? 600 : 540);
         setResizable(false);
         setLocationRelativeTo(padre);
         ImageIcon icono = ImageLoader.loadScaled("imagenes/logo.png", 32, 32);
@@ -167,6 +168,12 @@ public class DialogoEditarPersona extends JDialog {
         filaDir.add(txtLocalidad, gbc);
         form.add(filaDir);
 
+        form.add(Box.createVerticalStrut(12));
+        form.add(crearLabel("EMAIL"));
+        txtEmail = crearTextField(persona != null ? persona.getEmail() : "");
+        txtEmail.setAlignmentX(Component.LEFT_ALIGNMENT);
+        form.add(txtEmail);
+
         if (esVeterinario) {
             form.add(Box.createVerticalStrut(12));
             form.add(crearLabel("MATRÍCULA *"));
@@ -196,15 +203,19 @@ public class DialogoEditarPersona extends JDialog {
             String localidad = txtLocalidad.getText().trim().isEmpty() ? "Pilar" : txtLocalidad.getText().trim();
             Direccion direccion = new Direccion(calle, altura, localidad);
 
+            String email = txtEmail.getText().trim();
+
             if (!esModoEdicion) {
                 if (esVeterinario) {
-                    controlador.registrarVeterinario(
+                    Veterinario v = controlador.registrarVeterinario(
                             txtDni.getText().trim(), txtNombre.getText().trim(), txtApellido.getText().trim(),
                             txtCelular.getText().trim(), direccion, txtMatricula.getText().trim());
+                    v.setEmail(email);
                 } else {
-                    controlador.registrarResponsable(
+                    Responsable r = controlador.registrarResponsable(
                             txtDni.getText().trim(), txtNombre.getText().trim(), txtApellido.getText().trim(),
                             txtCelular.getText().trim(), direccion);
+                    r.setEmail(email);
                 }
             } else {
                 if (txtNombre.getText().trim().isEmpty() || txtApellido.getText().trim().isEmpty()) {
@@ -214,6 +225,7 @@ public class DialogoEditarPersona extends JDialog {
                 persona.setApellido(txtApellido.getText().trim());
                 persona.setCelular(txtCelular.getText().trim());
                 persona.setDireccion(direccion);
+                persona.setEmail(email);
                 if (esVeterinario) {
                     if (txtMatricula.getText().trim().isEmpty()) throw new IllegalArgumentException();
                     ((Veterinario) persona).setMatricula(txtMatricula.getText().trim());
