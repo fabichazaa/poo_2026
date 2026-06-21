@@ -3,7 +3,6 @@ import java.util.ArrayList;
 
 public class Responsable extends Persona {
     private final ArrayList<Animal> mascotas;
-    private String telefonoAlternativo = "";
 
     public Responsable(String DNI, String nombre, String apellido, String celular, Direccion direccion) {
         super(DNI, nombre, apellido, celular, direccion);
@@ -25,13 +24,5 @@ public class Responsable extends Persona {
 
     public ArrayList<Animal> getMascotas() {
         return mascotas;
-    }
-
-    public String getTelefonoAlternativo() {
-        return telefonoAlternativo;
-    }
-
-    public void setTelefonoAlternativo(String telefonoAlternativo) {
-        this.telefonoAlternativo = telefonoAlternativo != null ? telefonoAlternativo : "";
     }
 }
