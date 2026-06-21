@@ -18,14 +18,11 @@ public class PortalVeterinario extends JFrame {
     private final Veterinaria miVeterinaria;
     private final Veterinario veterinarioLogueado;
 
-    // Componentes para la navegación por capas
     private final JPanel panelContenedorSecciones;
     private final CardLayout navegadorCapas;
 
-    // Componentes de la sección Citas
     private final vista.paneles.PanelCitas panelCitas;
 
-    // Variables globales de fuentes
     private Font fuenteTitulo;
     private Font fuenteSubtitulos;
     private Font fuenteNormal;
@@ -90,7 +87,6 @@ public class PortalVeterinario extends JFrame {
         add(panelContenedorSecciones, BorderLayout.CENTER);
 
         // --- BARRA DE NAVEGACIÓN INFERIOR OPTIMIZADA (SOLO 5 SECCIONES ACTIVAS) ---
-        // 🌟 CAMBIO: Ajustamos a GridLayout(1, 5) para que los botones remanentes queden distribuidos de forma perfecta
         JPanel panelMenuInferior = new JPanel(new GridLayout(1, 5, 5, 0));
         panelMenuInferior.setBackground(Color.WHITE);
         panelMenuInferior.setBorder(BorderFactory.createCompoundBorder(
@@ -351,7 +347,6 @@ public class PortalVeterinario extends JFrame {
                 DialogoEditarPaciente modalAlta = new DialogoEditarPaciente(PortalVeterinario.this, null);
                 modalAlta.setVisible(true);
                 
-                // 🌟 CORREGIDO: Buscamos el PanelRegistros en el índice 2 de tus pestañas limpias
                 if (panelContenedorSecciones.getComponent(2) instanceof vista.paneles.PanelMascotas pReg) {
                     pReg.actualizar();
                 }

@@ -97,7 +97,6 @@ public class DialogoEditarPaciente extends JDialog {
         panelTabAnimal.setLayout(new BoxLayout(panelTabAnimal, BoxLayout.Y_AXIS));
         panelTabAnimal.setBorder(new EmptyBorder(25, 24, 20, 24));
 
-        // 🌟 LA SOLUCIÓN AL CORRIMIENTO: Envolvemos la grilla adentro de un FlowLayout contenedor protector
         if (!esModoEdicion) {
             panelTabAnimal.add(crearLabelFormulario("SELECCIONAR ESPECIE *"));
             

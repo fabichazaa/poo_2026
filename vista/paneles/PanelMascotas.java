@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import modelo.*;
-import vista.dialogos.DialogoEditarPaciente; // 🌟 Importación unificada a la nueva carpeta
+import vista.dialogos.DialogoEditarPaciente;
 
 public final class PanelMascotas extends JPanel {
 
@@ -29,7 +29,6 @@ public final class PanelMascotas extends JPanel {
         setBackground(recursos.Color.BG);
         setBorder(new EmptyBorder(15, 25, 15, 25));
 
-        // 🌟 CONFIGURACIÓN ESTRATÉGICA: Usamos BorderLayout para poder separar los filtros a la izquierda y el botón a la derecha
         panelBarraSuperior = new JPanel(new BorderLayout());
         panelBarraSuperior.setOpaque(false);
 

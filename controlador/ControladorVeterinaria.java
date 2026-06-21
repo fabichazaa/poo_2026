@@ -157,7 +157,6 @@ public class ControladorVeterinaria {
     }
 
     private void cargarEquipo() {
-        // 🔥 MODIFICADO: Agregamos el parámetro celular intermedio que hereda de Persona
         Veterinario vet1 = new Veterinario("22333444", "Carlos", "Páez", "+54 11 9999-8888", null, "MP-9854");
         vet1.setEspecialidad("Cirugía");
         vet1.setTurnoTrabajo("Mañana");
@@ -194,7 +193,6 @@ public class ControladorVeterinaria {
         veterinaria.registrarCliente(c3);
         veterinaria.registrarCliente(c4);
 
-        // 🔥 MODIFICADO: Inyectamos el parámetro flotante del peso (ej: 14.5f, 4.2f) según requiere el constructor
         // Claudio (c1)
         c1.agregarMascota(new Perro("Hulk",     LocalDate.of(2023, 4, 15), true,  28.0f, c1, "Dogo de Burdeos"));
         c1.agregarMascota(new Gato ("Luna",     LocalDate.of(2025, 8, 20), false, 4.2f,  c1, "Siamés"));
@@ -325,7 +323,6 @@ public class ControladorVeterinaria {
         Turno tHoy5 = new Turno(10, b3, "15:30", vet2, mishi, TipoTurno.BANIO, "");
         Turno tHoy6 = new Turno(11, b3, "16:00", vet4, rocky, TipoTurno.CONSULTA_GENERAL, "");
         
-        // 🔥 RESTAURADO: Turnos perdidos de los pacientes de la rama de Fabi
         Turno tHoyConejo = new Turno(18, b3, "16:45", vet1, tambor, TipoTurno.VACUNACION, "Control anual");
         Turno tHoyTortuga = new Turno(19, b3, "17:30", vet2, manuelita, TipoTurno.CONSULTA_GENERAL, "Chequeo caparazón");
 
@@ -335,7 +332,6 @@ public class ControladorVeterinaria {
         Turno tFut3 = new Turno(14, "12/06/2026", "09:00", vet2, toby, TipoTurno.CONSULTA_GENERAL, "");
         Turno tFut4 = new Turno(15, "15/06/2026", "17:00", vet3, pelusa, TipoTurno.ANALISIS, "");
         
-        // 🔥 RESTAURADO: Turnos futuros perdidos de la rama de Fabi
         Turno tFutConejo2 = new Turno(20, b4, "11:30", vet1, copito, TipoTurno.ANALISIS, "Control digestivo");
         Turno tFutConejo3 = new Turno(21, "11/06/2026", "15:00", vet3, orejas, TipoTurno.CONSULTA_GENERAL, "Revisión oreja izquierda");
 
@@ -343,9 +339,6 @@ public class ControladorVeterinaria {
         Turno tCancel = new Turno(16, b3, "18:00", vet1, luna, TipoTurno.CONSULTA_GENERAL, "");
         tCancel.cancelarTurno();
 
-        // =========================================================================
-        // 🔥 NUEVO: SET DE PRUEBAS DE TODOS LOS TIPOS DE TURNO ASOCIADOS A HULK
-        // =========================================================================
         Turno tHulkConsulta  = new Turno(22, "10/06/2026", "08:30", vet2, hulk, TipoTurno.CONSULTA_GENERAL, "Chequeo de tos leve.");
         Turno tHulkVacuna    = new Turno(23, "11/06/2026", "09:00", vet1, hulk, TipoTurno.VACUNACION, "Refuerzo Quíntuple.");
         Turno tHulkCirugia   = new Turno(24, "12/06/2026", "11:15", vet1, hulk, TipoTurno.CIRUGIA, "Limpieza sarro dental.");

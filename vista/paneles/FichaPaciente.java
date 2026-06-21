@@ -831,10 +831,8 @@ public class FichaPaciente extends JPanel {
             DialogoEditarPaciente modal = new DialogoEditarPaciente(ventanaPadre, animal);
             modal.setVisible(true);
             
-            // 🌟 LA JUGADA MAESTRA: Al cerrarse el modal, vaciamos por completo el JPanel de la ficha
             this.removeAll();
             
-            // 🌟 Volvemos a ejecutar los inicializadores nativos. 
             // Como el objeto 'animal' y su 'responsable' ya mutaron en RAM,
             // initCuerpo() va a leer los GETTERS frescos y dibujará los nuevos JLabels perfectos.
             initHeader();
