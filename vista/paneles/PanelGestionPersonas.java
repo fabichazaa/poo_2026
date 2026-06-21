@@ -38,7 +38,7 @@ public final class PanelGestionPersonas extends JPanel {
         filaTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
         filaTitulo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
         JLabel lblTitulo = new JLabel("Gestión de personas");
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblTitulo.setFont(recursos.CargadorFuentes.cargar(16f).deriveFont(Font.BOLD));
         lblTitulo.setForeground(recursos.Color.INK);
         filaTitulo.add(lblTitulo, BorderLayout.WEST);
 
@@ -86,7 +86,7 @@ public final class PanelGestionPersonas extends JPanel {
         add(Box.createVerticalStrut(10));
 
         lblFooter = new JLabel();
-        lblFooter.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        lblFooter.setFont(recursos.CargadorFuentes.cargar(12f));
         lblFooter.setForeground(recursos.Color.MUTED);
         lblFooter.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(lblFooter);
@@ -167,7 +167,7 @@ public final class PanelGestionPersonas extends JPanel {
         if (v.getTurnoTrabajo() != null && !v.getTurnoTrabajo().isBlank()) {
             este.add(Box.createVerticalStrut(4));
             JLabel lblHorario = new JLabel(v.getTurnoTrabajo());
-            lblHorario.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+            lblHorario.setFont(recursos.CargadorFuentes.cargar(11f));
             lblHorario.setForeground(recursos.Color.CAT_INACTIVO);
             lblHorario.setAlignmentX(Component.RIGHT_ALIGNMENT);
             este.add(lblHorario);
@@ -224,11 +224,11 @@ public final class PanelGestionPersonas extends JPanel {
         centro.setOpaque(false);
         centro.setLayout(new BoxLayout(centro, BoxLayout.Y_AXIS));
         JLabel lblTitulo = new JLabel(titulo);
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblTitulo.setFont(recursos.CargadorFuentes.cargar(14f).deriveFont(Font.BOLD));
         lblTitulo.setForeground(recursos.Color.INK);
         lblTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
         JLabel lblSub = new JLabel(subtitulo);
-        lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        lblSub.setFont(recursos.CargadorFuentes.cargar(12f));
         lblSub.setForeground(recursos.Color.MUTED);
         lblSub.setAlignmentX(Component.LEFT_ALIGNMENT);
         centro.add(Box.createVerticalGlue());
@@ -255,7 +255,7 @@ public final class PanelGestionPersonas extends JPanel {
         avatar.setOpaque(false);
         avatar.setPreferredSize(new Dimension(46, 46));
         JLabel lbl = new JLabel(iniciales);
-        lbl.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        lbl.setFont(recursos.CargadorFuentes.cargar(15f).deriveFont(Font.BOLD));
         lbl.setForeground(Color.WHITE);
         avatar.add(lbl);
         return avatar;
@@ -273,7 +273,7 @@ public final class PanelGestionPersonas extends JPanel {
                 super.paintComponent(g);
             }
         };
-        lbl.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        lbl.setFont(recursos.CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
         lbl.setForeground(textoColor);
         lbl.setBorder(new EmptyBorder(3, 12, 3, 12));
         return lbl;
@@ -302,7 +302,7 @@ public final class PanelGestionPersonas extends JPanel {
         JButton btn = new JButton("Agregar") {
             private boolean hover = false;
             {
-                setFont(new Font("Segoe UI", Font.BOLD, 13));
+                setFont(recursos.CargadorFuentes.cargar(13f).deriveFont(Font.BOLD));
                 setFocusPainted(false);
                 setContentAreaFilled(false);
                 setBorderPainted(false);
@@ -349,7 +349,7 @@ public final class PanelGestionPersonas extends JPanel {
                 super.paintComponent(g);
             }
         };
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFont(recursos.CargadorFuentes.cargar(12f).deriveFont(Font.BOLD));
         btn.setFocusPainted(false);
         btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
@@ -365,7 +365,7 @@ public final class PanelGestionPersonas extends JPanel {
 
     private JLabel chevron() {
         JLabel lbl = new JLabel("›");
-        lbl.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lbl.setFont(recursos.CargadorFuentes.cargar(22f).deriveFont(Font.BOLD));
         lbl.setForeground(recursos.Color.CAT_INACTIVO);
         lbl.setBorder(new EmptyBorder(0, 4, 0, 4));
         return lbl;
@@ -397,7 +397,7 @@ public final class PanelGestionPersonas extends JPanel {
                 super.paintComponent(g);
             }
         };
-        tf.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tf.setFont(recursos.CargadorFuentes.cargar(14f));
         tf.setForeground(recursos.Color.CAT_INACTIVO);
         tf.setOpaque(false);
         tf.setBorder(new EmptyBorder(0, 16, 0, 15));

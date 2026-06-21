@@ -227,8 +227,13 @@ public class DialogoEditarPersona extends JDialog {
                 persona.setDireccion(direccion);
                 persona.setEmail(email);
                 if (esVeterinario) {
-                    if (txtMatricula.getText().trim().isEmpty()) throw new IllegalArgumentException();
-                    ((Veterinario) persona).setMatricula(txtMatricula.getText().trim());
+                    String nuevaMatricula = txtMatricula.getText().trim();
+                    if (nuevaMatricula.isEmpty()) throw new IllegalArgumentException();
+                    Veterinario otro = controlador.buscarVeterinarioPorMatricula(nuevaMatricula);
+                    if (otro != null && otro != persona) {
+                        throw new IllegalStateException("Ya existe otro veterinario con esa matrícula.");
+                    }
+                    ((Veterinario) persona).setMatricula(nuevaMatricula);
                 }
             }
 
@@ -254,12 +259,18 @@ public class DialogoEditarPersona extends JDialog {
                     "Acción no permitida", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        String nombre = persona.getNombre() + " " + persona.getApellido();
-        String detalle = "";
         if (esVeterinario) {
             int turnos = controlador.contarTurnosDelVeterinario((Veterinario) persona, null);
-            if (turnos > 0) detalle = "\nTiene " + turnos + " turno(s) asociados.";
-        } else {
+            if (turnos > 0) {
+                JOptionPane.showMessageDialog(this,
+                        "No podés eliminar a este veterinario: tiene " + turnos + " turno(s) asociados.",
+                        "Acción no permitida", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        }
+        String nombre = persona.getNombre() + " " + persona.getApellido();
+        String detalle = "";
+        if (!esVeterinario) {
             int m = ((Responsable) persona).getMascotas().size();
             if (m > 0) detalle = "\nSe quitarán también sus " + m + " mascota(s) del sistema.";
         }
@@ -295,7 +306,7 @@ public class DialogoEditarPersona extends JDialog {
 
     private JLabel crearLabel(String texto) {
         JLabel lbl = new JLabel(texto);
-        lbl.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        lbl.setFont(CargadorFuentes.cargar(11f).deriveFont(Font.BOLD));
         lbl.setForeground(recursos.Color.CAT_INACTIVO);
         lbl.setBorder(new EmptyBorder(0, 2, 4, 0));
         lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -316,7 +327,7 @@ public class DialogoEditarPersona extends JDialog {
                 super.paintComponent(g);
             }
         };
-        tf.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        tf.setFont(CargadorFuentes.cargar(13f));
         tf.setForeground(recursos.Color.INK);
         tf.setOpaque(false);
         tf.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
@@ -329,7 +340,7 @@ public class DialogoEditarPersona extends JDialog {
         JButton btn = new JButton(texto) {
             private boolean hover = false;
             {
-                setFont(new Font("Segoe UI", Font.BOLD, 14));
+                setFont(CargadorFuentes.cargar(14f).deriveFont(Font.BOLD));
                 setFocusPainted(false);
                 setContentAreaFilled(false);
                 setBorderPainted(false);
@@ -347,7 +358,7 @@ public class DialogoEditarPersona extends JDialog {
                     g2.setColor(hover ? recursos.Color.PRIMARY_DEEP : recursos.Color.PRIMARY);
                     setForeground(Color.WHITE);
                 } else {
-                    g2.setColor(hover ? new Color(226, 232, 240) : new Color(241, 245, 249));
+                    g2.setColor(hover ? recursos.Color.BORDER : recursos.Color.BG);
                     setForeground(recursos.Color.SLATE_600);
                 }
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
@@ -363,7 +374,7 @@ public class DialogoEditarPersona extends JDialog {
         JButton btn = new JButton("🗑 Eliminar") {
             private boolean hover = false;
             {
-                setFont(new Font("Segoe UI", Font.BOLD, 14));
+                setFont(CargadorFuentes.cargar(14f).deriveFont(Font.BOLD));
                 setFocusPainted(false);
                 setContentAreaFilled(false);
                 setBorderPainted(false);
@@ -377,7 +388,7 @@ public class DialogoEditarPersona extends JDialog {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(hover ? new Color(254, 202, 202) : recursos.Color.RED_LIGHT);
+                g2.setColor(hover ? recursos.Color.RED_HOVER : recursos.Color.RED_LIGHT);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 setForeground(recursos.Color.ERROR);
                 g2.dispose();

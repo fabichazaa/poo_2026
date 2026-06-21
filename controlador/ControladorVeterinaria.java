@@ -85,8 +85,9 @@ public class ControladorVeterinaria {
                 || apellido == null || apellido.isBlank() || matricula == null || matricula.isBlank()) {
             throw new IllegalArgumentException("Faltan campos obligatorios.");
         }
-        if (veterinaria.buscarVeterinarioPorDni(dni.trim()) != null) {
-            throw new IllegalStateException("Ya existe un veterinario con ese DNI.");
+        if (veterinaria.buscarVeterinarioPorDni(dni.trim()) != null
+                || veterinaria.buscarClientePorDni(dni.trim()) != null) {
+            throw new IllegalStateException("Ya existe una persona con ese DNI.");
         }
         if (veterinaria.buscarVeterinarioPorMatricula(matricula.trim()) != null) {
             throw new IllegalStateException("Ya existe un veterinario con esa matrícula.");
@@ -101,12 +102,17 @@ public class ControladorVeterinaria {
         if (dni == null || dni.isBlank() || nombre == null || nombre.isBlank() || apellido == null || apellido.isBlank()) {
             throw new IllegalArgumentException("Faltan campos obligatorios.");
         }
-        if (veterinaria.buscarClientePorDni(dni.trim()) != null) {
-            throw new IllegalStateException("Ya existe un dueño con ese DNI.");
+        if (veterinaria.buscarClientePorDni(dni.trim()) != null
+                || veterinaria.buscarVeterinarioPorDni(dni.trim()) != null) {
+            throw new IllegalStateException("Ya existe una persona con ese DNI.");
         }
         Responsable r = new Responsable(dni.trim(), nombre.trim(), apellido.trim(), celular, direccion);
         veterinaria.registrarCliente(r);
         return r;
+    }
+
+    public Veterinario buscarVeterinarioPorMatricula(String matricula) {
+        return veterinaria.buscarVeterinarioPorMatricula(matricula);
     }
 
     public void eliminarVeterinario(Veterinario v) {
@@ -115,9 +121,11 @@ public class ControladorVeterinaria {
 
     public void eliminarResponsable(Responsable r) {
         if (r == null) return;
-        // También se quitan sus mascotas del registro de pacientes.
+        // Se quitan sus mascotas del registro de pacientes y los turnos que las referencian,
+        // para no dejar turnos huérfanos apuntando a un dueño eliminado.
         for (Animal a : new ArrayList<>(r.getMascotas())) {
             veterinaria.getPacientesRegistrados().remove(a);
+            veterinaria.getListaTurnos().removeIf(t -> a.equals(t.getAnimal()));
         }
         veterinaria.getListaClientes().remove(r);
     }

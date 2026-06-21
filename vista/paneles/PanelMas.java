@@ -88,7 +88,6 @@ public class PanelMas extends JPanel {
 
         scroll = new JScrollPane(panelCuerpo);
         scroll.setBorder(null);
-        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.getViewport().setBackground(recursos.Color.BG);
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         add(scroll, BorderLayout.CENTER);

@@ -148,6 +148,7 @@ public final class Color extends java.awt.Color {
 
     // Colores claros/pastel y variantes para Badges y Estados
     public static final Color RED_LIGHT = new Color(254, 226, 226);
+    public static final Color RED_HOVER = new Color(254, 202, 202);
     public static final Color BLUE_LIGHT = new Color(219, 234, 254);
     public static final Color BLUE_DARK = new Color(37, 99, 235);
     public static final Color PURPLE_LIGHT = new Color(243, 232, 255);
