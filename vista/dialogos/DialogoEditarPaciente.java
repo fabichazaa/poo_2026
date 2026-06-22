@@ -1,6 +1,8 @@
 package vista.dialogos;
 
 import controlador.ControladorVeterinaria;
+import fabrica.ConstructorAnimal;
+
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -466,106 +468,101 @@ public class DialogoEditarPaciente extends JDialog {
         };
         
         btnGuardar.addActionListener(e -> {
-            try {
-                String nombreA = txtNombre.getText().trim();
-                String razaA = txtRaza.getText().trim();
-                float pesoA = Float.parseFloat(txtPeso.getText().trim());
-                boolean activoA = chkActivo.isSelected();
-                boolean sexoA = rbMacho.isSelected();
-                LocalDate fechaNacA = txtFechaNac.getText().isBlank() ? null : LocalDate.parse(txtFechaNac.getText().trim(), formato);
+        try {
+            // 1. PROCESAMOS EL RESPONSABLE PRIMERO
+            String seleccionModo = cmbModoResponsable.getSelectedItem().toString();
+            int alturaInt = txtAlturaDueno.getText().trim().isEmpty() ? 0 : Integer.parseInt(txtAlturaDueno.getText().trim());
+            String localidadTexto = txtLocalidadDueno.getText().trim().isEmpty() ? "Pilar" : txtLocalidadDueno.getText().trim();
+            Direccion nueva_direccion = new Direccion(txtCalleDueno.getText().trim(), alturaInt, localidadTexto);
 
-                if (nombreA.isEmpty()) throw new IllegalArgumentException();
+            // Creamos una variable local para guardar el dueño definitivo que irá al Builder
+            Responsable dueñoFinal = null; 
 
-                if (!esModoEdicion) {
-                    switch (especieSeleccionada) {
-                        case "Perro":
-                            this.animal = new modelo.Perro(nombreA, fechaNacA, sexoA, pesoA, razaA);
-                            break;
-                        case "Gato":
-                            this.animal = new modelo.Gato(nombreA, fechaNacA, sexoA, pesoA, razaA);
-                            break;
-                        case "Tortuga":
-                            this.animal = new modelo.Tortuga(nombreA, fechaNacA, sexoA, pesoA, razaA);
-                            break;
-                        case "Loro":
-                            this.animal = new modelo.Loro(nombreA, fechaNacA, sexoA, pesoA, razaA);
-                            break;
-                        case "Conejo":
-                            this.animal = new modelo.Conejo(nombreA, fechaNacA, sexoA, pesoA, razaA);
-                            break;
-                        default:
-                            break;
-                    }
-                } else {
-                    animal.setNombre(nombreA);
-                    animal.setRaza(razaA);
-                    animal.setPeso(pesoA);
-                    animal.setActivo(activoA);
-                    animal.setSexo(sexoA);
-                    if (fechaNacA != null) animal.setFechaNacimiento(fechaNacA);
-                }
-
-                String seleccionModo = cmbModoResponsable.getSelectedItem().toString();
-                int alturaInt = txtAlturaDueno.getText().trim().isEmpty() ? 0 : Integer.parseInt(txtAlturaDueno.getText().trim());
-                String localidadTexto = txtLocalidadDueno.getText().trim().isEmpty() ? "Pilar" : txtLocalidadDueno.getText().trim();
-                Direccion nueva_direccion = new Direccion(txtCalleDueno.getText().trim(), alturaInt, localidadTexto);
-
-                switch (seleccionModo) {
-                    case "Editar Responsable Actual" -> {
-                        if (animal.getResponsable() != null) {
-                            Responsable r = animal.getResponsable();
-                            r.setNombre(txtNombreDueno.getText().trim());
-                            r.setApellido(txtApellidoDueno.getText().trim());
-                            r.setCelular(txtCelularDueno.getText().trim());
-                            r.setDireccion(nueva_direccion);
-                        }
-                    }
-                    case "Asignar Dueño Existente" -> {
-                        Responsable seleccionado = (Responsable) cmbResponsablesExistentes.getSelectedItem();
-                        if (seleccionado != null) {
-                            animal.setResponsable(seleccionado);
-                            seleccionado.agregarMascota(animal);
-                        }
-                    }
-                    case "Registrar y Asignar Nuevo Dueño" -> {
-                        Responsable nuevo = new Responsable(
-                                txtDniDueno.getText().trim(),
-                                txtNombreDueno.getText().trim(),
-                                txtApellidoDueno.getText().trim(),
-                                txtCelularDueno.getText().trim(),
-                                nueva_direccion
-                        );  controlador.getVeterinaria().getListaClientes().add(nuevo);
-                        animal.setResponsable(nuevo);
-                        nuevo.agregarMascota(animal);
-                    }
-                    default -> {
+            switch (seleccionModo) {
+                case "Editar Responsable Actual" -> {
+                    if (animal.getResponsable() != null) {
+                        dueñoFinal = animal.getResponsable();
+                        dueñoFinal.setNombre(txtNombreDueno.getText().trim());
+                        dueñoFinal.setApellido(txtApellidoDueno.getText().trim());
+                        dueñoFinal.setCelular(txtCelularDueno.getText().trim());
+                        dueñoFinal.setDireccion(nueva_direccion);
                     }
                 }
-
-                if (!esModoEdicion) {
-                    controlador.getVeterinaria().getPacientesRegistrados().add(animal);
-                    
-                    // CARTEL DE ÉXITO: Para un registro nuevo
-                    JOptionPane.showMessageDialog(this, 
-                        "¡Paciente registrado con éxito en el sistema!", 
-                        "Operación Exitosa", 
-                        JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    // CARTEL DE ÉXITO: Para cuando se edita un paciente existente
-                    JOptionPane.showMessageDialog(this, 
-                        "Los cambios se han guardado correctamente.", 
-                        "Operación Exitosa", 
-                        JOptionPane.INFORMATION_MESSAGE);
+                case "Asignar Dueño Existente" -> {
+                    dueñoFinal = (Responsable) cmbResponsablesExistentes.getSelectedItem();
                 }
-                
-                dispose();
-            } catch (NumberFormatException numEx) {
-                JOptionPane.showMessageDialog(this, "Verifica que el Peso y el N° de calle sean numéricos correctos.", "Error de formato", JOptionPane.ERROR_MESSAGE);
-            } catch (HeadlessException | IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(this, "Por favor, completa los campos obligatorios (*).", "Error de validación", JOptionPane.ERROR_MESSAGE);
+                case "Registrar y Asignar Nuevo Dueño" -> {
+                    dueñoFinal = new Responsable(
+                            txtDniDueno.getText().trim(),
+                            txtNombreDueno.getText().trim(),
+                            txtApellidoDueno.getText().trim(),
+                            txtCelularDueno.getText().trim(),
+                            nueva_direccion
+                    );
+                    controlador.getVeterinaria().getListaClientes().add(dueñoFinal);
+                }
+                default -> { }
             }
-        });
 
+            // 2. CAPTURAMOS LOS DATOS DEL ANIMAL
+            String nombreA = txtNombre.getText().trim();
+            String razaA = txtRaza.getText().trim();
+            float pesoA = Float.parseFloat(txtPeso.getText().trim());
+            boolean activoA = chkActivo.isSelected();
+            boolean sexoA = rbMacho.isSelected();
+            LocalDate fechaNacA = txtFechaNac.getText().isBlank() ? null : LocalDate.parse(txtFechaNac.getText().trim(), formato);
+
+            if (nombreA.isEmpty()) throw new IllegalArgumentException();
+
+            // 3. CONSTRUIMOS O EDITAMOS EL ANIMAL
+            if (!esModoEdicion) {
+                // Pasamos "dueñoFinal" al Builder y aplicamos toLowerCase() directo a la especie
+                this.animal = new ConstructorAnimal(especieSeleccionada.toLowerCase().trim())
+                                .conNombre(nombreA)
+                                .nacidoEl(fechaNacA)
+                                .esMacho(sexoA)
+                                .conPeso(pesoA)
+                                .conDueño(dueñoFinal)
+                                .deRaza(razaA)
+                                .construir();
+
+                // Vinculación bidireccional si es que se asignó un dueño
+                if (dueñoFinal != null) {
+                    dueñoFinal.agregarMascota(this.animal);
+                }
+
+                controlador.getVeterinaria().getPacientesRegistrados().add(this.animal);
+            } else {
+                animal.setNombre(nombreA);
+                animal.setRaza(razaA);
+                animal.setPeso(pesoA);
+                animal.setActivo(activoA);
+                animal.setSexo(sexoA);
+                if (fechaNacA != null) animal.setFechaNacimiento(fechaNacA);
+
+                // Si estamos editando y el dueño cambió en los pasos anteriores, lo actualizamos
+                if (animal.getResponsable() != dueñoFinal) {
+                    animal.setResponsable(dueñoFinal);
+                    if (dueñoFinal != null && !dueñoFinal.getMascotas().contains(animal)) {
+                        dueñoFinal.agregarMascota(animal);
+                    }
+                }
+            }
+
+            // 4. AVISOS DE ÉXITO Y CIERRE
+            JOptionPane.showMessageDialog(this, 
+                esModoEdicion ? "Los cambios se han guardado correctamente." : "¡Paciente registrado con éxito en el sistema!", 
+                "Operación Exitosa", 
+                JOptionPane.INFORMATION_MESSAGE);
+            
+            dispose();
+
+        } catch (NumberFormatException numEx) {
+            JOptionPane.showMessageDialog(this, "Verifica que el Peso y el N° de calle sean numéricos correctos.", "Error de formato", JOptionPane.ERROR_MESSAGE);
+        } catch (HeadlessException | IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, "Por favor, completa los campos obligatorios (*).", "Error de validación", JOptionPane.ERROR_MESSAGE);
+        }
+    });
         panelGridBotonesBottom.add(btnCancel);
         panelGridBotonesBottom.add(btnGuardar);
 
