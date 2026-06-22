@@ -4,7 +4,6 @@ import controlador.ControladorVeterinaria;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import modelo.Veterinario;
 import recursos.CargadorFuentes;
 
 public class DialogoLogin extends JDialog {
@@ -26,7 +25,7 @@ public class DialogoLogin extends JDialog {
     }
 
     private void construir() {
-        setSize(500, 420);
+        setSize(500, 480);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
         try {
@@ -36,16 +35,35 @@ public class DialogoLogin extends JDialog {
         } catch (Exception e) {
             System.out.println("No se pudo cargar el icono de la aplicación: " + e.getMessage());
         }
-        getContentPane().setBackground(new Color(241, 245, 249));
+        getContentPane().setBackground(recursos.Color.BG);
 
         JPanel panelCentral = new JPanel();
         panelCentral.setBackground(Color.WHITE);
         panelCentral.setBorder(new EmptyBorder(30, 40, 30, 40));
         panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
 
+        // Visual logo in center top
+        JLabel lblLogoVisual = new JLabel();
+        lblLogoVisual.setAlignmentX(Component.CENTER_ALIGNMENT);
+        try {
+            ImageIcon logoIcon = new ImageIcon("imagenes/logo.png");
+            if (logoIcon.getImage() != null) {
+                Image scaled = logoIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+                lblLogoVisual.setIcon(new ImageIcon(scaled));
+            } else {
+                lblLogoVisual.setText("🐾");
+                lblLogoVisual.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 44));
+            }
+        } catch (Exception e) {
+            lblLogoVisual.setText("🐾");
+            lblLogoVisual.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 44));
+        }
+        panelCentral.add(lblLogoVisual);
+        panelCentral.add(Box.createVerticalStrut(10));
+
         JLabel lblTitulo = new JLabel("Happy Paws");
         lblTitulo.setFont(CargadorFuentes.cargar(24f));
-        lblTitulo.setForeground(new Color(157, 106, 170));
+        lblTitulo.setForeground(recursos.Color.PRIMARY);
         lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelCentral.add(lblTitulo);
 
@@ -53,7 +71,7 @@ public class DialogoLogin extends JDialog {
 
         JLabel lblSubtitulo = new JLabel("Sistema de Gestión Veterinaria");
         lblSubtitulo.setFont(CargadorFuentes.cargar(12f));
-        lblSubtitulo.setForeground(new Color(100, 116, 139));
+        lblSubtitulo.setForeground(recursos.Color.MUTED);
         lblSubtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelCentral.add(lblSubtitulo);
 
@@ -61,7 +79,7 @@ public class DialogoLogin extends JDialog {
 
         JLabel lblPrompt = new JLabel("Ingresá tu matrícula:");
         lblPrompt.setFont(CargadorFuentes.cargar(13f));
-        lblPrompt.setForeground(new Color(30, 41, 59));
+        lblPrompt.setForeground(recursos.Color.INK);
         lblPrompt.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelCentral.add(lblPrompt);
 
@@ -71,7 +89,7 @@ public class DialogoLogin extends JDialog {
         campoMatricula.setFont(CargadorFuentes.cargar(14f));
         campoMatricula.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         campoMatricula.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(203, 213, 225), 1, true),
+            new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(8, 12, 8, 12)
         ));
         campoMatricula.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -82,15 +100,15 @@ public class DialogoLogin extends JDialog {
 
         lblError = new JLabel(" ");
         lblError.setFont(CargadorFuentes.cargar(11f));
-        lblError.setForeground(new Color(220, 38, 38));
+        lblError.setForeground(recursos.Color.ERROR);
         lblError.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelCentral.add(lblError);
 
         panelCentral.add(Box.createVerticalStrut(20));
 
         btnIngresar = new JButton("Ingresar");
-        btnIngresar.setFont(CargadorFuentes.cargar(13f));
-        btnIngresar.setBackground(new Color(157, 106, 170));
+        btnIngresar.setFont(CargadorFuentes.cargar(13f).deriveFont(Font.BOLD));
+        btnIngresar.setBackground(recursos.Color.PRIMARY);
         btnIngresar.setForeground(Color.WHITE);
         btnIngresar.setFocusPainted(false);
         btnIngresar.setOpaque(true);
@@ -98,6 +116,19 @@ public class DialogoLogin extends JDialog {
         btnIngresar.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnIngresar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnIngresar.addActionListener(e -> intentarLogin());
+        
+        // Add micro-animation hover effect
+        btnIngresar.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                btnIngresar.setBackground(recursos.Color.PRIMARY_DEEP);
+            }
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btnIngresar.setBackground(recursos.Color.PRIMARY);
+            }
+        });
+        
         panelCentral.add(btnIngresar);
 
         panelCentral.add(Box.createVerticalStrut(16));
@@ -113,7 +144,6 @@ public class DialogoLogin extends JDialog {
     private void intentarLogin() {
         String matricula = campoMatricula.getText();
         if (controlador.loginPorMatricula(matricula)) {
-            Veterinario v = controlador.getVeterinarioLogueado();
             exito = true;
             dispose();
         } else {

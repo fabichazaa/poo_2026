@@ -35,13 +35,13 @@ public class PanelAdopcion extends JPanel {
         };
         panelHeader.setBackground(Color.WHITE);
         panelHeader.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(226, 232, 240), 1, true),
+            new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(16, 22, 16, 22)
         ));
 
         JLabel lblTitulo = new JLabel("Portal de Adopciones");
         lblTitulo.setFont(CargadorFuentes.cargar(16f));
-        lblTitulo.setForeground(new Color(30, 41, 59));
+        lblTitulo.setForeground(recursos.Color.INK);
         panelHeader.add(lblTitulo, BorderLayout.WEST);
 
         JLabel lblSubtitulo = new JLabel("Mascotas disponibles para dar en adopción");
@@ -55,7 +55,7 @@ public class PanelAdopcion extends JPanel {
         panelLista.setLayout(new BoxLayout(panelLista, BoxLayout.Y_AXIS));
         panelLista.setBackground(Color.WHITE);
         panelLista.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(226, 232, 240), 1, true),
+            new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(16, 20, 16, 20)
         ));
 
@@ -87,7 +87,7 @@ public class PanelAdopcion extends JPanel {
         if (enAdopcion.isEmpty()) {
             JLabel lblVacio = new JLabel("No hay mascotas en adopción actualmente.");
             lblVacio.setFont(CargadorFuentes.cargar(13f));
-            lblVacio.setForeground(new Color(148, 163, 184));
+            lblVacio.setForeground(recursos.Color.CAT_INACTIVO);
             lblVacio.setHorizontalAlignment(SwingConstants.CENTER);
             lblVacio.setAlignmentX(Component.LEFT_ALIGNMENT);
             lblVacio.setBorder(new EmptyBorder(40, 0, 40, 0));
@@ -124,7 +124,7 @@ public class PanelAdopcion extends JPanel {
         panelIcono.setPreferredSize(new Dimension(54, 54));
         panelIcono.setLayout(new GridBagLayout());
         try {
-            String ruta = a.getRutaFoto();
+            String ruta = a.getImagen();
             ImageIcon icon = new ImageIcon(ruta);
             Image img = icon.getImage().getScaledInstance(36, 36, Image.SCALE_SMOOTH);
             panelIcono.add(new JLabel(new ImageIcon(img)));
@@ -140,7 +140,7 @@ public class PanelAdopcion extends JPanel {
         panelInfo.setLayout(new BoxLayout(panelInfo, BoxLayout.Y_AXIS));
         JLabel lblNombre = new JLabel(a.getNombre() + "  •  " + a.getEspecie());
         lblNombre.setFont(CargadorFuentes.cargar(14f));
-        lblNombre.setForeground(new Color(30, 41, 59));
+        lblNombre.setForeground(recursos.Color.INK);
         lblNombre.setAlignmentX(Component.LEFT_ALIGNMENT);
         JLabel lblDetalle = new JLabel("Edad: " + a.calcularEdad() + " años  •  Alimentación: " + a.getTipoAlimentacion().getDescripcion());
         lblDetalle.setFont(CargadorFuentes.cargar(11f));
@@ -173,7 +173,7 @@ public class PanelAdopcion extends JPanel {
         Frame frame = owner instanceof Frame ? (Frame) owner : null;
 
         List<Animal> todos = controlador.obtenerTodosLosAnimales();
-        Animal[] arr = todos.toArray(new Animal[0]);
+        Animal[] arr = todos.toArray(Animal[]::new);
         Animal seleccionado = (Animal) JOptionPane.showInputDialog(
             frame,
             "Seleccioná la mascota que querés poner en adopción:",

@@ -31,15 +31,15 @@ public class ComprobanteTurno {
     }
 
     public String generarEncabezado() {
-        Animal a = turno.getAnimal();
-        Veterinario v = turno.getVeterinario();
-        return "=========================================\n"
-             + "   COMPROBANTE DE ATENCIÓN VETERINARIA   \n"
-             + "=========================================\n"
-             + "Veterinaria: " + nombreVeterinaria() + "\n"
-             + "Comprobante N°: " + turno.getIdTurno() + "\n"
-             + "Emitido: " + fechaEmision + "\n"
-             + "-----------------------------------------\n";
+
+        return """
+               =========================================
+                  COMPROBANTE DE ATENCI\u00d3N VETERINARIA   
+               =========================================
+               Veterinaria: """ + nombreVeterinaria() + "\n"
+                + "Comprobante N°: " + turno.getIdTurno() + "\n"
+                + "Emitido: " + fechaEmision + "\n"
+                + "-----------------------------------------\n";
     }
 
     public String generarDetallePaciente() {
@@ -51,11 +51,7 @@ public class ComprobanteTurno {
         sb.append("  Especie: ").append(a.getEspecie()).append("\n");
         sb.append("  Edad: ").append(a.calcularEdad()).append(" años\n");
         sb.append("  Alimentación: ").append(a.getTipoAlimentacion().getDescripcion()).append("\n");
-        if (a instanceof Perro) {
-            sb.append("  Raza: ").append(((Perro) a).getRaza()).append("\n");
-        } else if (a instanceof Gato) {
-            sb.append("  Raza: ").append(((Gato) a).getRaza()).append("\n");
-        }
+        sb.append("  Raza: ").append(a.getRaza()).append("\n");
         sb.append("  ID: ").append(a.getIdAnimal()).append("\n");
         if (r != null) {
             sb.append("\nRESPONSABLE\n");
@@ -75,7 +71,7 @@ public class ComprobanteTurno {
         sb.append("  Fecha: ").append(turno.getFecha()).append("\n");
         sb.append("  Hora: ").append(turno.getHora()).append("\n");
         sb.append("  Tipo: ").append(turno.getTipo().getDescripcion())
-          .append(" (").append(turno.getTipo().getDuracionMinutos()).append(" min)\n");
+                .append(" (").append(turno.getTipo().getDuracionMinutos()).append(" min)\n");
         sb.append("  Estado: ").append(turno.getEstado()).append("\n");
         if (v != null) {
             sb.append("  Veterinario: Dr/a. ").append(v.getNombre()).append(" ").append(v.getApellido()).append("\n");
@@ -89,23 +85,43 @@ public class ComprobanteTurno {
     }
 
     public String generarDetalleTratamiento() {
-        ArrayList<Medicamento> meds = turno.getAnimal().getHistorial().getMedicamentosRecetados();
+        ArrayList<Prescripcion> meds = turno.getAnimal().getHistorial().getMedicamentosRecetados();
+        ArrayList<RegistroVacunacion> vacs = turno.getAnimal().getHistorial().getRegistroVacunas();
         StringBuilder sb = new StringBuilder();
         sb.append("\nTRATAMIENTO\n");
-        if (meds == null || meds.isEmpty()) {
-            sb.append("  Sin medicamentos recetados.\n");
+
+        boolean tieneMeds = meds != null && !meds.isEmpty();
+        boolean tieneVacs = vacs != null && !vacs.isEmpty();
+
+        if (!tieneMeds && !tieneVacs) {
+            sb.append("  Sin medicamentos ni vacunas registradas.\n");
         } else {
             int i = 1;
-            for (Medicamento m : meds) {
-                sb.append("  ").append(i++).append(". ")
-                  .append(m.getNombreMedicamento())
-                  .append(" (SENASA: ").append(m.getCodigoSenasa()).append(")\n");
-                if (m instanceof Vacuna) {
-                    Vacuna vac = (Vacuna) m;
-                    sb.append("     Tipo: Vacuna | Aplicada: ").append(vac.getFechaAplicacion())
-                      .append(" | Vence: ").append(vac.getFechaVencimiento())
-                      .append(vac.estaVencida() ? " (VENCIDA)" : " (VIGENTE)")
-                      .append("\n");
+            if (meds != null && !meds.isEmpty()) {
+                for (Prescripcion p : meds) {
+                    sb.append("  ").append(i++).append(". ")
+                            .append(p.getMedicamento().getNombreMedicamento())
+                            .append(" (SENASA: ").append(p.getMedicamento().getCodigoSenasa()).append(")\n");
+                    sb.append("     Dosis: ").append(p.getDosis())
+                            .append(" | Vía: ").append(p.getViaAdministracion())
+                            .append(" | Frec: ").append(p.getFrecuencia())
+                            .append(" | Días: ").append(p.getVigenciaDias())
+                            .append("\n");
+                    if (p.getIndicaciones() != null && !p.getIndicaciones().isEmpty()) {
+                        sb.append("     Indicaciones: ").append(p.getIndicaciones()).append("\n");
+                    }
+                }
+            }
+            if (vacs != null && !vacs.isEmpty()) {
+                for (RegistroVacunacion rv : vacs) {
+                    sb.append("  ").append(i++).append(". ")
+                            .append(rv.getVacunaAplicada().getNombreMedicamento())
+                            .append(" (SENASA: ").append(rv.getVacunaAplicada().getCodigoSenasa()).append(")\n");
+                    sb.append("     Tipo: Vacuna | Aplicada: ").append(rv.getFechaAplicacion())
+                            .append(" | Vence: ").append(rv.getFechaVencimiento())
+                            .append(" (Vigencia: ").append(rv.getVacunaAplicada().getVigenciaDias()).append(" días)")
+                            .append(rv.estaVencida() ? " (VENCIDA)" : " (VIGENTE)")
+                            .append("\n");
                 }
             }
         }
@@ -114,10 +130,10 @@ public class ComprobanteTurno {
 
     public String generarTextoCompleto() {
         return generarEncabezado()
-             + generarDetallePaciente()
-             + generarDetalleAtencion()
-             + generarDetalleTratamiento()
-             + "=========================================\n";
+                + generarDetallePaciente()
+                + generarDetalleAtencion()
+                + generarDetalleTratamiento()
+                + "=========================================\n";
     }
 
     public void marcarComoCompletado() {

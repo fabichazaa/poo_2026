@@ -42,4 +42,16 @@ desktop.ini
 
 # Agents
 .agents
+AGENTS.md
+CLAUDE.md
+.claude/
+.playwright-mcp/
+docs/superpowers/
 skills-lock.json
+opencode.json
+.opencode/command/ponytail-audit.md
+.opencode/command/ponytail-debt.md
+.opencode/command/ponytail-help.md
+.opencode/command/ponytail-review.md
+.opencode/command/ponytail.md
+.opencode/plugins/ponytail.mjs

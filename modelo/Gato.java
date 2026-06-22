@@ -3,28 +3,18 @@ package modelo;
 import java.time.LocalDate;
 
 public class Gato extends Animal {
-    private String raza;
+
     private boolean esEsterilizado;
 
-    public Gato(String nombre, LocalDate fechaNacimiento, boolean sexo,
-        Responsable responsable, String raza) {
-        super(nombre, fechaNacimiento, sexo, responsable);
-        this.raza = raza;
+    public Gato(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso,
+            Responsable responsable, String raza) {
+        super(nombre, fechaNacimiento, sexo, peso, responsable, raza);
         this.esEsterilizado = false;
     }
 
-    public Gato(String nombre, LocalDate fechaNacimiento, boolean sexo, String raza) {
-        super(nombre, fechaNacimiento, sexo);
-        this.raza = raza;
+    public Gato(String nombre, LocalDate fechaNacimiento, boolean sexo, float peso, String raza) {
+        super(nombre, fechaNacimiento, sexo, peso, raza);
         this.esEsterilizado = false;
-    }
-
-    public String getRaza() {
-        return raza;
-    }
-
-    public void setRaza(String raza) {
-        this.raza = raza;
     }
 
     public boolean isEsEsterilizado() {
@@ -46,7 +36,22 @@ public class Gato extends Animal {
     }
 
     @Override
-    public String getRutaFoto() {
-        return "imagenes/gato.png";
+    public String getImagen() {
+        return "imagenes/emojis/gato.png";
+    }
+
+    @Override
+    public String getColorInicioHexActivo() {
+        return "#22D3EE";
+    }
+
+    @Override
+    public String getColorFinHexActivo() {
+        return "#2563EB";
+    }
+
+    @Override
+    public String getCategoriaFiltro() {
+        return "Gato";
     }
 }

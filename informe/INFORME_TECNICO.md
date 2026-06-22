@@ -14,7 +14,7 @@ delivery_date: "22 de julio de 2026"
 
 # Resumen
 
-El presente trabajo describe el diseño y la implementación de **Happy Paws**, un sistema de gestión veterinaria desarrollado en Java con interfaz gráfica Swing como Trabajo Integrador de la materia Programación Orientada a Objetos. El sistema permite administrar clientes, mascotas, veterinarios, turnos, historias clínicas, medicamentos, vacunas y un portal de adopciones. La aplicación se construyó aplicando los pilares del paradigma orientado a objetos: abstracción, encapsulamiento, herencia, polimorfismo y composición, complementados con el patrón arquitectónico Modelo–Vista–Controlador (MVC). Se incorpora además un *seed* de datos realistas (4 veterinarios, 4 clientes, 10 mascotas, 16 turnos, 8 medicamentos y un portal de adopciones activo) y una batería de **59 pruebas integrales automatizadas** que validan todos los flujos funcionales del sistema con un 100 % de éxito.
+El presente trabajo describe el diseño y la implementación de **Happy Paws**, un sistema de gestión veterinaria desarrollado en Java con interfaz gráfica Swing como Trabajo Integrador de la materia Programación Orientada a Objetos. El sistema permite administrar clientes, mascotas, veterinarios, turnos, historias clínicas, medicamentos, vacunas y un portal de adopciones. La aplicación se construyó aplicando los pilares del paradigma orientado a objetos: abstracción, encapsulamiento, herencia, polimorfismo y composición, complementados con el patrón arquitectónico Modelo–Vista–Controlador (MVC). Se incorpora además un *seed* de datos realistas (4 veterinarios, 4 clientes, 17 mascotas, 27 turnos, 11 medicamentos/vacunas en catálogo y un portal de adopciones activo) y una batería de **62 pruebas integrales automatizadas** que validan todos los flujos funcionales del sistema con un 100 % de éxito.
 
 **Palabras clave:** Java, Swing, POO, MVC, UML, herencia, polimorfismo, composición, agregación, colecciones.
 
@@ -80,7 +80,7 @@ La POO modela un sistema como un conjunto de **objetos** que colaboran entre sí
 | **Abstracción** | Identificar las características esenciales de una entidad, ignorando los detalles accidentales. | Clases `Animal` y `Persona` modelan lo común a todas las mascotas y a todas las personas del dominio. |
 | **Encapsulamiento** | Ocultar el estado interno y exponer solo lo necesario mediante una interfaz controlada. | Todos los atributos son `private`; el acceso se realiza por *getters* y *setters* con validaciones. |
 | **Herencia** | Mecanismo para crear jerarquías donde las subclases reutilizan y especializan el comportamiento de la superclase. | `Perro` y `Gato` heredan de `Animal`; `Responsable` y `Veterinario` heredan de `Persona`; `Vacuna` hereda de `Medicamento`. |
-| **Polimorfismo** | Capacidad de un mismo mensaje de producir comportamientos distintos según el tipo concreto del receptor. | `Animal.getTipoAlimentacion()` retorna `OMNIVORO` en `Perro` y `CARNIVORO_ESTRICTO` en `Gato`. |
+| **Polimorfismo** | Capacidad de un mismo mensaje de producir comportamientos distintos según el tipo concreto del receptor. | `Animal.getTipoAlimentacion()` retorna `OMNIVORO` en `Perro`, `CARNIVORO_ESTRICTO` en `Gato` y `HERBIBORO` en `Conejo`. |
 
 ## 2.3 Composición vs. agregación
 
@@ -144,8 +144,8 @@ En Happy Paws el modelo vive en el paquete `modelo/`, la vista en `vista/` y el 
 | RNF-01 | Portabilidad: ejecutar en cualquier máquina con JDK 11+ sin instalación adicional. | ✅ |
 | RNF-02 | Carga de tipografías portable desde el *classpath* (no rutas absolutas). | ✅ |
 | RNF-03 | Separación estricta entre capas (MVC). | ✅ |
-| RNF-04 | Pruebas automatizadas con cobertura de los flujos principales. | ✅ (59/59) |
-| RNF-05 | Documentación UML en al menos un formato editable y otro gráfico. | ✅ (`.puml`, `.png`, `.svg`, `.mmmd`) |
+| RNF-04 | Pruebas automatizadas con cobertura de los flujos principales. | ✅ (62/62) |
+| RNF-05 | Documentación UML en al menos un formato editable y otro gráfico. | ✅ (`.puml`, `.png`, `.svg`, `.mmd`) |
 
 ---
 
@@ -160,23 +160,26 @@ Persona (abstract) ──┬── Responsable
                     └── Veterinario
 
 Animal  (abstract) ──┬── Perro
-                    └── Gato
+                    ├── Gato
+                    ├── Conejo
+                    ├── Loro
+                    └── Tortuga
 
-Medicamento ─────────── Vacuna
+Medicamento ─── Vacuna
 ```
 
-- `Persona` agrupa DNI, nombre, apellido, teléfono, email y dirección.
-- `Animal` agrupa nombre, edad, peso, sexo, responsable e historial clínico.
-- `Medicamento` se especializa en `Vacuna` agregando fechas de aplicación y vencimiento.
+- `Persona` agrupa DNI, nombre, apellido, celular y dirección.
+- `Animal` agrupa nombre, fecha de nacimiento, sexo, peso, responsable, raza e historial clínico.
+- `Medicamento` se especializa en `Vacuna` agregando la vigencia en días.
 
 ## 4.2 Polimorfismo elegido
 
-Se seleccionó `getTipoAlimentacion()` como método polimórfico obligatorio (retornando un `enum` `TipoAlimentacion` con `OMNIVORO` y `CARNIVORO_ESTRICTO`) por dos razones:
+Se seleccionó `getTipoAlimentacion()` como método polimórfico obligatorio (retornando un `enum` `TipoAlimentacion` con `OMNIVORO`, `CARNIVORO_ESTRICTO` y `HERBIBORO`) por dos razones:
 
-1. **Demostrabilidad**: en cualquier punto del sistema se puede preguntar a un `Animal` su tipo de alimentación y la respuesta depende del tipo concreto, sin necesidad de `instanceof`.
-2. **Extensibilidad**: si en el futuro se agrega la clase `Ave` o `Reptil`, basta sobrescribir el método. El código cliente no cambia.
+1. **Demostrabilidad**: en cualquier punto del sistema se puede preguntar a un `Animal` su tipo de alimentación y la respuesta depende del tipo concreto (por ejemplo, `OMNIVORO` en `Perro`, `CARNIVORO_ESTRICTO` en `Gato` y `HERBIBORO` en `Conejo`), sin necesidad de `instanceof`.
+2. **Extensibilidad**: al incorporar nuevas subclases como `Conejo`, `Loro` y `Tortuga`, basta sobrescribir el método. El código cliente no sufre modificaciones.
 
-Adicionalmente, `getEspecie()` también es polimórfico y retorna `"Perro"` o `"Gato"`.
+Adicionalmente, `getEspecie()` también es polimórfico y retorna `"Perro"`, `"Gato"`, `"Conejo"`, `"Loro"` o `"Tortuga"`. También se definen como abstractos los métodos `getColorInicioHexActivo()` and `getColorFinHexActivo()`, implementados polimórficamente por cada subclase de `Animal` para definir de manera particular el color de su tarjeta en la interfaz Swing.
 
 ## 4.3 Composición y agregación
 
@@ -198,13 +201,11 @@ Adicionalmente, `getEspecie()` también es polimórfico y retorna `"Perro"` o `"
 
 ```java
 public String generarTextoCompleto() {
-    Turno t = this.turno;
-    return "Comprobante — " + t.getVeterinaria().getNombreNegocio()
-         + "\nPaciente: "   + t.getAnimal().getNombre()
-         + "\nResponsable: "+ t.getAnimal().getResponsable().getNombreCompleto()
-         + "\nVeterinario: "+ t.getVeterinario().getNombreCompleto()
-         + "\nTipo: "       + t.getTipo().getDescripcion()
-         + "\nFecha: "      + t.getFecha() + " " + t.getHora();
+    return generarEncabezado()
+         + generarDetallePaciente()
+         + generarDetalleAtencion()
+         + generarDetalleTratamiento()
+         + "=========================================\n";
 }
 ```
 
@@ -238,21 +239,37 @@ public static void reiniciar() { instancia = null; }  // útil para tests
 
 Las vistas (`PortalVeterinario` y los diálogos) operan exclusivamente a través del controlador; nunca instancian clases del modelo directamente. Esta decisión facilita la trazabilidad, el testing y un eventual reemplazo de la vista (por ejemplo, una versión web).
 
-## 4.7 Estructura de paquetes
+## 4.7 Patrones creacionales opcionales: Factory y Builder
+
+Para flexibilizar y desacoplar la creación de objetos del dominio (particularmente la jerarquía de `Animal`), se implementaron dos patrones creacionales en el paquete `fabrica/`:
+
+### 4.7.1 Factory Dinámico con Registro (`FabricaAnimalMap`)
+El patrón **Factory** centraliza la instanciación de las subclases de `Animal`. A fin de evitar un bloque rígido de `switch-case` (que requeriría modificar la fábrica cada vez que se añada una especie, violando el principio Open/Closed de SOLID), se implementó un registro dinámico (`Map<String, Class<? extends Animal>>`):
+- **Registro**: Asocia un identificador en texto (`"perro"`, `"gato"`, `"conejo"`, etc.) con la clase correspondiente mediante reflexión de Java.
+- **Creación**: El método estático `crear()` busca la clase registrada y hace un llamado dinámico a su constructor, retornando una instancia polimórfica de tipo `Animal`.
+- **Extensibilidad**: Permite registrar nuevos tipos de animales dinámicamente en tiempo de ejecución a través del método `registrar()`.
+
+### 4.7.2 Builder Fluido (`ConstructorAnimal`)
+El patrón **Builder** provee una interfaz fluida (*Fluent API*) para construir de forma clara y paso a paso instancias de animales sin lidiar con constructores gigantescos:
+- Permite encadenar llamadas de configuración (ej. `new ConstructorAnimal("perro").conNombre("Bobby").conPeso(12.5f).construir()`).
+- Encapsula la complejidad del orden de parámetros y delega la instanciación física al Factory dinámico `FabricaAnimalMap`.
+
+## 4.8 Estructura de paquetes
 
 ```
 poo_2026/
-├── modelo/       → 15 clases (Animal, Perro, Gato, Persona, Responsable,
-│                   Veterinario, Direccion, HistoriaClinica, Medicamento,
-│                   Vacuna, Turno, TipoTurno, TipoAlimentacion,
-│                   Veterinaria, ComprobanteTurno)
+├── modelo/       → 18 clases y 2 enums (Animal, Perro, Gato, Conejo, Loro, Tortuga,
+│                   Persona, Responsable, Veterinario, Direccion, HistoriaClinica,
+│                   Medicamento, Prescripcion, Vacuna, RegistroVacunacion, Turno,
+│                   TipoTurno, TipoAlimentacion, Veterinaria, ComprobanteTurno)
+├── fabrica/      → Creación desacoplada (FabricaAnimalMap, ConstructorAnimal)
 ├── vista/        → PortalVeterinario + subpaquetes paneles/ y dialogos/
 ├── controlador/  → ControladorVeterinaria (Singleton)
 ├── recursos/     → GoogleSans.ttf + CargadorFuentes
 ├── imagenes/     → assets gráficos
 ├── diagrama/     → UML en 4 formatos
 ├── Main.java     → launcher
-├── Demo.java     → 59 pruebas integrales
+├── Demo.java     → 62 pruebas integrales
 └── README.md
 ```
 
@@ -345,22 +362,34 @@ java -cp build Demo
 |---|---|
 | `MP-9854` | Dr. Carlos Páez |
 | `MP-1024` | Dra. Laura Gómez |
-| `MP-2255` | Dr. Mariano Suárez |
-| `MP-3344` | Dra. Sofía Méndez |
+| `MP-2050` | Dra. Ana Ruiz |
+| `MP-3080` | Dr. Miguel Torres |
 
 > El sistema distingue mayúsculas y minúsculas. La matrícula vacía o inexistente es rechazada.
 
 ## 6.4 Carga portable de tipografías
 
-`recursos/CargadorFuentes.java` carga `GoogleSans.ttf` desde el *classpath* mediante `getResourceAsStream`, evitando rutas absolutas y haciendo la aplicación portable:
+`recursos/CargadorFuentes.java` carga `GoogleSans.ttf` desde el *classpath* mediante `getResourceAsStream`, evitando rutas absolutas y haciendo la aplicación portable. La fuente base se registra una sola vez y se cachea; cada llamado a `cargar(float)` simplemente la deriva al tamaño pedido. Si el recurso no se encuentra, hace *fallback* a una fuente del sistema:
 
 ```java
-public static Font cargar(String rutaInterna, float size, int estilo) {
-    try (InputStream is = CargadorFuentes.class
-            .getResourceAsStream(rutaInterna)) {
-        Font base = Font.createFont(Font.TRUETYPE_FONT, is);
-        return base.deriveFont(estilo, size);
-    } catch (Exception e) { return new Font("SansSerif", estilo, (int) size); }
+private static final String RUTA_FUENTE = "/recursos/GoogleSans.ttf";
+
+public static Font cargar(float tamano) {
+    return obtenerFuenteBase().deriveFont(tamano);
+}
+
+public static Font obtenerFuenteBase() {
+    if (fuenteBaseRegistrada != null) return fuenteBaseRegistrada;
+    try (InputStream is = CargadorFuentes.class.getResourceAsStream(RUTA_FUENTE)) {
+        if (is == null) {
+            fuenteBaseRegistrada = fallback();
+        } else {
+            Font f = Font.createFont(Font.TRUETYPE_FONT, is);
+            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(f);
+            fuenteBaseRegistrada = f;
+        }
+    } catch (Exception e) { fuenteBaseRegistrada = fallback(); }
+    return fuenteBaseRegistrada;
 }
 ```
 
@@ -385,10 +414,11 @@ Se construyó una batería de pruebas integrales (no unitarias) en `Demo.java`. 
   Sección 7: Notas y recordatorios                   5/5 ✓
   Sección 8: Búsquedas y filtros                    10/10 ✓
   Sección 9: Composición y agregación                4/4 ✓
-  Sección 10: Cierre de sesión                       2/2 ✓
+  Sección 10: Presentación de combos                 3/3 ✓
+  Sección 11: Cierre de sesión                       2/2 ✓
 
 ══════════════════════════════════════════
-  Resultado: 59 pasadas, 0 fallidas
+  Resultado: 62 pasadas, 0 fallidas
 ══════════════════════════════════════════
 ```
 

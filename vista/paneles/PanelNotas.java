@@ -12,7 +12,7 @@ public class PanelNotas extends JPanel {
     private JTextArea campoNuevaNota;
     private JPanel panelLista;
 
-    private static final Color COLOR_TOPE = new Color(217, 119, 6);
+    private static final Color COLOR_TOPE = recursos.Color.PENDING;
 
     public PanelNotas(ControladorVeterinaria controlador) {
         this.controlador = controlador;
@@ -34,12 +34,12 @@ public class PanelNotas extends JPanel {
         };
         panelHeader.setBackground(Color.WHITE);
         panelHeader.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(226, 232, 240), 1, true),
+            new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(16, 22, 16, 22)
         ));
         JLabel lblTitulo = new JLabel("Notas y Recordatorios");
         lblTitulo.setFont(CargadorFuentes.cargar(16f));
-        lblTitulo.setForeground(new Color(30, 41, 59));
+        lblTitulo.setForeground(recursos.Color.INK);
         panelHeader.add(lblTitulo, BorderLayout.WEST);
         JLabel lblSub = new JLabel("Anotaciones internas del equipo veterinario");
         lblSub.setFont(CargadorFuentes.cargar(11f));
@@ -53,13 +53,13 @@ public class PanelNotas extends JPanel {
         JPanel panelEditor = new JPanel(new BorderLayout(0, 8));
         panelEditor.setBackground(Color.WHITE);
         panelEditor.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(226, 232, 240), 1, true),
+            new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(14, 18, 14, 18)
         ));
 
         JLabel lblEditor = new JLabel("Nueva nota");
         lblEditor.setFont(CargadorFuentes.cargar(12f));
-        lblEditor.setForeground(new Color(71, 85, 105));
+        lblEditor.setForeground(recursos.Color.SLATE_600);
         panelEditor.add(lblEditor, BorderLayout.NORTH);
 
         campoNuevaNota = new JTextArea(3, 1);
@@ -90,7 +90,7 @@ public class PanelNotas extends JPanel {
         panelLista.setLayout(new BoxLayout(panelLista, BoxLayout.Y_AXIS));
         panelLista.setBackground(Color.WHITE);
         panelLista.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(new Color(226, 232, 240), 1, true),
+            new LineBorder(recursos.Color.BORDER, 1, true),
             new EmptyBorder(12, 16, 12, 16)
         ));
         JScrollPane scrollLista = new JScrollPane(panelLista);
@@ -106,7 +106,7 @@ public class PanelNotas extends JPanel {
         if (controlador.getNotas().isEmpty()) {
             JLabel lblVacio = new JLabel("No hay notas registradas.");
             lblVacio.setFont(CargadorFuentes.cargar(12f));
-            lblVacio.setForeground(new Color(148, 163, 184));
+            lblVacio.setForeground(recursos.Color.CAT_INACTIVO);
             lblVacio.setAlignmentX(Component.LEFT_ALIGNMENT);
             lblVacio.setBorder(new EmptyBorder(30, 0, 30, 0));
             panelLista.add(lblVacio);
@@ -132,7 +132,7 @@ public class PanelNotas extends JPanel {
 
         JLabel lblTexto = new JLabel("<html><div style='width: 100%;'>" + texto + "</div></html>");
         lblTexto.setFont(CargadorFuentes.cargar(12f));
-        lblTexto.setForeground(new Color(30, 41, 59));
+        lblTexto.setForeground(recursos.Color.INK);
         item.add(lblTexto, BorderLayout.CENTER);
 
         JButton btnEliminar = new JButton("✕");

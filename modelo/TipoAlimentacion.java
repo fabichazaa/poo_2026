@@ -3,7 +3,7 @@ package modelo;
 public enum TipoAlimentacion {
     OMNIVORO("Omnívoro"),
     CARNIVORO_ESTRICTO("Carnívoro estricto"),
-    HERVIBORO("Herbívoro");
+    HERBIBORO("Herbívoro");
 
     private final String descripcion;
 

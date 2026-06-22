@@ -45,7 +45,7 @@ class Veterinario {
     -String especialidad
     -String turnoTrabajo
     +String getMatricula()
-    +String getRutaFoto()
+    +String getImagen()
     +void agregarTurno(Turno turno)
 }
 class Responsable {
@@ -64,7 +64,7 @@ class Animal {
     -HistoriaClinica historiaClinica
     -boolean enAdopcion
     +int calcularEdad()
-    +String getRutaFoto()
+    +String getImagen()
     +TipoAlimentacion getTipoAlimentacion()
     +String getEspecie()
 }
@@ -80,22 +80,82 @@ class Gato {
     +TipoAlimentacion getTipoAlimentacion()
     +String getEspecie()
 }
+class Conejo {
+    -String raza
+    -boolean esEsterilizado
+    +TipoAlimentacion getTipoAlimentacion()
+    +String getEspecie()
+}
+class Loro {
+    -String raza
+    -boolean necesitaPaseo
+    +TipoAlimentacion getTipoAlimentacion()
+    +String getEspecie()
+}
+class Tortuga {
+    -String raza
+    -boolean necesitaPaseo
+    +TipoAlimentacion getTipoAlimentacion()
+    +String getEspecie()
+}
 class HistoriaClinica {
     -List medicamentosRecetados
+    -List registroVacunas
     +void recetarMedicamento(Medicamento medicamento)
+    +void recetarMedicamento(Prescripcion pres)
+    +void registrarVacuna(RegistroVacunacion reg)
     +List getMedicamentosRecetados()
+    +List getRegistroVacunas()
 }
 class Medicamento {
     -String codigoSenasa
     -String nombreMedicamento
+    -String subtitulo
     +String getCodigoSenasa()
     +String getNombreMedicamento()
+    +String getSubtitulo()
+    +void setSubtitulo(String subtitulo)
 }
-
+class Prescripcion {
+    -Medicamento medicamento
+    -String dosis
+    -String viaAdministracion
+    -String frecuencia
+    -LocalDate fechaInicio
+    -int vigenciaDias
+    -String indicaciones
+    -boolean esMagistral
+    +Medicamento getMedicamento()
+    +String getDosis()
+    +String getViaAdministracion()
+    +String getFrecuencia()
+    +LocalDate getFechaInicio()
+    +int getVigenciaDias()
+    +String getIndicaciones()
+    +boolean isEsMagistral()
+    +String getNombreMedicamento()
+    +String getCodigoSenasa()
+}
 class Vacuna {
+    -int vigenciaDias
+    +int getVigenciaDias()
+}
+class RegistroVacunacion {
+    -Vacuna vacunaAplicada
     -LocalDate fechaAplicacion
     -LocalDate fechaVencimiento
+    -String tipoDosis
+    -String via
+    -String lote
+    -String observaciones
+    +Vacuna getVacunaAplicada()
+    +LocalDate getFechaAplicacion()
+    +LocalDate getFechaVencimiento()
     +boolean estaVencida()
+    +String getTipoDosis()
+    +String getVia()
+    +String getLote()
+    +String getObservaciones()
 }
 class Turno {
     -int idTurno
@@ -146,6 +206,9 @@ Persona <|-- Responsable
 Persona <|-- Veterinario
 Animal <|-- Perro
 Animal <|-- Gato
+Animal <|-- Conejo
+Animal <|-- Loro
+Animal <|-- Tortuga
 Medicamento <|-- Vacuna
 Animal "1" *-- "1" HistoriaClinica
 Veterinaria "1" *-- "*" Veterinario
@@ -153,7 +216,10 @@ Veterinaria "1" *-- "*" Responsable
 Veterinaria "1" *-- "*" Turno
 Responsable "1" o-- "*" Animal
 Veterinaria "1" o-- "*" Medicamento
-HistoriaClinica "1" o-- "*" Medicamento
+HistoriaClinica "1" *-- "*" Prescripcion
+Prescripcion "*" --> "1" Medicamento
+HistoriaClinica "1" *-- "*" RegistroVacunacion
+RegistroVacunacion "*" --> "1" Vacuna
 Persona "1" --> "0..1" Direccion
 Turno "*" --> "1" Veterinario
 Turno "*" --> "1" Animal
@@ -164,3 +230,4 @@ ComprobanteTurno ..> Animal
 ComprobanteTurno ..> Veterinario
 ComprobanteTurno ..> Responsable
 ComprobanteTurno ..> HistoriaClinica
+ComprobanteTurno ..> RegistroVacunacion

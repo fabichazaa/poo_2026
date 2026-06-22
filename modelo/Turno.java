@@ -1,6 +1,11 @@
 package modelo;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 public class Turno {
+
     public static final String ESTADO_PENDIENTE = "Pendiente";
     public static final String ESTADO_COMPLETADO = "Completado";
     public static final String ESTADO_CANCELADO = "Cancelado";
@@ -14,7 +19,11 @@ public class Turno {
     private TipoTurno tipo;
     private String observaciones;
 
-    public Turno(int idTurno, String fecha, String hora, Veterinario veterinario, Animal animal, TipoTurno tipo) {
+    private transient LocalDate fechaParsed;
+    private transient LocalTime horaParsed;
+
+
+    public Turno(int idTurno, String fecha, String hora, Veterinario veterinario, Animal animal, TipoTurno tipo, String observaciones) {
         this.idTurno = idTurno;
         this.fecha = fecha;
         this.hora = hora;
@@ -22,39 +31,114 @@ public class Turno {
         this.animal = animal;
         this.estado = ESTADO_PENDIENTE;
         this.tipo = tipo;
-        this.observaciones = "";
-        if (veterinario != null) {
-            veterinario.agregarTurno(this);
-        }
+        this.observaciones = observaciones;
+        // Not registering 'this' with Veterinario here to avoid leaking
+        // the partially-constructed object from the constructor.
     }
 
     public Turno(String fecha, String hora, Veterinario veterinario, Animal animal, TipoTurno tipo) {
-        this(0, fecha, hora, veterinario, animal, tipo);
+        this(0, fecha, hora, veterinario, animal, tipo, "");
     }
 
-    public int getIdTurno() { return idTurno; }
-    public void setIdTurno(int idTurno) { this.idTurno = idTurno; }
+    public int getIdTurno() {
+        return idTurno;
+    }
 
-    public Veterinario getVeterinario() { return veterinario; }
-    public void setVeterinario(Veterinario veterinario) { this.veterinario = veterinario; }
+    public void setIdTurno(int idTurno) {
+        this.idTurno = idTurno;
+    }
 
-    public Animal getAnimal() { return animal; }
-    public void setAnimal(Animal animal) { this.animal = animal; }
+    public Veterinario getVeterinario() {
+        return veterinario;
+    }
 
-    public String getFecha() { return fecha; }
-    public void setFecha(String fecha) { this.fecha = fecha; }
+    public void setVeterinario(Veterinario veterinario) {
+        this.veterinario = veterinario;
+    }
 
-    public String getHora() { return hora; }
-    public void setHora(String hora) { this.hora = hora; }
+    /**
+     * Registra este Turno en el Veterinario asociado.
+     * Llamar después de construir el objeto para evitar "this" escape en el constructor.
+     */
+    public void registrarEnVeterinario() {
+        if (this.veterinario != null) {
+            this.veterinario.agregarTurno(this);
+        }
+    }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public Animal getAnimal() {
+        return animal;
+    }
 
-    public TipoTurno getTipo() { return tipo; }
-    public void setTipo(TipoTurno tipo) { this.tipo = tipo; }
+    public void setAnimal(Animal animal) {
+        this.animal = animal;
+    }
 
-    public String getObservaciones() { return observaciones; }
-    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
+    public String getFecha() {
+        return fecha;
+    }
+
+    public LocalDate getFechaParsed() {
+        if (fechaParsed == null && fecha != null) {
+            try {
+                fechaParsed = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } catch (Exception e) {
+                fechaParsed = LocalDate.MIN;
+            }
+        }
+        return fechaParsed;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+        this.fechaParsed = null;
+    }
+
+    public String getHora() {
+        return hora;
+    }
+
+    public LocalTime getHoraParsed() {
+        if (horaParsed == null && hora != null) {
+            try {
+                horaParsed = LocalTime.parse(hora, DateTimeFormatter.ofPattern("HH:mm"));
+            } catch (Exception e) {
+                horaParsed = LocalTime.MIN;
+            }
+        }
+        return horaParsed;
+    }
+
+    public void setHora(String hora) {
+        this.hora = hora;
+        this.horaParsed = null;
+    }
+
+
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public TipoTurno getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoTurno tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
 
     public void completarTurno() {
         this.estado = ESTADO_COMPLETADO;
@@ -70,5 +154,12 @@ public class Turno {
 
     public boolean estaCompletado() {
         return ESTADO_COMPLETADO.equals(this.estado);
+    }
+
+    @Override
+    public String toString() {
+        String pac = (animal != null) ? animal.getNombre() : "Sin mascota";
+        String desc = (tipo != null) ? tipo.getDescripcion() : "Sin tipo";
+        return "Turno #" + idTurno + " - " + fecha + " " + hora + " - Paciente: " + pac + " (" + desc + ") [" + estado + "]";
     }
 }

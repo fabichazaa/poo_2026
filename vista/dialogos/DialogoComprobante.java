@@ -9,30 +9,21 @@ import recursos.CargadorFuentes;
 public class DialogoComprobante extends JDialog {
 
     public DialogoComprobante(Frame owner, ComprobanteTurno comprobante) {
-        super(owner, "Comprobante de Atención", true);
+        super(owner, "Comprobante de Atención N° " + comprobante.getTurno().getIdTurno(), true);
+        try {
+            ImageIcon iconoApp = new ImageIcon("imagenes/logo.png");
+            setIconImage(iconoApp.getImage());
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar el icono del diálogo: " + e.getMessage());
+        }
         construir(comprobante);
     }
 
     private void construir(ComprobanteTurno comprobante) {
-        setSize(640, 620);
+        setSize(640, 540);
         setLocationRelativeTo(getOwner());
         setLayout(new BorderLayout());
-        getContentPane().setBackground(new Color(241, 245, 249));
-
-        JPanel panelHeader = new JPanel(new BorderLayout());
-        panelHeader.setBackground(new Color(13, 148, 136));
-        panelHeader.setBorder(new EmptyBorder(16, 24, 16, 24));
-
-        JLabel lblTitulo = new JLabel("Comprobante de Atención N° " + comprobante.getTurno().getIdTurno());
-        lblTitulo.setFont(CargadorFuentes.cargar(16f));
-        lblTitulo.setForeground(Color.WHITE);
-        panelHeader.add(lblTitulo, BorderLayout.WEST);
-
-        JLabel lblFecha = new JLabel("Emitido: " + comprobante.getFechaEmision().toLocalDate());
-        lblFecha.setFont(CargadorFuentes.cargar(11f));
-        lblFecha.setForeground(new Color(204, 251, 241));
-        panelHeader.add(lblFecha, BorderLayout.EAST);
-        add(panelHeader, BorderLayout.NORTH);
+        getContentPane().setBackground(recursos.Color.BG);
 
         JTextArea areaTexto = new JTextArea(comprobante.generarTextoCompleto());
         areaTexto.setFont(new Font("Consolas", Font.PLAIN, 12));
@@ -44,7 +35,7 @@ public class DialogoComprobante extends JDialog {
         JScrollPane scroll = new JScrollPane(areaTexto);
         scroll.setBorder(BorderFactory.createCompoundBorder(
             new EmptyBorder(16, 24, 16, 24),
-            new LineBorder(new Color(226, 232, 240), 1, true)
+            new LineBorder(recursos.Color.BORDER, 1, true)
         ));
         scroll.getViewport().setBackground(Color.WHITE);
         add(scroll, BorderLayout.CENTER);
