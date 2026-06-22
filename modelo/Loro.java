@@ -40,10 +40,12 @@ public class Loro extends Animal {
         return "imagenes/emojis/loro.png";
     }
 
+    @Override
     public String getColorInicioHexActivo() {
         return "#34D399";
     }
 
+    @Override
     public String getColorFinHexActivo() {
         return "#059669";
     }

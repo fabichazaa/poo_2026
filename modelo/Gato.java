@@ -40,10 +40,12 @@ public class Gato extends Animal {
         return "imagenes/emojis/gato.png";
     }
 
+    @Override
     public String getColorInicioHexActivo() {
         return "#22D3EE";
     }
 
+    @Override
     public String getColorFinHexActivo() {
         return "#2563EB";
     }

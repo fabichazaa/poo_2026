@@ -40,10 +40,12 @@ public class Conejo extends Animal {
         return "imagenes/emojis/conejo.png";
     }
 
+    @Override
     public String getColorInicioHexActivo() {
         return "#F472B6";
     }
-        
+
+    @Override
     public String getColorFinHexActivo() {
         return "#DB2777";
     }
