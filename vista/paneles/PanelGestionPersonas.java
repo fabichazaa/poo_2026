@@ -8,6 +8,7 @@ import javax.swing.border.LineBorder;
 import modelo.Persona;
 import modelo.Responsable;
 import modelo.Veterinario;
+import vista.componentes.BotonPrimario;
 import vista.dialogos.DialogoEditarPersona;
 
 public final class PanelGestionPersonas extends JPanel {
@@ -299,32 +300,7 @@ public final class PanelGestionPersonas extends JPanel {
     }
 
     private JButton crearBotonAgregar() {
-        JButton btn = new JButton("Agregar") {
-            private boolean hover = false;
-            {
-                setFont(recursos.CargadorFuentes.cargar(13f).deriveFont(Font.BOLD));
-                setFocusPainted(false);
-                setContentAreaFilled(false);
-                setBorderPainted(false);
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                setBorder(new EmptyBorder(0, 20, 0, 20));
-                setPreferredSize(new Dimension(150, 38));
-                addMouseListener(new java.awt.event.MouseAdapter() {
-                    @Override public void mouseEntered(java.awt.event.MouseEvent e) { hover = true; repaint(); }
-                    @Override public void mouseExited(java.awt.event.MouseEvent e) { hover = false; repaint(); }
-                });
-            }
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(hover ? recursos.Color.PRIMARY_DEEP : recursos.Color.PRIMARY);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36);
-                setForeground(Color.WHITE);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
+        JButton btn = new BotonPrimario("Agregar");
         btn.addActionListener(e -> abrirAlta());
         return btn;
     }

@@ -12,6 +12,7 @@ import javax.swing.border.*;
 import modelo.*;
 import recursos.CargadorFuentes;
 import recursos.ImageLoader;
+import vista.componentes.BotonPrimario;
 import vista.componentes.CardPanel;
 
 public class DialogoNuevoTurno extends JDialog {
@@ -497,42 +498,7 @@ public class DialogoNuevoTurno extends JDialog {
         panelResumen.add(panelResumenData, BorderLayout.CENTER);
 
         // CTA button
-        final JButton btnRegistrar = new JButton("Registrar turno") {
-            private boolean hovered = false;
-
-            {
-                addMouseListener(new java.awt.event.MouseAdapter() {
-                    @Override
-                    public void mouseEntered(java.awt.event.MouseEvent e) {
-                        hovered = true;
-                        repaint();
-                    }
-
-                    @Override
-                    public void mouseExited(java.awt.event.MouseEvent e) {
-                        hovered = false;
-                        repaint();
-                    }
-                });
-            }
-
-            @Override
-            protected void paintComponent(final Graphics g) {
-                final Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(hovered ? recursos.Color.PRIMARY_DEEP : recursos.Color.PRIMARY); // Teal-700 / Teal-600
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        btnRegistrar.setFont(CargadorFuentes.cargar(14f).deriveFont(Font.BOLD));
-        btnRegistrar.setForeground(Color.WHITE);
-        btnRegistrar.setContentAreaFilled(false);
-        btnRegistrar.setBorderPainted(false);
-        btnRegistrar.setFocusPainted(false);
-        btnRegistrar.setPreferredSize(new Dimension(180, 36));
-        btnRegistrar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        final JButton btnRegistrar = new BotonPrimario("Registrar turno");
         btnRegistrar.addActionListener(e -> intentarGuardar());
 
         final JPanel panelRegistrarWrapper = new JPanel(new GridBagLayout());

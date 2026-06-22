@@ -32,6 +32,7 @@ import javax.swing.border.LineBorder;
 import modelo.Medicamento;
 import modelo.Vacuna;
 import recursos.CargadorFuentes;
+import vista.componentes.BotonPrimario;
 
 public class DialogoAgregarMedicamento extends JDialog {
 
@@ -254,24 +255,7 @@ public class DialogoAgregarMedicamento extends JDialog {
     }
 
     private JButton crearBotonPrimario(String texto) {
-        JButton btn = new JButton(texto) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(24, 154, 235));
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        btn.setFont(CargadorFuentes.cargar(13f).deriveFont(Font.BOLD));
-        btn.setForeground(Color.WHITE);
-        btn.setFocusPainted(false);
-        btn.setContentAreaFilled(false);
-        btn.setBorderPainted(false);
-        btn.setBorder(new EmptyBorder(10, 20, 10, 20));
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        JButton btn = new BotonPrimario(texto);
         return btn;
     }
 

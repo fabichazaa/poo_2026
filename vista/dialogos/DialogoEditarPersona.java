@@ -10,6 +10,7 @@ import modelo.Responsable;
 import modelo.Veterinario;
 import recursos.CargadorFuentes;
 import recursos.ImageLoader;
+import vista.componentes.BotonPrimario;
 
 public class DialogoEditarPersona extends JDialog {
 
@@ -337,35 +338,7 @@ public class DialogoEditarPersona extends JDialog {
     }
 
     private JButton crearBoton(String texto, boolean primario, java.awt.event.ActionListener accion) {
-        JButton btn = new JButton(texto) {
-            private boolean hover = false;
-            {
-                setFont(CargadorFuentes.cargar(14f).deriveFont(Font.BOLD));
-                setFocusPainted(false);
-                setContentAreaFilled(false);
-                setBorderPainted(false);
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                addMouseListener(new java.awt.event.MouseAdapter() {
-                    @Override public void mouseEntered(java.awt.event.MouseEvent e) { hover = true; repaint(); }
-                    @Override public void mouseExited(java.awt.event.MouseEvent e) { hover = false; repaint(); }
-                });
-            }
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                if (primario) {
-                    g2.setColor(hover ? recursos.Color.PRIMARY_DEEP : recursos.Color.PRIMARY);
-                    setForeground(Color.WHITE);
-                } else {
-                    g2.setColor(hover ? recursos.Color.BORDER : recursos.Color.BG);
-                    setForeground(recursos.Color.SLATE_600);
-                }
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
+        JButton btn = new BotonPrimario(texto);
         btn.addActionListener(accion);
         return btn;
     }

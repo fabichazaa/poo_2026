@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import modelo.*;
+import vista.componentes.BotonPrimario;
 import vista.dialogos.DialogoEditarPaciente;
 
 public final class PanelMascotas extends JPanel {
@@ -159,39 +160,7 @@ public final class PanelMascotas extends JPanel {
         JPanel panelContenedorBotonDerecha = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         panelContenedorBotonDerecha.setOpaque(false);
 
-        JButton btnAgregarMascota = new JButton("Agregar Mascota") {
-            private boolean hover = false;
-            {
-                setFont(new Font("Segoe UI", Font.BOLD, 13));
-                setFocusPainted(false);
-                setContentAreaFilled(false);
-                setBorderPainted(false);
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                setBorder(new EmptyBorder(0, 20, 0, 20));
-                setPreferredSize(new Dimension(170, 40));
-
-                addMouseListener(new java.awt.event.MouseAdapter() {
-                    @Override public void mouseEntered(java.awt.event.MouseEvent e) { hover = true; repaint(); }
-                    @Override public void mouseExited(java.awt.event.MouseEvent e) { hover = false; repaint(); }
-                });
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                
-                // Transición cromática interactiva (PRIMARY a HOVER VERDE)
-                Color colorFondo = hover ? new Color(15, 118, 110) : recursos.Color.PRIMARY;
-                g2.setColor(colorFondo);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 36, 36); // Redondeo perfecto tipo píldora
-                
-                setForeground(Color.WHITE);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-
+        JButton btnAgregarMascota = new BotonPrimario("Agregar Mascota");
         // Escuchador dinámico: Levanta el diálogo pasando "null" como segundo parámetro para activar el Modo Registrar
         btnAgregarMascota.addActionListener(e -> {
             JFrame ventanaPadre = (JFrame) SwingUtilities.getWindowAncestor(this);
