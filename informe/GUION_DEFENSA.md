@@ -46,7 +46,7 @@
 
 ### 3.1 Herencia y polimorfismo (1.5 min)
 
-> "Tenemos **dos clases abstractas**: `Animal` y `Persona`. `Animal` declara el método polimórfico `getTipoAlimentacion()`, que retorna un enum `TipoAlimentacion`. En `Perro` retorna `OMNIVORO`; en `Gato` y `Conejo`, `CARNIVORO_ESTRICTO`. Esto demuestra polimorfismo dinámico real: el llamador no necesita saber el tipo concreto."
+> "Tenemos **dos clases abstractas**: `Animal` y `Persona`. `Animal` declara el método polimórfico `getTipoAlimentacion()`, que retorna un enum `TipoAlimentacion`. En `Perro` retorna `OMNIVORO`; en `Gato`, `CARNIVORO_ESTRICTO`; en `Conejo`, `HERBIBORO`. Esto demuestra polimorfismo dinámico real: el llamador no necesita saber el tipo concreto."
 
 *(Si la profe pregunta, abrir `Animal.java` y mostrar el override en `Perro.java`, `Gato.java`, `Conejo.java`, etc.)*
 
@@ -65,6 +65,16 @@
 ### 3.4 Clase de reporte (1 min)
 
 > "La clase de reporte es `ComprobanteTurno`. Lo importante: **no almacena estado**. Cada vez que se genera un comprobante, recibe el `Turno` y delega en él la consulta de los datos — nombre del paciente, del responsable, del veterinario, del tipo de atención. Cero duplicación de datos, exactamente como pide la cátedra."
+
+### 3.5 Patrones creacionales: Factory y Builder (1 min)
+
+> "Para desacoplar la creación de animales implementamos dos patrones creacionales en el paquete `fabrica/`:
+> - **Factory** (`FabricaAnimalMap`): centraliza la instanciación de las especies. En vez de un `switch` rígido, usa un registro `Map<String, Class<? extends Animal>>` y reflexión, así sumar una especie nueva no obliga a tocar la fábrica.
+> - **Builder** (`ConstructorAnimal`): una API fluida para construir el animal paso a paso — `new ConstructorAnimal("perro").conNombre("Bobby").conPeso(12.5f)...construir()` — que delega la instanciación final en el Factory.
+>
+> Ambos se usan de verdad en el alta de mascotas, en `DialogoEditarPaciente`."
+
+*(Si preguntan, abrir `fabrica/FabricaAnimalMap.java` y `fabrica/ConstructorAnimal.java`.)*
 
 ---
 
@@ -133,6 +143,9 @@ Resultado: 62 pasadas, 0 fallidas
 
 ### "¿Cómo justifican que `ComprobanteTurno` cumple el requisito de reporte?"
 > Tres condiciones: 1) es una clase propia distinta del modelo, 2) genera una salida formateada, 3) **delega en otros objetos** para obtener los datos (Turno, Animal, Responsable, Veterinario) — no duplica atributos. Pueden verificarlo en el código.
+
+### "¿Implementaron algún patrón de diseño además de MVC y Singleton?"
+> Sí, dos patrones creacionales en el paquete `fabrica/`. Un **Factory** (`FabricaAnimalMap`) que crea las especies de `Animal` a partir de un registro dinámico (`Map<String, Class>`) con reflexión, en lugar de un `switch` rígido — agregar una especie no obliga a modificar la fábrica. Y un **Builder** (`ConstructorAnimal`) con API fluida que arma el animal paso a paso y delega la creación final en el Factory. Los dos se usan en el alta real de mascotas (`DialogoEditarPaciente`).
 
 ### "¿Por qué `Animal` y `Persona` son abstract y no interface?"
 > Porque tienen **estado y comportamiento común**. `Animal` tiene nombre, edad, peso, historia clínica. Una interface solo declara comportamiento, no estado. Usamos clases abstractas para reusar atributos y exigir al mismo tiempo que cada subclase implemente `getTipoAlimentacion()`.

@@ -145,7 +145,7 @@ En Happy Paws el modelo vive en el paquete `modelo/`, la vista en `vista/` y el 
 | RNF-02 | Carga de tipografías portable desde el *classpath* (no rutas absolutas). | ✅ |
 | RNF-03 | Separación estricta entre capas (MVC). | ✅ |
 | RNF-04 | Pruebas automatizadas con cobertura de los flujos principales. | ✅ (62/62) |
-| RNF-05 | Documentación UML en al menos un formato editable y otro gráfico. | ✅ (`.puml`, `.png`, `.svg`, `.mmmd`) |
+| RNF-05 | Documentación UML en al menos un formato editable y otro gráfico. | ✅ (`.puml`, `.png`, `.svg`, `.mmd`) |
 
 ---
 
@@ -362,22 +362,34 @@ java -cp build Demo
 |---|---|
 | `MP-9854` | Dr. Carlos Páez |
 | `MP-1024` | Dra. Laura Gómez |
-| `MP-2255` | Dr. Mariano Suárez |
-| `MP-3344` | Dra. Sofía Méndez |
+| `MP-2050` | Dra. Ana Ruiz |
+| `MP-3080` | Dr. Miguel Torres |
 
 > El sistema distingue mayúsculas y minúsculas. La matrícula vacía o inexistente es rechazada.
 
 ## 6.4 Carga portable de tipografías
 
-`recursos/CargadorFuentes.java` carga `GoogleSans.ttf` desde el *classpath* mediante `getResourceAsStream`, evitando rutas absolutas y haciendo la aplicación portable:
+`recursos/CargadorFuentes.java` carga `GoogleSans.ttf` desde el *classpath* mediante `getResourceAsStream`, evitando rutas absolutas y haciendo la aplicación portable. La fuente base se registra una sola vez y se cachea; cada llamado a `cargar(float)` simplemente la deriva al tamaño pedido. Si el recurso no se encuentra, hace *fallback* a una fuente del sistema:
 
 ```java
-public static Font cargar(String rutaInterna, float size, int estilo) {
-    try (InputStream is = CargadorFuentes.class
-            .getResourceAsStream(rutaInterna)) {
-        Font base = Font.createFont(Font.TRUETYPE_FONT, is);
-        return base.deriveFont(estilo, size);
-    } catch (Exception e) { return new Font("SansSerif", estilo, (int) size); }
+private static final String RUTA_FUENTE = "/recursos/GoogleSans.ttf";
+
+public static Font cargar(float tamano) {
+    return obtenerFuenteBase().deriveFont(tamano);
+}
+
+public static Font obtenerFuenteBase() {
+    if (fuenteBaseRegistrada != null) return fuenteBaseRegistrada;
+    try (InputStream is = CargadorFuentes.class.getResourceAsStream(RUTA_FUENTE)) {
+        if (is == null) {
+            fuenteBaseRegistrada = fallback();
+        } else {
+            Font f = Font.createFont(Font.TRUETYPE_FONT, is);
+            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(f);
+            fuenteBaseRegistrada = f;
+        }
+    } catch (Exception e) { fuenteBaseRegistrada = fallback(); }
+    return fuenteBaseRegistrada;
 }
 ```
 
