@@ -106,4 +106,4 @@ Para mantener la coherencia con el **Design System** de Happy Paws detallado en 
 - Integrante 3 — Alejandro Gallo
 - Integrante 4 — Juan Marengo
 
-**Fecha de entrega / defensa**: 22 de julio de 2026.
+**Fecha de entrega / defensa**: 22 de junio de 2026.
